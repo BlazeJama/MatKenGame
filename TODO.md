@@ -1,0 +1,163 @@
+# MatKenGame — Feature Checklist
+
+This file tracks the completion status of every planned feature.
+Check items off as they are finished. Never remove items — mark them ✅ instead.
+
+---
+
+## 🏗️ Pre-Build Setup
+
+- [x] Game Design Document written
+- [x] Platform decision made (PWA)
+- [x] GitHub repository created (MatKenGame)
+- [x] README.md created
+- [x] CHANGELOG.md created
+- [x] TODO.md created
+- [ ] GitHub Pages enabled on main branch
+- [ ] Folder structure created in repo
+- [ ] index.html created
+- [ ] app.jsx created
+- [ ] manifest.json created
+- [ ] service-worker.js created
+- [ ] PWA icons created (192px, 512px)
+
+---
+
+## 🥇 MVP — Core Quiz Game
+
+### UI Screens
+- [ ] Home screen with Play button
+- [ ] Quiz screen — vehicle image display
+- [ ] Quiz screen — 4 answer option buttons
+- [ ] Feedback state — correct answer (green highlight)
+- [ ] Feedback state — wrong answer (red highlight + show correct)
+- [ ] Score tracker display (e.g. 3/10)
+- [ ] End screen — final score display
+- [ ] End screen — Play Again button
+- [ ] Responsive layout (mobile + desktop)
+- [ ] Touch-friendly button sizes (min 44x44px)
+
+### Game Logic
+- [ ] Load vehicle data from data file
+- [ ] Randomly select 10 vehicles per round
+- [ ] Randomly select 1 image per vehicle from its image array
+- [ ] Generate 4 answer options (1 correct + 3 random wrong)
+- [ ] Handle correct answer selection
+- [ ] Handle wrong answer selection
+- [ ] Advance to next question
+- [ ] Calculate and display final score
+- [ ] Reset game state on Play Again
+
+### Vehicle Data
+- [ ] vehicles.js data file created
+- [ ] Data structure defined (id, name, country, category, era, images, funFact, difficulty)
+- [ ] 15–20 Main Battle Tanks added with multiple images each
+- [ ] Wikimedia Commons images sourced and URLs added
+
+### PWA
+- [ ] manifest.json configured
+- [ ] Service worker registered
+- [ ] Offline caching working
+- [ ] Installable to iOS home screen
+- [ ] Installable to Android home screen
+- [ ] Tested in Google Sites iframe embed
+
+---
+
+## 🥈 Phase 2 — Depth & Replayability
+
+### New Content
+- [ ] APCs added to vehicle database
+- [ ] IFVs added to vehicle database
+- [ ] Self-propelled artillery added
+- [ ] Military helicopters added
+- [ ] Database expanded to 50–75 vehicles
+
+### Difficulty Levels
+- [ ] Easy mode implemented
+- [ ] Medium mode implemented
+- [ ] Hard mode implemented (similar variants)
+- [ ] Difficulty selector on home screen
+
+### Filters
+- [ ] Category filter (tanks, helicopters, etc.)
+- [ ] Nation filter (Russian, NATO, etc.)
+- [ ] Random mixed mode (default)
+
+### Hint System
+- [ ] Hint button added to quiz screen
+- [ ] 2 hints per round logic implemented
+- [ ] Hint eliminates one wrong answer
+
+### Fun Facts
+- [ ] Fun fact panel shown after each answer
+- [ ] Fun facts written for all vehicles in database
+
+### Progress Tracking
+- [ ] Best score saved per category (localStorage)
+- [ ] Stats screen created
+- [ ] Stats accessible from home screen
+
+### Admin Page
+- [ ] Admin page created at /admin
+- [ ] Add new vehicle via form
+- [ ] Upload multiple images per vehicle
+- [ ] Edit existing vehicle details
+- [ ] Delete a vehicle
+- [ ] Admin page password protected
+
+---
+
+## 🥉 Phase 3 — Polish & Engagement
+
+### Special Game Modes
+- [ ] Silhouette mode — show outline only
+- [ ] Detail zoom mode — show cropped close-up
+- [ ] Nation flag mode — match vehicle to country flag
+- [ ] "What's Wrong?" mode — spot the incorrect label
+- [ ] Vehicle Spotlight mode — learn then quiz
+- [ ] Side-by-side comparison after round
+
+### Era Filter
+- [ ] WW2 filter
+- [ ] Cold War filter
+- [ ] Modern filter
+
+### Timed Mode
+- [ ] Countdown timer per question
+- [ ] Bonus points for fast answers
+- [ ] Timer toggle on home screen
+
+### Streak & Scoring
+- [ ] Streak counter implemented
+- [ ] Score multiplier for streaks
+- [ ] Streak reset on wrong answer
+- [ ] Streak displayed on quiz screen
+
+### Leaderboard
+- [ ] Backend service set up (Supabase or Firebase free tier)
+- [ ] Score submission after round
+- [ ] Leaderboard screen created
+- [ ] Nickname entry for leaderboard
+
+### Social & Sound
+- [ ] Share score button (iOS/Android share sheet)
+- [ ] Score share image generated
+- [ ] Sound effects added (correct/wrong)
+- [ ] Sound toggle in settings
+
+### Content
+- [ ] Database expanded to 100+ vehicles
+- [ ] All vehicles have multiple images
+
+---
+
+## 🐛 Bug Fixes & Known Issues
+
+> Log bugs here as they are discovered. Mark fixed ones ✅.
+
+- None yet
+
+---
+
+*Last updated: 2026-03-26*
