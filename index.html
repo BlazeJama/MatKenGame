@@ -41,6 +41,9 @@
 <body class="bg-white text-gray-900">
   <div id="root"></div>
 
+  <!-- Vehicle data — must load BEFORE app.jsx; exposes window.vehicles -->
+  <script src="data/vehicles.js"></script>
+
   <!-- App entry point — Babel transpiles this on load -->
   <script type="text/babel" data-presets="react" src="app.jsx"></script>
 

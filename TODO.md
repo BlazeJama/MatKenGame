@@ -26,33 +26,34 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 ## 🥇 MVP — Core Quiz Game
 
 ### UI Screens
-- [ ] Home screen with Play button
-- [ ] Quiz screen — vehicle image display
-- [ ] Quiz screen — 4 answer option buttons
-- [ ] Feedback state — correct answer (green highlight)
-- [ ] Feedback state — wrong answer (red highlight + show correct)
-- [ ] Score tracker display (e.g. 3/10)
-- [ ] End screen — final score display
-- [ ] End screen — Play Again button
-- [ ] Responsive layout (mobile + desktop)
-- [ ] Touch-friendly button sizes (min 44x44px)
+- [x] Home screen with Play button
+- [x] Quiz screen — vehicle image display
+- [x] Quiz screen — 4 answer option buttons
+- [x] Feedback state — correct answer (green highlight)
+- [x] Feedback state — wrong answer (red highlight + show correct)
+- [x] Score tracker display (e.g. 3/10)
+- [x] End screen — final score display
+- [x] End screen — Play Again button
+- [x] Responsive layout (mobile + desktop)
+- [x] Touch-friendly button sizes (min 44x44px)
+- [ ] Visual-design polish pass (deferred — feedback collected, to be done later)
 
 ### Game Logic
-- [ ] Load vehicle data from data file
-- [ ] Randomly select 10 vehicles per round
-- [ ] Randomly select 1 image per vehicle from its image array
-- [ ] Generate 4 answer options (1 correct + 3 random wrong)
-- [ ] Handle correct answer selection
-- [ ] Handle wrong answer selection
-- [ ] Advance to next question
-- [ ] Calculate and display final score
-- [ ] Reset game state on Play Again
+- [x] Load vehicle data from data file
+- [x] Randomly select 10 vehicles per round
+- [x] Randomly select 1 image per vehicle from its image array
+- [x] Generate 4 answer options (1 correct + 3 random wrong)
+- [x] Handle correct answer selection
+- [x] Handle wrong answer selection
+- [x] Advance to next question
+- [x] Calculate and display final score
+- [x] Reset game state on Play Again
 
 ### Vehicle Data (MVP)
-- [ ] Data structure defined (id, name, country, category, era, images array of `{url, stars}`, funFact)
-- [ ] 15–20 Main Battle Tanks added with at least 2 images each
-- [ ] Each image has a star rating (1, 2, or 3) recorded — not used by MVP game logic, kept for Phase 2
-- [ ] Wikimedia Commons image URLs sourced and added directly into `data/vehicles.js`
+- [x] Data structure defined (id, name, country, category, era, images array of `{url, stars}`, funFact)
+- [x] 10 Main Battle Tanks added with 3 images each (bare-minimum MVP count — 15–20 is the Phase 2 target)
+- [x] Each image has a star rating (1, 2, or 3) recorded — not used by MVP game logic, kept for Phase 2
+- [x] Wikimedia Commons image URLs sourced and added directly into `data/vehicles.js`
 - [ ] (Phase 2) Local `assets/images/` storage + GitHub-API image upload via admin page
 - [ ] (Phase 2) Enforce minimum 5 images per difficulty level for filtering
 

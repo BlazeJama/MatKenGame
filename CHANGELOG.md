@@ -15,6 +15,28 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 
 ---
 
+## [0.2.0] - 2026-05-20
+### Added
+- `data/vehicles.js` — vehicle database with 10 Main Battle Tanks (5 Modern, 2 Cold War, 3 WW2), each with 3 Wikimedia Commons image URLs at star ratings 1/2/3, plus name, country, era, and a fun fact
+- `app.jsx` — full MVP game loop:
+  - **Home screen** with vehicle-count stats card, Play button, and how-to-play description
+  - **Quiz screen** with progress bar, question counter, live score, vehicle image, "Which vehicle is this?" prompt, 4 lettered (A/B/C/D) answer buttons, green/red feedback states with ✓ / ✗ markers, fun-fact panel after each answer, and Next/See Results button
+  - **End screen** with large final score, score-based message, and Play Again button
+- Helper functions: Fisher-Yates `shuffle`, `pickRandom`, `buildRound`, `scoreMessage`
+- Safety fallback if `window.vehicles` fails to load
+
+### Changed
+- `service-worker.js` cache bumped to v3 (precaches `data/vehicles.js`)
+- `index.html` now loads `data/vehicles.js` before `app.jsx`
+- TODO.md — ticked off all MVP UI Screen, Game Logic, and Vehicle Data items
+
+### Notes
+- 10 tanks instead of the 15–20 from the original GDD — bare-minimum MVP, every round shows every tank in shuffled order
+- Visual-design feedback collected but deferred — polish pass will come in a later commit
+- PWA icons still pending — game runs without them but install prompts won't show
+
+---
+
 ## [0.1.2] - 2026-05-20
 ### Added
 - `index.html` — entry point loading React 18, Tailwind, and Babel via CDN
