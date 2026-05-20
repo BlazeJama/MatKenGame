@@ -48,16 +48,13 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Calculate and display final score
 - [ ] Reset game state on Play Again
 
-### Image Storage
-- [ ] assets/images/ folder created in repo
-- [ ] Admin page auto-names images on upload (vehicleid-001.jpg etc.)
-- [ ] Admin page uses GitHub API to save images directly to repo
-- [ ] Image URLs stored as relative paths in vehicles.js
-- [ ] Data structure defined (id, name, country, category, era, images array with url+stars, funFact)
-- [ ] 15–20 Main Battle Tanks added with multiple images each
-- [ ] Each image has a star rating (1, 2, or 3)
-- [ ] Minimum 5 images per difficulty level per vehicle where possible
-- [ ] Wikimedia Commons images sourced and URLs added
+### Vehicle Data (MVP)
+- [ ] Data structure defined (id, name, country, category, era, images array of `{url, stars}`, funFact)
+- [ ] 15–20 Main Battle Tanks added with at least 2 images each
+- [ ] Each image has a star rating (1, 2, or 3) recorded — not used by MVP game logic, kept for Phase 2
+- [ ] Wikimedia Commons image URLs sourced and added directly into `data/vehicles.js`
+- [ ] (Phase 2) Local `assets/images/` storage + GitHub-API image upload via admin page
+- [ ] (Phase 2) Enforce minimum 5 images per difficulty level for filtering
 
 ### PWA
 - [ ] manifest.json configured
@@ -103,7 +100,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Stats screen created
 - [ ] Stats accessible from home screen
 
-### Admin Page (moved to MVP)
+### Admin Page
 - [ ] Password screen at /admin
 - [ ] Session-based password authentication
 - [ ] Two-column desktop layout (list left, form right)
@@ -174,4 +171,4 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ---
 
-*Last updated: 2026-03-26*
+*Last updated: 2026-05-20*

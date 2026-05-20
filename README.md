@@ -11,24 +11,33 @@ A Progressive Web App (PWA) quiz game that teaches players to recognize and iden
 
 ## 🌐 Play the Game
 
-👉 **[Play MatKenGame](https://matken.github.io/MatKenGame)**
+> 🚧 **Coming soon** — the live link will go up at `https://blazejama.github.io/MatKenGame` once the MVP is deployed.
 
-> Also embeddable in Google Sites. Works on iOS, Android, and desktop browsers. Can be installed to your home screen.
+> Will be embeddable in Google Sites. Works on iOS, Android, and desktop browsers. Can be installed to your home screen.
 
-## 📦 Features
+## 📦 MVP Features
 
-- Multiple images per vehicle — different angles, conditions, and camouflage schemes
-- Main Battle Tanks, APCs, IFVs, Artillery, Helicopters (growing library)
-- Difficulty levels — Easy, Medium, Hard
-- Silhouette mode, Detail Zoom mode, Nation Flag mode *(Phase 3)*
-- Leaderboard and score sharing *(Phase 3)*
-- Works offline after first visit
+- 10-question rounds of Main Battle Tank recognition
+- 4 multiple-choice answers per question (vehicle name + country)
+- Instant green/red feedback after each answer
+- Fun fact shown after every answer
+- Final score and Play Again button
+- Multiple images per vehicle, picked at random each round
+- Installable as a PWA, works offline after first visit
+
+## 🔮 Coming Later
+
+- More vehicle categories (APCs, IFVs, Artillery, Helicopters) — *Phase 2*
+- Easy / Medium / Hard difficulty modes — *Phase 2*
+- Admin page for adding vehicles via the browser — *Phase 2*
+- Silhouette, Detail Zoom and Nation Flag modes — *Phase 3*
+- Leaderboard, streaks, score sharing, sound — *Phase 3*
 
 ## 🗺️ Development Phases
 
 | Phase | Status | Description |
 |---|---|---|
-| MVP | 🔄 In Progress | Core quiz game — Main Battle Tanks |
+| MVP | 🛠️ In Setup | Core quiz game — Main Battle Tanks |
 | Phase 2 | ⬜ Planned | More categories, difficulty, hints, admin page |
 | Phase 3 | ⬜ Planned | Special modes, leaderboard, streaks, sound |
 

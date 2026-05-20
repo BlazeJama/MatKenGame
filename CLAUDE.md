@@ -99,13 +99,13 @@ export const vehicles = [
 ```
 
 **Rules for vehicle data:**
-- Every vehicle must have at least 2 images to be saved
+- Every vehicle must have at least 2 images
 - Each image has its own star rating: 1 = easy, 2 = medium, 3 = hard
-- A vehicle needs minimum 5 images at a given star level to appear in that difficulty mode
-- If a vehicle has fewer than 5 images for a difficulty it is skipped — no fallback
 - Images must be HTTPS Wikimedia Commons URLs
 - category is one of: "Main Battle Tank", "APC", "IFV", "Artillery", "Helicopter"
 - era is one of: "WW2", "Cold War", "Modern"
+
+> **MVP note:** the game ignores the `stars` field and picks a random image. The field is recorded now so Phase 2 difficulty filtering can be added without a data migration. The "5 images per difficulty level" rule is a Phase 2 concern, not MVP.
 
 ---
 
@@ -131,12 +131,8 @@ export const vehicles = [
 - Colour scheme: navy (#1a2744) as primary, white backgrounds, green for correct, red for wrong
 
 ### Images
-- All images stored in `assets/images/` folder in the repo
-- Auto-named by the admin page — never manually named
-- Naming convention: `vehicleid-001.jpg`, `vehicleid-002.jpg` etc.
-- Admin page uses the GitHub API to write image files directly to the repo
-- Image URLs in vehicles.js are relative paths e.g. `assets/images/challenger2-001.jpg`
-- Never use external image hosting — everything lives in the repo
+- For MVP: image URLs in `data/vehicles.js` are direct HTTPS Wikimedia Commons URLs
+- Phase 2 introduces the admin page, which will store images in `assets/images/` and auto-name them (`vehicleid-001.jpg`, etc.) via the GitHub API. Not part of MVP.
 
 ---
 
