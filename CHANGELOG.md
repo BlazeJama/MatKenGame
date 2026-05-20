@@ -15,6 +15,22 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 
 ---
 
+## [0.1.2] - 2026-05-20
+### Added
+- `index.html` — entry point loading React 18, Tailwind, and Babel via CDN
+- `manifest.json` — PWA manifest with navy theme colour and icon references
+- `service-worker.js` — cache-first offline support with version-based eviction
+- `app.jsx` — minimal "MatKenGame scaffold" screen confirming React + Tailwind + service-worker pipeline works end-to-end
+- Custom `navy` (#1a2744) colour added to Tailwind config
+
+### Changed
+- TODO.md — marked Pre-Build Setup items as done (folder structure, index.html, app.jsx, manifest.json, service-worker.js, GitHub Pages enabled)
+
+### Notes
+- PWA icons (192px, 512px) still pending — will be generated before first phone install test
+
+---
+
 ## [0.1.1] - 2026-05-20
 ### Changed
 - Admin page reverted from MVP back to Phase 2 to keep MVP focused on a playable quiz.

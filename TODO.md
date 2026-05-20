@@ -13,12 +13,12 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] README.md created
 - [x] CHANGELOG.md created
 - [x] TODO.md created
-- [ ] GitHub Pages enabled on main branch
-- [ ] Folder structure created in repo
-- [ ] index.html created
-- [ ] app.jsx created
-- [ ] manifest.json created
-- [ ] service-worker.js created
+- [x] GitHub Pages enabled on main branch
+- [x] Folder structure created in repo
+- [x] index.html created
+- [x] app.jsx created
+- [x] manifest.json created
+- [x] service-worker.js created
 - [ ] PWA icons created (192px, 512px)
 
 ---

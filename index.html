@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>MatKenGame</title>
+
+  <!-- PWA meta -->
+  <meta name="description" content="A quiz game that teaches you to recognise military vehicles from around the world." />
+  <meta name="theme-color" content="#1a2744" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- iOS PWA support -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MatKenGame" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+
+  <!-- Tailwind CSS (Play CDN — fine for MVP, no build step) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Extend Tailwind with our navy primary
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: "#1a2744"
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- React 18 (development build for now — switch to .production.min.js before launch) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- Babel Standalone — transpiles JSX in the browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-white text-gray-900">
+  <div id="root"></div>
+
+  <!-- App entry point — Babel transpiles this on load -->
+  <script type="text/babel" data-presets="react" src="app.jsx"></script>
+
+  <!-- Service worker registration -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js").catch((err) => {
+          console.warn("Service worker registration failed:", err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
