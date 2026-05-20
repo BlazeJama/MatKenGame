@@ -48,10 +48,15 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Calculate and display final score
 - [ ] Reset game state on Play Again
 
-### Vehicle Data
-- [ ] vehicles.js data file created
-- [ ] Data structure defined (id, name, country, category, era, images, funFact, difficulty)
+### Image Storage
+- [ ] assets/images/ folder created in repo
+- [ ] Admin page auto-names images on upload (vehicleid-001.jpg etc.)
+- [ ] Admin page uses GitHub API to save images directly to repo
+- [ ] Image URLs stored as relative paths in vehicles.js
+- [ ] Data structure defined (id, name, country, category, era, images array with url+stars, funFact)
 - [ ] 15–20 Main Battle Tanks added with multiple images each
+- [ ] Each image has a star rating (1, 2, or 3)
+- [ ] Minimum 5 images per difficulty level per vehicle where possible
 - [ ] Wikimedia Commons images sourced and URLs added
 
 ### PWA
@@ -98,13 +103,22 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Stats screen created
 - [ ] Stats accessible from home screen
 
-### Admin Page
-- [ ] Admin page created at /admin
-- [ ] Add new vehicle via form
-- [ ] Upload multiple images per vehicle
-- [ ] Edit existing vehicle details
-- [ ] Delete a vehicle
-- [ ] Admin page password protected
+### Admin Page (moved to MVP)
+- [ ] Password screen at /admin
+- [ ] Session-based password authentication
+- [ ] Two-column desktop layout (list left, form right)
+- [ ] Vehicle list with search and category filter
+- [ ] Per-vehicle difficulty status stars (E / M / H rows)
+- [ ] Bright gold = ready (5+ images), dim = partial, very dim = none
+- [ ] Add vehicle form (name, country, category, era, fun fact)
+- [ ] Image upload — drag and drop or click to browse
+- [ ] Per-image star difficulty selector (1, 2, 3 stars)
+- [ ] Difficulty label under each image thumbnail (Easy / Medium / Hard)
+- [ ] Multi-select checkboxes on image thumbnails
+- [ ] "Delete X selected" button shown when images are checked
+- [ ] Confirmation popup before image deletion
+- [ ] Edit existing vehicle
+- [ ] Delete vehicle with confirmation popup
 
 ---
 

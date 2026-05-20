@@ -58,9 +58,11 @@ This keeps the setup simple and GitHub Pages compatible.
 MatKenGame/
 ├── index.html              ← Entry point — loads React + Tailwind via CDN
 ├── app.jsx                 ← Main React app (all components in one file for MVP)
+├── admin.html              ← Admin page — password protected, desktop only
 ├── data/
 │   └── vehicles.js         ← ALL vehicle data lives here and only here
 ├── assets/
+│   ├── images/             ← All vehicle images — auto-named by admin page
 │   └── icons/              ← PWA icons (192px and 512px)
 ├── manifest.json           ← PWA manifest
 ├── service-worker.js       ← Offline caching
@@ -87,19 +89,21 @@ export const vehicles = [
     category: "Main Battle Tank",
     era: "Modern",
     images: [
-      "https://upload.wikimedia.org/wikipedia/.../challenger2-side.jpg",
-      "https://upload.wikimedia.org/wikipedia/.../challenger2-desert.jpg"
+      { url: "https://upload.wikimedia.org/wikipedia/.../challenger2-side.jpg", stars: 1 },
+      { url: "https://upload.wikimedia.org/wikipedia/.../challenger2-camo.jpg", stars: 2 },
+      { url: "https://upload.wikimedia.org/wikipedia/.../challenger2-front.jpg", stars: 3 }
     ],
-    funFact: "The Challenger 2 has never had a crew member killed in combat.",
-    difficulty: "medium"
+    funFact: "The Challenger 2 has never had a crew member killed in combat."
   }
 ]
 ```
 
 **Rules for vehicle data:**
-- Every vehicle must have at least 2 images
+- Every vehicle must have at least 2 images to be saved
+- Each image has its own star rating: 1 = easy, 2 = medium, 3 = hard
+- A vehicle needs minimum 5 images at a given star level to appear in that difficulty mode
+- If a vehicle has fewer than 5 images for a difficulty it is skipped — no fallback
 - Images must be HTTPS Wikimedia Commons URLs
-- difficulty is one of: "easy", "medium", "hard"
 - category is one of: "Main Battle Tank", "APC", "IFV", "Artillery", "Helicopter"
 - era is one of: "WW2", "Cold War", "Modern"
 
@@ -126,9 +130,13 @@ export const vehicles = [
 - No hover-only interactions — must work on touchscreens
 - Colour scheme: navy (#1a2744) as primary, white backgrounds, green for correct, red for wrong
 
-### PWA
-- Always keep manifest.json and service-worker.js in sync
-- Test offline functionality after any changes to service-worker.js
+### Images
+- All images stored in `assets/images/` folder in the repo
+- Auto-named by the admin page — never manually named
+- Naming convention: `vehicleid-001.jpg`, `vehicleid-002.jpg` etc.
+- Admin page uses the GitHub API to write image files directly to the repo
+- Image URLs in vehicles.js are relative paths e.g. `assets/images/challenger2-001.jpg`
+- Never use external image hosting — everything lives in the repo
 
 ---
 
