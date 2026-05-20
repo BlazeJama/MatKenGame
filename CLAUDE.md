@@ -209,5 +209,20 @@ If starting a new session or picking up after a break, read these in order:
 
 ---
 
-*Last updated: 2026-03-26*
+## Reference Documents (read on demand only)
+
+These files exist in the repo but do NOT need to be loaded every session.
+Only read them when specifically relevant to the task at hand.
+
+| File | When to read it |
+|---|---|
+| game-design-document.md | Planning new features or moving to a new phase |
+| project-summary.md | Questions about platform decisions or tech choices |
+| README.md | Updating project description or live URL |
+
+To load one, just say: "Read game-design-document.md before we start"
+
+---
+
+*Last updated: 2026-05-20*
 *Project owner: BlazeJama*
