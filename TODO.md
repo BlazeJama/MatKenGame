@@ -36,7 +36,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] End screen — Play Again button
 - [x] Responsive layout (mobile + desktop)
 - [x] Touch-friendly button sizes (min 44x44px)
-- [ ] Visual-design polish pass (deferred — feedback collected, to be done later)
+- [x] Visual-design polish pass — tactical HUD aesthetic (dark bg, amber accents, Bebas Neue, scanlines, corner brackets)
 
 ### Game Logic
 - [x] Load vehicle data from data file

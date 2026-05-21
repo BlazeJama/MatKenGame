@@ -16,6 +16,64 @@
   <meta name="apple-mobile-web-app-title" content="MatKenGame" />
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
 
+  <!-- Fonts: Bebas Neue (display) · Rajdhani (UI) · Share Tech Mono (data) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Base ─────────────────────────────────────────── */
+    html, body, #root { background-color: #070b14; min-height: 100%; }
+
+    /* ── Scanlines (viewport-fixed, fully non-interactive) */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.016) 3px, rgba(0,0,0,0.016) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Amber grid pattern (applied per screen) ───────── */
+    .tac-grid {
+      background-color: #070b14;
+      background-image:
+        linear-gradient(rgba(245,158,11,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,158,11,0.045) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ── Font utility classes ───────────────────────────── */
+    .font-display { font-family: 'Bebas Neue', sans-serif; }
+    .font-tac     { font-family: 'Rajdhani', sans-serif; }
+    .font-data    { font-family: 'Share Tech Mono', monospace; }
+
+    /* ── Entry animations ───────────────────────────────── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .anim-panel { animation: fadeSlideUp 0.25s ease forwards; }
+    .anim-fade  { animation: fadeIn 0.2s ease forwards; }
+
+    /* ── Interactive states ─────────────────────────────── */
+    .tac-answer:hover:not(:disabled) {
+      border-color: rgba(245,158,11,0.45) !important;
+      background:   rgba(245,158,11,0.07) !important;
+    }
+    .tac-primary { transition: filter 0.15s, transform 0.1s; }
+    .tac-primary:hover:not(:disabled) { filter: brightness(1.08); }
+    .tac-primary:active:not(:disabled) { transform: scale(0.98); }
+  </style>
+
   <!-- Tailwind CSS (Play CDN — fine for MVP, no build step) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -38,7 +96,7 @@
   <!-- Babel Standalone — transpiles JSX in the browser -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body class="bg-white text-gray-900">
+<body class="text-slate-100">
   <div id="root"></div>
 
   <!-- Vehicle data — must load BEFORE app.jsx; exposes window.vehicles -->

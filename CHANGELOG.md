@@ -18,6 +18,18 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 
 ---
 
+- **Tactical HUD visual redesign** — complete UI overhaul across all three screens (Home, Quiz, End):
+  - Dark `#070b14` background with a subtle amber grid and fixed scanline overlay (CSS `body::after`)
+  - **Bebas Neue** display font for all headings and action labels; **Rajdhani** for body/UI text; **Share Tech Mono** for score counters and metadata readouts — all served from Google Fonts
+  - Amber (`#f59e0b`) replaces navy as the accent colour: progress bar, letter badges, corner brackets, active states, highlights
+  - `TargetBrackets` component overlays four corner brackets on the mission intel card, target image, and score card
+  - Target image gets a `◉ IDENTIFY TARGET` gradient overlay and full-corner targeting reticle
+  - Answer buttons use dark glass panels (`rgba(15,23,42,0.85)`) with amber border; reveal green/red/ghosted states after selection with animated `anim-panel` entry
+  - Result banner shows `✓ TARGET ACQUIRED` / `✗ WRONG TARGET` in Bebas Neue with the amber `◈` fun-fact bullet
+  - End screen redesigned as a DEBRIEF: score fraction, animated percent fill bar, tactical rating label (`ELITE OPERATOR` → `BACK TO BASICS`), **REDEPLOY** button
+  - Home screen: `◈ SYSTEM ONLINE ◈` label, MATKENGAME title with amber **GAME** suffix, Mission Intel card, **BEGIN TRAINING** button, Field Briefing section
+  - Service worker bumped to v15; `.claude/launch.json` added for local preview server
+
 ### Previous unreleased work
 - **Admin page foundation (PR 1 of 5)** — new `/admin/` URL with separate `index.html` and `admin.jsx`. Includes session-based password gate (stored in `sessionStorage`), desktop-only check with mobile "use a desktop" message, and a two-column shell with placeholders for the vehicle list (PR 2) and add/edit form (PR 3). Service worker cache bumped to v4 to precache the new admin files.
 - **Admin vehicle list (PR 2 of 5)** — left column now lists every vehicle with name, country, category badge, era badge (colour-coded per era), image count, and a 3-row difficulty status indicator (E / M / H) showing per-star-level image counts and readiness (bright gold ★ = 5+ images, dim grey ★ = partial, very dim ★ = none). Includes a live search box, category dropdown filter, "Showing X of Y" counter, empty-state message, and a star-colour legend. Edit / Delete buttons present but disabled — wired up in PR 3 / PR 4. Service worker bumped to v5.

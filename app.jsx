@@ -5,7 +5,7 @@
 // Each round picks 10 random vehicles, one random image per vehicle, and 3 random wrong
 // answers from the same category for each question.
 
-const { useState, useMemo } = React;
+const { useState } = React;
 
 // localStorage key shared with the admin page — when present, the game
 // uses your in-progress draft instead of the deployed window.vehicles
@@ -48,7 +48,6 @@ function pickRandom(arr, n) {
 // Vehicles with zero images are excluded — they're treated as drafts.
 function buildRound(vehicles) {
   const QUESTIONS_PER_ROUND = 10;
-  // Only vehicles with at least one image are playable in a round
   const playable = vehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0);
   const roundVehicles = shuffle(playable).slice(0, QUESTIONS_PER_ROUND);
 
@@ -56,12 +55,14 @@ function buildRound(vehicles) {
     const image = pickRandom(vehicle.images, 1)[0];
     // Pick one fun fact at random per question. Falls back to a singular
     // `funFact` field if the vehicle still uses the legacy schema.
-    const facts = Array.isArray(vehicle.funFacts) && vehicle.funFacts.length > 0
-      ? vehicle.funFacts
-      : (vehicle.funFact ? [vehicle.funFact] : []);
+    const facts =
+      Array.isArray(vehicle.funFacts) && vehicle.funFacts.length > 0
+        ? vehicle.funFacts
+        : vehicle.funFact
+        ? [vehicle.funFact]
+        : [];
     const funFact = facts.length > 0 ? pickRandom(facts, 1)[0] : "";
     // Wrong answers: same category, different vehicle, must also have images
-    // so the answer button is showing a real, identifiable tank
     const wrongPool = playable.filter(
       (v) => v.id !== vehicle.id && v.category === vehicle.category
     );
@@ -71,13 +72,63 @@ function buildRound(vehicles) {
   });
 }
 
-// Score message based on final score out of 10
-function scoreMessage(score) {
-  if (score >= 9) return "Outstanding! 🏆";
-  if (score >= 7) return "Great job! 🎯";
-  if (score >= 5) return "Not bad — keep going. 👍";
-  if (score >= 3) return "Keep practising. 💪";
-  return "Worth another try. 🔁";
+// Score rating labels (tactical tone)
+function scoreLabel(score) {
+  if (score >= 9) return "ELITE OPERATOR";
+  if (score >= 7) return "FIELD READY";
+  if (score >= 5) return "OBJECTIVE COMPLETE";
+  if (score >= 3) return "TRAINING REQUIRED";
+  return "BACK TO BASICS";
+}
+
+function scoreSubtext(score) {
+  if (score >= 9) return "Exceptional field intelligence";
+  if (score >= 7) return "Strong recognition capability";
+  if (score >= 5) return "Continue your training";
+  if (score >= 3) return "Review vehicle profiles";
+  return "Intensive training needed";
+}
+
+function scoreLabelColor(score) {
+  if (score >= 7) return "#f59e0b";
+  if (score >= 5) return "#94a3b8";
+  return "#ef4444";
+}
+
+// ============================================================================
+// Shared UI primitives
+// ============================================================================
+
+// Four amber corner brackets — used to frame cards and the target image
+function TargetBrackets({ size = 18, color = "#f59e0b", thickness = 2, inset = -1 }) {
+  const common = { position: "absolute", width: size, height: size, borderColor: color };
+  const line   = `${thickness}px solid ${color}`;
+  return (
+    <>
+      <div style={{ ...common, top: inset, left: inset,   borderTop: line, borderLeft: line }} />
+      <div style={{ ...common, top: inset, right: inset,  borderTop: line, borderRight: line }} />
+      <div style={{ ...common, bottom: inset, left: inset,  borderBottom: line, borderLeft: line }} />
+      <div style={{ ...common, bottom: inset, right: inset, borderBottom: line, borderRight: line }} />
+    </>
+  );
+}
+
+// Dark translucent card with amber border and corner brackets
+function TacCard({ children, className = "", style: extraStyle = {} }) {
+  return (
+    <div
+      className={`relative ${className}`}
+      style={{
+        background: "rgba(26,39,68,0.45)",
+        border: "1px solid rgba(245,158,11,0.18)",
+        borderRadius: 2,
+        ...extraStyle,
+      }}
+    >
+      <TargetBrackets size={14} thickness={2} inset={-1} />
+      {children}
+    </div>
+  );
 }
 
 // ============================================================================
@@ -86,57 +137,152 @@ function scoreMessage(score) {
 
 function HomeScreen({ onPlay, vehicleCount, playableCount, usingDraft }) {
   const canPlay = playableCount > 0;
-  return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-navy text-white py-6 px-4 shadow">
-        <h1 className="text-2xl font-bold tracking-wide text-center">MatKenGame</h1>
-        <p className="text-sm text-center text-white/70 mt-1">
-          Military vehicle recognition quiz
-        </p>
-      </header>
 
+  return (
+    <div
+      className="min-h-screen flex flex-col tac-grid font-tac"
+    >
+      {/* Draft warning */}
       {usingDraft && (
-        <div className="bg-yellow-100 text-yellow-900 border-b border-yellow-300 text-center text-xs py-2 px-4">
-          Previewing local draft from the admin page — visitors to the live site see the deployed data.
+        <div
+          className="font-data text-xs text-center py-2 px-4 border-b"
+          style={{
+            background: "rgba(120,80,0,0.3)",
+            borderColor: "rgba(245,158,11,0.3)",
+            color: "#fcd34d",
+            letterSpacing: "0.06em",
+          }}
+        >
+          ⚠ PREVIEW MODE — LOCAL ADMIN DRAFT ACTIVE
         </div>
       )}
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-10 max-w-md mx-auto w-full">
-        {/* Stats card */}
-        <div className="w-full bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8 text-center">
-          <div className="text-4xl font-bold text-navy">{playableCount}</div>
-          <div className="text-sm text-gray-600 mt-1">
-            playable Main Battle Tanks
-            {playableCount < vehicleCount && (
-              <span className="block text-xs text-gray-400 mt-1">
-                ({vehicleCount - playableCount} draft{vehicleCount - playableCount === 1 ? "" : "s"} skipped — no images yet)
-              </span>
-            )}
-          </div>
+      {/* Title block */}
+      <header className="px-6 pt-14 pb-6 text-center">
+        <div
+          className="font-data text-xs tracking-widest mb-5"
+          style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
+        >
+          ◈ SYSTEM ONLINE ◈
         </div>
+        <h1
+          className="font-display text-white"
+          style={{ fontSize: "4.8rem", lineHeight: 1, letterSpacing: "0.04em" }}
+        >
+          MATKEN<span style={{ color: "#f59e0b" }}>GAME</span>
+        </h1>
+        <p
+          className="font-data text-xs mt-3"
+          style={{ color: "#475569", letterSpacing: "0.16em" }}
+        >
+          MILITARY VEHICLE RECOGNITION TRAINING
+        </p>
+      </header>
 
-        {/* Play button */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-10 max-w-md mx-auto w-full">
+        {/* Mission intel card */}
+        <TacCard className="w-full mb-6" style={{ padding: "24px 28px" }}>
+          <div
+            className="font-data text-xs tracking-widest mb-5"
+            style={{ color: "rgba(245,158,11,0.4)", letterSpacing: "0.14em" }}
+          >
+            MISSION INTEL
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <div
+                className="font-display text-white"
+                style={{ fontSize: "3.8rem", lineHeight: 1 }}
+              >
+                {playableCount}
+              </div>
+              <div
+                className="text-sm font-semibold tracking-wider mt-1"
+                style={{ color: "#64748b", letterSpacing: "0.1em" }}
+              >
+                VEHICLES READY
+              </div>
+            </div>
+            <div className="text-right">
+              <div
+                className="font-display"
+                style={{ fontSize: "2.8rem", lineHeight: 1, color: "#f59e0b" }}
+              >
+                10
+              </div>
+              <div
+                className="text-sm font-semibold tracking-wider mt-1"
+                style={{ color: "#64748b", letterSpacing: "0.1em" }}
+              >
+                PER ROUND
+              </div>
+            </div>
+          </div>
+          {playableCount < vehicleCount && (
+            <div
+              className="font-data text-xs mt-5 pt-4"
+              style={{
+                color: "#334155",
+                borderTop: "1px solid rgba(51,65,85,0.5)",
+                letterSpacing: "0.06em",
+              }}
+            >
+              {vehicleCount - playableCount} DRAFT
+              {vehicleCount - playableCount !== 1 ? "S" : ""} PENDING — NO IMAGES YET
+            </div>
+          )}
+        </TacCard>
+
+        {/* Begin training button */}
         <button
           onClick={onPlay}
           disabled={!canPlay}
-          className={`w-full text-lg font-semibold rounded-xl px-8 py-4 min-h-[44px] shadow-md transition mb-6 ${
-            canPlay
-              ? "bg-navy text-white active:scale-95"
-              : "bg-gray-200 text-gray-400 cursor-not-allowed"
-          }`}
+          className="w-full font-display tracking-widest tac-primary mb-6"
+          style={{
+            fontSize: "1.45rem",
+            minHeight: "58px",
+            borderRadius: 2,
+            letterSpacing: "0.14em",
+            background: canPlay ? "#f59e0b" : "rgba(30,41,59,0.7)",
+            color: canPlay ? "#070b14" : "#334155",
+            border: canPlay ? "none" : "1px solid rgba(51,65,85,0.5)",
+            cursor: canPlay ? "pointer" : "not-allowed",
+          }}
         >
-          {canPlay ? "▶ Play" : "No playable vehicles yet"}
+          {canPlay ? "▶  BEGIN TRAINING" : "NO VEHICLES LOADED"}
         </button>
 
-        {/* How to play */}
-        <div className="text-sm text-gray-600 text-center leading-relaxed">
-          <p className="mb-2"><strong>How to play:</strong></p>
-          <p>Look at the photo of a tank, then pick the correct name and country from 4 options. Each round has up to 10 questions.</p>
+        {/* Field briefing */}
+        <div
+          className="w-full px-5 py-4 text-sm leading-relaxed"
+          style={{
+            background: "rgba(15,23,42,0.6)",
+            border: "1px solid rgba(148,163,184,0.07)",
+            borderRadius: 2,
+            color: "#64748b",
+          }}
+        >
+          <div
+            className="font-data text-xs tracking-widest mb-3"
+            style={{ color: "#334155", letterSpacing: "0.12em" }}
+          >
+            FIELD BRIEFING
+          </div>
+          <p style={{ color: "#94a3b8" }}>
+            Examine the vehicle photograph and select the correct identification
+            from four options. Each session contains up to{" "}
+            <span style={{ color: "#f59e0b" }}>10 targets</span>.
+          </p>
         </div>
       </main>
 
-      <footer className="text-center text-xs text-gray-400 py-4">
-        v0.2.0 — MVP
+      <footer className="text-center pb-6">
+        <span
+          className="font-data text-xs"
+          style={{ color: "#1e293b", letterSpacing: "0.12em" }}
+        >
+          v0.2.0 · CLASSIFIED
+        </span>
       </footer>
     </div>
   );
@@ -148,20 +294,18 @@ function HomeScreen({ onPlay, vehicleCount, playableCount, usingDraft }) {
 
 function QuizScreen({ round, onComplete }) {
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [selectedId, setSelectedId] = useState(null);
+  const [score, setScore]                 = useState(0);
+  const [selectedId, setSelectedId]       = useState(null);
 
-  const question = round[questionIndex];
+  const question      = round[questionIndex];
   const isLastQuestion = questionIndex === round.length - 1;
-  const hasAnswered = selectedId !== null;
-  const isCorrect = hasAnswered && selectedId === question.vehicle.id;
+  const hasAnswered   = selectedId !== null;
+  const isCorrect     = hasAnswered && selectedId === question.vehicle.id;
 
   const handleSelect = (vehicleId) => {
-    if (hasAnswered) return; // can't change answer once given
+    if (hasAnswered) return;
     setSelectedId(vehicleId);
-    if (vehicleId === question.vehicle.id) {
-      setScore((s) => s + 1);
-    }
+    if (vehicleId === question.vehicle.id) setScore((s) => s + 1);
   };
 
   const handleNext = () => {
@@ -173,110 +317,243 @@ function QuizScreen({ round, onComplete }) {
     }
   };
 
-  // Tailwind class helper for each answer button based on its state
-  const optionClasses = (optionId) => {
-    const base =
-      "w-full text-left flex items-center gap-4 rounded-xl border-2 px-4 py-3 min-h-[44px] transition";
-    if (!hasAnswered) {
-      return `${base} bg-white border-gray-200 active:bg-gray-50`;
-    }
-    const isThisCorrect = optionId === question.vehicle.id;
-    const isThisSelected = optionId === selectedId;
-    if (isThisCorrect) {
-      return `${base} bg-green-50 border-green-500 text-green-800`;
-    }
-    if (isThisSelected) {
-      return `${base} bg-red-50 border-red-500 text-red-800`;
-    }
-    return `${base} bg-white border-gray-200 opacity-50`;
+  // Inline style for each answer button based on current state
+  const optionStyle = (optionId) => {
+    const base = {
+      width: "100%",
+      textAlign: "left",
+      display: "flex",
+      alignItems: "center",
+      gap: 14,
+      borderRadius: 2,
+      padding: "11px 14px",
+      minHeight: 52,
+      fontFamily: "'Rajdhani', sans-serif",
+      cursor: hasAnswered ? "default" : "pointer",
+      border: "1px solid",
+      transition: "border-color 0.15s, background 0.15s",
+    };
+    if (!hasAnswered) return {
+      ...base,
+      background: "rgba(15,23,42,0.85)",
+      borderColor: "rgba(245,158,11,0.2)",
+      color: "#e2e8f0",
+    };
+    if (optionId === question.vehicle.id) return {
+      ...base,
+      background: "rgba(34,197,94,0.1)",
+      borderColor: "#22c55e",
+      color: "#86efac",
+    };
+    if (optionId === selectedId) return {
+      ...base,
+      background: "rgba(239,68,68,0.1)",
+      borderColor: "#ef4444",
+      color: "#fca5a5",
+    };
+    return {
+      ...base,
+      background: "rgba(15,23,42,0.4)",
+      borderColor: "rgba(30,41,59,0.5)",
+      color: "#334155",
+      opacity: 0.45,
+    };
   };
 
-  const letters = ["A", "B", "C", "D"];
-  const progressPercent = ((questionIndex + (hasAnswered ? 1 : 0)) / round.length) * 100;
+  // Amber letter badge colours per option state
+  const badgeStyle = (optionId) => {
+    const base = {
+      width: 32, height: 32, borderRadius: 2,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontFamily: "'Bebas Neue', sans-serif",
+      fontSize: "1.1rem",
+      flexShrink: 0,
+    };
+    if (!hasAnswered) return { ...base, background: "rgba(245,158,11,0.15)", color: "#f59e0b" };
+    if (optionId === question.vehicle.id) return { ...base, background: "rgba(34,197,94,0.2)", color: "#4ade80" };
+    if (optionId === selectedId)          return { ...base, background: "rgba(239,68,68,0.2)",  color: "#f87171" };
+    return { ...base, background: "rgba(30,41,59,0.5)", color: "#334155" };
+  };
+
+  const letters      = ["A", "B", "C", "D"];
+  const progressPct  = ((questionIndex + (hasAnswered ? 1 : 0)) / round.length) * 100;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Navy header with progress + counter + score */}
-      <header className="bg-navy text-white px-4 pt-4 pb-3 shadow">
+    <div
+      className="min-h-screen flex flex-col font-tac"
+      style={{ background: "#070b14" }}
+    >
+      {/* ── Header ──────────────────────────────────────── */}
+      <header
+        style={{
+          background: "#0d1526",
+          borderBottom: "1px solid rgba(245,158,11,0.12)",
+          padding: "12px 16px 10px",
+        }}
+      >
         <div className="max-w-md mx-auto w-full">
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span>Question {questionIndex + 1} / {round.length}</span>
-            <span>Score: {score}</span>
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-data text-xs" style={{ color: "#475569", letterSpacing: "0.1em" }}>
+              QUESTION{" "}
+              <span style={{ color: "#f59e0b" }}>{questionIndex + 1}</span>
+              <span style={{ color: "#334155" }}>/{round.length}</span>
+            </span>
+            <span className="font-data text-xs" style={{ color: "#475569", letterSpacing: "0.1em" }}>
+              SCORE{" "}
+              <span style={{ color: "#f59e0b" }}>{score}</span>
+            </span>
           </div>
-          <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
+          {/* Progress bar */}
+          <div
+            className="w-full rounded-full overflow-hidden"
+            style={{ height: 3, background: "rgba(245,158,11,0.1)" }}
+          >
             <div
-              className="h-full bg-white transition-all"
-              style={{ width: `${progressPercent}%` }}
+              style={{
+                height: "100%",
+                width: `${progressPct}%`,
+                background: "#f59e0b",
+                transition: "width 0.4s ease",
+                borderRadius: 9999,
+              }}
             />
           </div>
         </div>
       </header>
 
-      {/* Vehicle image */}
-      <div className="max-w-md mx-auto w-full">
+      {/* ── Target image ────────────────────────────────── */}
+      <div
+        className="max-w-md mx-auto w-full relative"
+        style={{ background: "#0a0e1a", lineHeight: 0 }}
+      >
         <img
           src={question.image.url}
           alt="Military vehicle to identify"
-          className="w-full h-52 object-cover bg-gray-200"
+          className="w-full object-cover"
+          style={{ height: 220, display: "block" }}
         />
+        {/* Targeting brackets */}
+        <TargetBrackets size={26} color="#f59e0b" thickness={2} inset={10} />
+        {/* Bottom label overlay */}
+        <div
+          className="absolute bottom-0 left-0 right-0 p-3"
+          style={{
+            background: "linear-gradient(to top, rgba(7,11,20,0.88), transparent)",
+          }}
+        >
+          <span
+            className="font-data text-xs"
+            style={{ color: "rgba(245,158,11,0.65)", letterSpacing: "0.14em" }}
+          >
+            ◉ IDENTIFY TARGET
+          </span>
+        </div>
       </div>
 
-      {/* Question + answers */}
-      <main className="flex-1 max-w-md mx-auto w-full px-4 py-5">
-        <p className="text-sm font-medium text-gray-700 mb-4">Which vehicle is this?</p>
-
-        <div className="flex flex-col gap-3">
+      {/* ── Answers + result ───────────────────────────── */}
+      <main
+        className="flex-1 max-w-md mx-auto w-full px-4 py-4"
+        style={{ fontFamily: "'Rajdhani', sans-serif" }}
+      >
+        <div className="flex flex-col gap-2">
           {question.options.map((option, i) => {
-            const isThisCorrect = option.id === question.vehicle.id;
+            const isThisCorrect  = option.id === question.vehicle.id;
             const isThisSelected = option.id === selectedId;
             return (
               <button
                 key={option.id}
                 onClick={() => handleSelect(option.id)}
-                className={optionClasses(option.id)}
                 disabled={hasAnswered}
+                style={optionStyle(option.id)}
+                className={!hasAnswered ? "tac-answer" : ""}
               >
-                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm shrink-0">
-                  {letters[i]}
+                {/* Letter badge */}
+                <span style={badgeStyle(option.id)}>{letters[i]}</span>
+
+                {/* Vehicle info */}
+                <span className="flex-1 text-left">
+                  <span
+                    className="block font-semibold"
+                    style={{ fontSize: "1.05rem", letterSpacing: "0.02em" }}
+                  >
+                    {option.name}
+                  </span>
+                  <span
+                    className="block font-data"
+                    style={{ fontSize: "0.7rem", opacity: 0.65, letterSpacing: "0.06em" }}
+                  >
+                    {option.country}
+                  </span>
                 </span>
-                <span className="flex-1">
-                  <span className="block font-semibold">{option.name}</span>
-                  <span className="block text-xs opacity-75">{option.country}</span>
-                </span>
-                {hasAnswered && isThisCorrect && <span className="text-2xl">✓</span>}
+
+                {/* Result icon */}
+                {hasAnswered && isThisCorrect && (
+                  <span style={{ color: "#4ade80", fontSize: "1.1rem", fontWeight: 700 }}>✓</span>
+                )}
                 {hasAnswered && isThisSelected && !isThisCorrect && (
-                  <span className="text-2xl">✗</span>
+                  <span style={{ color: "#f87171", fontSize: "1.1rem", fontWeight: 700 }}>✗</span>
                 )}
               </button>
             );
           })}
         </div>
 
-        {/* Result panel — shown only after answering. Fun fact line hidden if absent. */}
+        {/* Result / fun-fact panel */}
         {hasAnswered && (
           <div
-            className={`mt-5 rounded-xl border-2 p-4 ${
-              isCorrect
-                ? "bg-green-50 border-green-200"
-                : "bg-red-50 border-red-200"
-            }`}
+            className="mt-4 p-4 anim-panel"
+            style={{
+              borderRadius: 2,
+              border: `1px solid ${isCorrect ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.28)"}`,
+              background: isCorrect
+                ? "rgba(34,197,94,0.06)"
+                : "rgba(239,68,68,0.06)",
+            }}
           >
-            <p className="text-sm font-semibold mb-1">
-              {isCorrect ? "Correct!" : `That was the ${question.vehicle.name}.`}
+            <p
+              className="font-display tracking-widest mb-1"
+              style={{
+                fontSize: "1.15rem",
+                color: isCorrect ? "#4ade80" : "#f87171",
+                letterSpacing: "0.1em",
+              }}
+            >
+              {isCorrect ? "✓ TARGET ACQUIRED" : "✗ WRONG TARGET"}
             </p>
+            {!isCorrect && (
+              <p className="text-sm mb-2" style={{ color: "#64748b" }}>
+                Correct:{" "}
+                <span style={{ color: "#e2e8f0", fontWeight: 600 }}>
+                  {question.vehicle.name}
+                </span>
+              </p>
+            )}
             {question.funFact && (
-              <p className="text-sm text-gray-700">💡 {question.funFact}</p>
+              <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>
+                <span style={{ color: "#f59e0b" }}>◈ </span>
+                {question.funFact}
+              </p>
             )}
           </div>
         )}
 
-        {/* Next button — shown only after answering */}
+        {/* Next / finish button */}
         {hasAnswered && (
           <button
             onClick={handleNext}
-            className="w-full mt-5 bg-navy text-white text-lg font-semibold rounded-xl px-8 py-4 min-h-[44px] shadow-md active:scale-95 transition"
+            className="w-full mt-4 font-display tracking-widest tac-primary anim-fade"
+            style={{
+              fontSize: "1.35rem",
+              minHeight: "52px",
+              borderRadius: 2,
+              background: "#f59e0b",
+              color: "#070b14",
+              border: "none",
+              letterSpacing: "0.14em",
+              cursor: "pointer",
+            }}
           >
-            {isLastQuestion ? "See Results →" : "Next Question →"}
+            {isLastQuestion ? "DEBRIEF  →" : "NEXT TARGET  →"}
           </button>
         )}
       </main>
@@ -289,30 +566,100 @@ function QuizScreen({ round, onComplete }) {
 // ============================================================================
 
 function EndScreen({ score, total, onPlayAgain }) {
+  const pct = Math.round((score / total) * 100);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-navy text-white py-6 px-4 shadow">
-        <h1 className="text-2xl font-bold tracking-wide text-center">Round Complete</h1>
+    <div className="min-h-screen flex flex-col tac-grid font-tac">
+      <header className="text-center px-6 pt-14 pb-6">
+        <div
+          className="font-data text-xs tracking-widest mb-4"
+          style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
+        >
+          ◈ MISSION COMPLETE ◈
+        </div>
+        <h1
+          className="font-display text-white"
+          style={{ fontSize: "4rem", letterSpacing: "0.08em" }}
+        >
+          DEBRIEF
+        </h1>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-10 max-w-md mx-auto w-full">
-        <div className="text-center mb-10">
-          <div className="text-6xl font-bold text-navy mb-2">
-            {score}<span className="text-gray-400"> / {total}</span>
+      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-10 max-w-md mx-auto w-full">
+        {/* Score card */}
+        <TacCard className="w-full text-center mb-8" style={{ padding: "32px 28px" }}>
+          {/* Score fraction */}
+          <div
+            className="font-display"
+            style={{ fontSize: "5.5rem", lineHeight: 1, letterSpacing: "0.04em" }}
+          >
+            <span className="text-white">{score}</span>
+            <span style={{ fontSize: "2.8rem", color: "#334155" }}>/{total}</span>
           </div>
-          <p className="text-lg text-gray-700">{scoreMessage(score)}</p>
-        </div>
 
+          {/* Percent bar */}
+          <div
+            className="mx-auto my-5"
+            style={{
+              height: 3,
+              background: "rgba(245,158,11,0.12)",
+              borderRadius: 2,
+              maxWidth: 180,
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${pct}%`,
+                background: "#f59e0b",
+                borderRadius: 2,
+                transition: "width 0.7s ease",
+              }}
+            />
+          </div>
+
+          {/* Rating */}
+          <div
+            className="font-display tracking-widest mb-2"
+            style={{
+              fontSize: "1.5rem",
+              color: scoreLabelColor(score),
+              letterSpacing: "0.12em",
+            }}
+          >
+            {scoreLabel(score)}
+          </div>
+          <div style={{ color: "#475569", fontSize: "0.95rem" }}>
+            {scoreSubtext(score)}
+          </div>
+        </TacCard>
+
+        {/* Redeploy button */}
         <button
           onClick={onPlayAgain}
-          className="w-full bg-navy text-white text-lg font-semibold rounded-xl px-8 py-4 min-h-[44px] shadow-md active:scale-95 transition"
+          className="w-full font-display tracking-widest tac-primary"
+          style={{
+            fontSize: "1.45rem",
+            minHeight: "58px",
+            borderRadius: 2,
+            background: "#f59e0b",
+            color: "#070b14",
+            border: "none",
+            letterSpacing: "0.14em",
+            cursor: "pointer",
+          }}
         >
-          🔁 Play Again
+          ↺  REDEPLOY
         </button>
       </main>
 
-      <footer className="text-center text-xs text-gray-400 py-4">
-        v0.2.0 — MVP
+      <footer className="text-center pb-6">
+        <span
+          className="font-data text-xs"
+          style={{ color: "#1e293b", letterSpacing: "0.12em" }}
+        >
+          v0.2.0 · CLASSIFIED
+        </span>
       </footer>
     </div>
   );
@@ -323,13 +670,12 @@ function EndScreen({ score, total, onPlayAgain }) {
 // ============================================================================
 
 function App() {
-  const [screen, setScreen] = useState("home"); // "home" | "quiz" | "end"
-  const [round, setRound] = useState(null);
+  const [screen, setScreen]       = useState("home");
+  const [round, setRound]         = useState(null);
   const [finalScore, setFinalScore] = useState(0);
 
   // Prefer a local draft (saved by the admin) over the deployed file.
-  // Other visitors to the live site won't have a draft, so they see the file.
-  const draft = loadDraftFromStorage();
+  const draft    = loadDraftFromStorage();
   const vehicles = draft || window.vehicles || [];
   const usingDraft = Boolean(draft);
 
@@ -344,34 +690,33 @@ function App() {
     setScreen("end");
   };
 
-  const goHome = () => {
-    setRound(null);
-    setScreen("home");
-  };
-
-  // Safety net — if data didn't load, show a clear message
+  // Safety net — if data didn't load, show a clear error
   if (vehicles.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 text-center">
+      <div
+        className="min-h-screen flex items-center justify-center p-6 text-center tac-grid font-tac"
+      >
         <div>
-          <p className="text-red-700 font-semibold mb-2">No vehicle data loaded.</p>
-          <p className="text-sm text-gray-600">
-            Check that <code>data/vehicles.js</code> loads before <code>app.jsx</code>.
+          <p className="font-display text-red-400 mb-3" style={{ fontSize: "1.8rem", letterSpacing: "0.1em" }}>
+            DATA LOAD FAILURE
+          </p>
+          <p className="text-sm" style={{ color: "#64748b" }}>
+            Check that{" "}
+            <code className="font-data" style={{ color: "#f59e0b" }}>data/vehicles.js</code>{" "}
+            loads before{" "}
+            <code className="font-data" style={{ color: "#f59e0b" }}>app.jsx</code>.
           </p>
         </div>
       </div>
     );
   }
 
-  if (screen === "quiz") {
-    return <QuizScreen round={round} onComplete={finishGame} />;
-  }
+  if (screen === "quiz") return <QuizScreen round={round} onComplete={finishGame} />;
+  if (screen === "end")  return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} />;
 
-  if (screen === "end") {
-    return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} />;
-  }
-
-  const playableCount = vehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
+  const playableCount = vehicles.filter(
+    (v) => Array.isArray(v.images) && v.images.length > 0
+  ).length;
 
   return (
     <HomeScreen
