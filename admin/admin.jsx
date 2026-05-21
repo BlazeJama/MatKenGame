@@ -324,9 +324,8 @@ function VehicleRow({ vehicle, isSelected, onSelect, onDelete }) {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onDelete(vehicle); }}
-            disabled
-            className="text-xs px-3 py-1 rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed"
-            title="Delete — coming in PR 4"
+            className="text-xs px-3 py-1 rounded-lg border border-red-300 text-red-700 hover:bg-red-50"
+            title={`Delete ${vehicle.name}`}
           >
             Delete
           </button>
@@ -356,19 +355,55 @@ function VehicleRow({ vehicle, isSelected, onSelect, onDelete }) {
 // Vehicle list — left column. Search + category filter + scrollable rows
 // =============================================================================
 
+// Filter sentinels — using strings (not null) so they round-trip through <select>
+const ALL_CATEGORIES = "All categories";
+const DRAFTS_ONLY = "Drafts (no images)";
+const ALL_COUNTRIES = "All countries";
+const ANY_DIFFICULTY = "Any difficulty";
+const DIFFICULTY_OPTIONS = [
+  { value: ANY_DIFFICULTY, label: "Any difficulty" },
+  { value: "1", label: "★ Easy (has 1-star image)" },
+  { value: "2", label: "★★ Medium (has 2-star image)" },
+  { value: "3", label: "★★★ Hard (has 3-star image)" }
+];
+
 function VehicleList({ vehicles, selectedId, onSelect, onNew, onDelete }) {
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState(ALL_CATEGORIES);
+  const [countryFilter, setCountryFilter] = useState(ALL_COUNTRIES);
+  const [difficultyFilter, setDifficultyFilter] = useState(ANY_DIFFICULTY);
 
-  // Unique category list from data — keeps the dropdown future-proof for Phase 2
-  const categories = ["All", ...Array.from(new Set(vehicles.map((v) => v.category))).sort()];
+  // Unique category + country lists derived from the current data so the dropdowns
+  // stay in sync with whatever vehicles you've added. Blanks (draft entries with
+  // no category/country yet) are excluded.
+  const realCategories = Array.from(new Set(vehicles.map((v) => v.category).filter(Boolean))).sort();
+  const countries = [ALL_COUNTRIES, ...Array.from(new Set(vehicles.map((v) => v.country).filter(Boolean))).sort()];
 
-  // Apply both filters
-  const filtered = vehicles.filter((v) => {
-    const matchesSearch = v.name.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === "All" || v.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  // Apply all four filters, then sort alphabetically by name
+  const filtered = vehicles
+    .filter((v) => {
+      const hasNoImages = !v.images || v.images.length === 0;
+
+      const matchesSearch = v.name.toLowerCase().includes(search.toLowerCase());
+
+      let matchesCategory;
+      if (categoryFilter === ALL_CATEGORIES) matchesCategory = true;
+      else if (categoryFilter === DRAFTS_ONLY) matchesCategory = hasNoImages;
+      else matchesCategory = v.category === categoryFilter;
+
+      const matchesCountry = countryFilter === ALL_COUNTRIES || v.country === countryFilter;
+
+      let matchesDifficulty;
+      if (difficultyFilter === ANY_DIFFICULTY) {
+        matchesDifficulty = true;
+      } else {
+        const star = parseInt(difficultyFilter, 10);
+        matchesDifficulty = (v.images || []).some((img) => img.stars === star);
+      }
+
+      return matchesSearch && matchesCategory && matchesCountry && matchesDifficulty;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col min-h-0">
@@ -390,22 +425,48 @@ function VehicleList({ vehicles, selectedId, onSelect, onNew, onDelete }) {
         </button>
       </div>
 
-      {/* Search + filter controls */}
-      <div className="flex flex-col sm:flex-row gap-2 mb-4">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name…"
-          className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
-        />
+      {/* Search bar — full width on its own row */}
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search by name…"
+        className="w-full mb-2 px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+      />
+
+      {/* Category + Country + Difficulty filters side by side */}
+      <div className="grid grid-cols-3 gap-2 mb-4">
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:border-navy outline-none"
+          className="min-w-0 px-2 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:border-navy outline-none"
         >
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
+          <option value={ALL_CATEGORIES}>{ALL_CATEGORIES}</option>
+          <option value={DRAFTS_ONLY}>{DRAFTS_ONLY}</option>
+          {realCategories.length > 0 && (
+            <optgroup label="By category">
+              {realCategories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </optgroup>
+          )}
+        </select>
+        <select
+          value={countryFilter}
+          onChange={(e) => setCountryFilter(e.target.value)}
+          className="min-w-0 px-2 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:border-navy outline-none"
+        >
+          {countries.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <select
+          value={difficultyFilter}
+          onChange={(e) => setDifficultyFilter(e.target.value)}
+          className="min-w-0 px-2 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:border-navy outline-none"
+        >
+          {DIFFICULTY_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
       </div>
@@ -473,9 +534,16 @@ function StarSelector({ value, onChange }) {
 // Image row — URL input + star selector + remove button
 // =============================================================================
 
-function ImageRow({ image, index, onChange, onRemove }) {
+function ImageRow({ image, index, isSelected, onToggleSelect, onChange, onRemove }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center gap-2 rounded-lg p-1 -mx-1 transition ${isSelected ? "bg-red-50" : ""}`}>
+      <input
+        type="checkbox"
+        checked={isSelected}
+        onChange={() => onToggleSelect(index)}
+        title="Select for bulk delete"
+        className="w-4 h-4 rounded border-gray-300 accent-red-600 cursor-pointer shrink-0"
+      />
       <input
         type="url"
         value={image.url}
@@ -510,11 +578,12 @@ function VehicleDetails({ vehicle, onEdit, onClose }) {
   return (
     <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col min-h-0 overflow-y-auto">
       {/* Header */}
-      <div className="flex items-baseline justify-between mb-4">
+      <div className="flex items-baseline justify-between mb-4 gap-3">
         <div className="min-w-0">
           <h2 className="font-semibold text-navy truncate">{vehicle.name}</h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            <code className="bg-gray-100 px-1 rounded">{vehicle.id}</code> · {vehicle.country}
+            <code className="bg-gray-100 px-1 rounded">{vehicle.id}</code>
+            {vehicle.country && <span> · {vehicle.country}</span>}
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -619,6 +688,8 @@ function EmptyDetailsPanel() {
 
 function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
   const [form, setForm] = useState(blankFormState());
+  // Set of indices selected for bulk delete on the images list
+  const [selectedImageIndices, setSelectedImageIndices] = useState(() => new Set());
 
   // When the selected vehicle changes, load its data into the form.
   // In "new" mode (selectedVehicle === null), reset to blank.
@@ -638,6 +709,8 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
     } else {
       setForm(blankFormState());
     }
+    // Reset image multi-select whenever the form's target changes
+    setSelectedImageIndices(new Set());
   }, [selectedVehicle]);
 
   const isEditing = mode === "edit";
@@ -667,6 +740,36 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
       ...prev,
       images: prev.images.filter((_, idx) => idx !== i)
     }));
+    // Keep the multi-select consistent — drop the removed index and shift any later ones down
+    setSelectedImageIndices((prev) => {
+      const next = new Set();
+      for (const idx of prev) {
+        if (idx === i) continue;
+        next.add(idx > i ? idx - 1 : idx);
+      }
+      return next;
+    });
+  };
+
+  const toggleImageSelect = (i) => {
+    setSelectedImageIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  };
+
+  const deleteSelectedImages = () => {
+    const count = selectedImageIndices.size;
+    if (count === 0) return;
+    const label = count === 1 ? "1 image" : `${count} images`;
+    if (!confirm(`Delete ${label} from "${form.name || "this vehicle"}"?\n\nThis cannot be undone.`)) return;
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, idx) => !selectedImageIndices.has(idx))
+    }));
+    setSelectedImageIndices(new Set());
   };
 
   const updateFunFact = (i, value) => {
@@ -748,7 +851,7 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
           )}
         </div>
 
-        {/* Country */}
+        {/* Country — with autocomplete from existing vehicles */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">Country</label>
           <input
@@ -756,8 +859,18 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
             value={form.country}
             onChange={(e) => updateField("country", e.target.value)}
             placeholder="e.g. United Kingdom"
+            list="known-countries"
+            autoComplete="off"
             className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
           />
+          <datalist id="known-countries">
+            {Array.from(new Set(vehicles.map((v) => v.country).filter(Boolean))).sort().map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
+          <p className="text-xs text-gray-400 mt-1">
+            Start typing to pick from existing countries, or type a new one.
+          </p>
         </div>
 
         {/* Category + Era side-by-side */}
@@ -831,17 +944,28 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
 
         {/* Image rows */}
         <div>
-          <div className="flex items-baseline justify-between mb-2">
+          <div className="flex items-baseline justify-between mb-2 gap-2">
             <label className="block text-xs font-medium text-gray-700">
               Images (optional — vehicles with zero images are skipped by the game)
             </label>
-            <button
-              type="button"
-              onClick={addImageRow}
-              className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50"
-            >
-              + Add image
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              {selectedImageIndices.size > 0 && (
+                <button
+                  type="button"
+                  onClick={deleteSelectedImages}
+                  className="text-xs px-2 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700"
+                >
+                  Delete {selectedImageIndices.size} selected
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={addImageRow}
+                className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50"
+              >
+                + Add image
+              </button>
+            </div>
           </div>
           {form.images.length === 0 ? (
             <p className="text-xs text-gray-400 italic">No images yet. The vehicle will be saved as a draft and won't appear in rounds until you add one.</p>
@@ -852,6 +976,8 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
                   key={i}
                   image={img}
                   index={i}
+                  isSelected={selectedImageIndices.has(i)}
+                  onToggleSelect={toggleImageSelect}
                   onChange={updateImage}
                   onRemove={removeImageRow}
                 />
@@ -975,9 +1101,15 @@ function AdminShell({ onLogout }) {
     setMode("view");
   };
 
-  // Delete handler — wired up in PR 4
+  // Delete a vehicle entirely (from the list row or the details panel)
   const handleDelete = (vehicle) => {
-    console.log("Delete clicked (wired up in PR 4):", vehicle.id);
+    if (!confirm(`Delete "${vehicle.name}"?\n\nThis removes the vehicle from your draft. You can still revert via "Reset to file" until you export.`)) return;
+    setDraftVehicles((prev) => prev.filter((v) => v.id !== vehicle.id));
+    // If the deleted vehicle was on screen, clear the right column
+    if (selectedId === vehicle.id) {
+      setSelectedId(null);
+      setMode("empty");
+    }
   };
 
   // Wipe the localStorage draft and restore from the deployed file
@@ -1072,7 +1204,7 @@ function AdminShell({ onLogout }) {
       </main>
 
       <footer className="text-center text-xs text-gray-400 py-3 shrink-0">
-        Admin — PR 3 of 5 (view / add / edit)
+        Admin — PR 4 of 5 (delete + multi-select)
       </footer>
     </div>
   );

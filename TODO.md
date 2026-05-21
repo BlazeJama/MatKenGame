@@ -122,6 +122,14 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] localStorage-backed drafts — survives refresh, shared with game tab _(PR 3)_
 - [x] "Reset to file" button to discard local draft _(PR 3)_
 - [x] "Previewing local draft" banner on game when localStorage draft is active _(PR 3)_
+- [x] Delete vehicle (from list row) with native confirmation popup _(PR 4)_
+- [x] Multi-select checkboxes on image rows _(PR 4)_
+- [x] "Delete N selected" red button when ≥1 image checked, with confirmation _(PR 4)_
+- [x] Alphabetical sort by name _(PR 4)_
+- [x] Country filter dropdown (auto-derived from data) _(PR 4)_
+- [x] Difficulty filter dropdown (1 / 2 / 3 star) _(PR 4)_
+- [x] "Drafts (no images)" filter — quick way to find unfinished vehicles _(PR 4)_
+- [x] Autocomplete for the country form field (HTML5 datalist) _(PR 4)_
 - [ ] Image upload — drag-and-drop / click-to-browse _(deferred — admin uses URL paste; full GitHub-API upload is a future enhancement)_
 - [ ] Add vehicle form (name, country, category, era, fun fact)
 - [ ] Image upload — drag and drop or click to browse
