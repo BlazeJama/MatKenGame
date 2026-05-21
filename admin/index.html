@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MatKenGame — Admin</title>
+
+  <!-- No PWA / manifest on admin — this page is not installable -->
+  <meta name="theme-color" content="#1a2744" />
+  <meta name="robots" content="noindex" />
+
+  <!-- Tailwind CSS (Play CDN — same as the main app, no build step) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { navy: "#1a2744" }
+        }
+      }
+    };
+  </script>
+
+  <!-- React 18 + Babel Standalone, same setup as the main app -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div id="root"></div>
+
+  <!-- Shared vehicle data — same file as the main game, loaded with a parent path -->
+  <script src="../data/vehicles.js"></script>
+
+  <!-- Admin app entry — Babel transpiles on load -->
+  <script type="text/babel" data-presets="react" src="admin.jsx"></script>
+</body>
+</html>
