@@ -93,15 +93,20 @@ export const vehicles = [
       { url: "https://upload.wikimedia.org/wikipedia/.../challenger2-camo.jpg", stars: 2 },
       { url: "https://upload.wikimedia.org/wikipedia/.../challenger2-front.jpg", stars: 3 }
     ],
-    funFact: "The Challenger 2 has never had a crew member killed in combat."
+    funFacts: [
+      "The Challenger 2 has never had a crew member killed in combat.",
+      "Its 120mm rifled gun is a holdout — most NATO peers use smoothbore guns."
+    ]
   }
 ]
 ```
 
 **Rules for vehicle data:**
-- Every vehicle must have at least 2 images
-- Each image has its own star rating: 1 = easy, 2 = medium, 3 = hard
-- Images must be HTTPS Wikimedia Commons URLs
+- `name` is the only required field. Everything else can be saved blank — the admin lets you keep a draft vehicle that you fill in over time.
+- Each image has its own star rating: 1 = easy, 2 = medium, 3 = hard. Any URL provided must be HTTPS.
+- `funFacts` is an array — zero or more. The game shows one at random per answer, or nothing if the list is empty.
+- **Vehicles with zero images are skipped by the game** until at least one image is added.
+- When difficulty filtering arrives (Phase 2), a vehicle with only one image at e.g. 2-star will only appear in the Medium round.
 - category is one of: "Main Battle Tank", "APC", "IFV", "Artillery", "Helicopter"
 - era is one of: "WW2", "Cold War", "Modern"
 
