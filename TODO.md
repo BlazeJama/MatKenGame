@@ -102,9 +102,11 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Stats accessible from home screen
 
 ### Admin Page
-- [ ] Password screen at /admin
-- [ ] Session-based password authentication
-- [ ] Two-column desktop layout (list left, form right)
+*Being built in 5 PRs — see CHANGELOG for status.*
+- [x] Password screen at /admin _(PR 1)_
+- [x] Session-based password authentication _(PR 1)_
+- [x] Two-column desktop layout (list left, form right) _(PR 1)_
+- [x] Desktop-only check with mobile fallback message _(PR 1)_
 - [ ] Vehicle list with search and category filter
 - [ ] Per-vehicle difficulty status stars (E / M / H rows)
 - [ ] Bright gold = ready (5+ images), dim = partial, very dim = none

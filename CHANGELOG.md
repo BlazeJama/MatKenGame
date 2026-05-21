@@ -13,6 +13,9 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added
+- **Admin page foundation (PR 1 of 5)** — new `/admin/` URL with separate `index.html` and `admin.jsx`. Includes session-based password gate (stored in `sessionStorage`), desktop-only check with mobile "use a desktop" message, and a two-column shell with placeholders for the vehicle list (PR 2) and add/edit form (PR 3). Service worker cache bumped to v4 to precache the new admin files.
+
 ---
 
 ## [0.2.0] - 2026-05-20
