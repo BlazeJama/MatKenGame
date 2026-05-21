@@ -34,7 +34,13 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
   - Category dropdown gains a **"Drafts (no images)"** sentinel option for quickly finding unfinished vehicles; real categories are grouped under a `By category` heading.
   - Difficulty dropdown filters to vehicles that have at least one image at the selected star level.
   - Country form field now uses a native HTML5 `<datalist>` so typing suggests existing countries — prevents spelling drift like "U.S.A" vs "United States".
-- Service worker bumped to v12.
+- **Admin export (PR 5 of 5)** — completes the edit-export-commit loop. New **⬇ Export vehicles.js** button in the admin header opens a modal that:
+  - Shows a preview of the generated file content (full schema header + properly formatted entries that exactly match the hand-written `data/vehicles.js` style — unquoted keys, sensible indentation, JSON-stringified strings for safe escaping)
+  - **Copy to clipboard** button (with green ✓ confirmation feedback)
+  - **Download as file** button (saves `vehicles.js`)
+  - Closes on Esc / click outside / Close button
+  - Disabled when there are zero vehicles to export
+- Service worker bumped to v13.
 
 ---
 
