@@ -7,6 +7,23 @@
 
 const { useState, useMemo } = React;
 
+// localStorage key shared with the admin page — when present, the game
+// uses your in-progress draft instead of the deployed window.vehicles
+const DRAFT_STORAGE_KEY = "matken-draft-vehicles";
+
+function loadDraftFromStorage() {
+  try {
+    const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.warn("Failed to read draft from localStorage:", e);
+  }
+  return null;
+}
+
 // ============================================================================
 // Helpers
 // ============================================================================
@@ -26,21 +43,31 @@ function pickRandom(arr, n) {
   return shuffle(arr).slice(0, n);
 }
 
-// Build one round: 10 question objects, each with the correct vehicle,
+// Build one round: up to 10 question objects, each with the correct vehicle,
 // a randomly chosen image, and 4 shuffled answer options.
+// Vehicles with zero images are excluded — they're treated as drafts.
 function buildRound(vehicles) {
   const QUESTIONS_PER_ROUND = 10;
-  const roundVehicles = shuffle(vehicles).slice(0, QUESTIONS_PER_ROUND);
+  // Only vehicles with at least one image are playable in a round
+  const playable = vehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0);
+  const roundVehicles = shuffle(playable).slice(0, QUESTIONS_PER_ROUND);
 
   return roundVehicles.map((vehicle) => {
     const image = pickRandom(vehicle.images, 1)[0];
-    // Wrong answers: same category, different vehicle
-    const wrongPool = vehicles.filter(
+    // Pick one fun fact at random per question. Falls back to a singular
+    // `funFact` field if the vehicle still uses the legacy schema.
+    const facts = Array.isArray(vehicle.funFacts) && vehicle.funFacts.length > 0
+      ? vehicle.funFacts
+      : (vehicle.funFact ? [vehicle.funFact] : []);
+    const funFact = facts.length > 0 ? pickRandom(facts, 1)[0] : "";
+    // Wrong answers: same category, different vehicle, must also have images
+    // so the answer button is showing a real, identifiable tank
+    const wrongPool = playable.filter(
       (v) => v.id !== vehicle.id && v.category === vehicle.category
     );
-    const wrongAnswers = pickRandom(wrongPool, 3);
+    const wrongAnswers = pickRandom(wrongPool, Math.min(3, wrongPool.length));
     const options = shuffle([vehicle, ...wrongAnswers]);
-    return { vehicle, image, options };
+    return { vehicle, image, options, funFact };
   });
 }
 
@@ -57,7 +84,8 @@ function scoreMessage(score) {
 // Home Screen
 // ============================================================================
 
-function HomeScreen({ onPlay, vehicleCount }) {
+function HomeScreen({ onPlay, vehicleCount, playableCount, usingDraft }) {
+  const canPlay = playableCount > 0;
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-navy text-white py-6 px-4 shadow">
@@ -67,25 +95,43 @@ function HomeScreen({ onPlay, vehicleCount }) {
         </p>
       </header>
 
+      {usingDraft && (
+        <div className="bg-yellow-100 text-yellow-900 border-b border-yellow-300 text-center text-xs py-2 px-4">
+          Previewing local draft from the admin page — visitors to the live site see the deployed data.
+        </div>
+      )}
+
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-10 max-w-md mx-auto w-full">
         {/* Stats card */}
         <div className="w-full bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8 text-center">
-          <div className="text-4xl font-bold text-navy">{vehicleCount}</div>
-          <div className="text-sm text-gray-600 mt-1">Main Battle Tanks in the database</div>
+          <div className="text-4xl font-bold text-navy">{playableCount}</div>
+          <div className="text-sm text-gray-600 mt-1">
+            playable Main Battle Tanks
+            {playableCount < vehicleCount && (
+              <span className="block text-xs text-gray-400 mt-1">
+                ({vehicleCount - playableCount} draft{vehicleCount - playableCount === 1 ? "" : "s"} skipped — no images yet)
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Play button */}
         <button
           onClick={onPlay}
-          className="w-full bg-navy text-white text-lg font-semibold rounded-xl px-8 py-4 min-h-[44px] shadow-md active:scale-95 transition mb-6"
+          disabled={!canPlay}
+          className={`w-full text-lg font-semibold rounded-xl px-8 py-4 min-h-[44px] shadow-md transition mb-6 ${
+            canPlay
+              ? "bg-navy text-white active:scale-95"
+              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          }`}
         >
-          ▶ Play
+          {canPlay ? "▶ Play" : "No playable vehicles yet"}
         </button>
 
         {/* How to play */}
         <div className="text-sm text-gray-600 text-center leading-relaxed">
           <p className="mb-2"><strong>How to play:</strong></p>
-          <p>Look at the photo of a tank, then pick the correct name and country from 4 options. Each round has 10 questions.</p>
+          <p>Look at the photo of a tank, then pick the correct name and country from 4 options. Each round has up to 10 questions.</p>
         </div>
       </main>
 
@@ -206,7 +252,7 @@ function QuizScreen({ round, onComplete }) {
           })}
         </div>
 
-        {/* Fun fact panel — shown only after answering */}
+        {/* Result panel — shown only after answering. Fun fact line hidden if absent. */}
         {hasAnswered && (
           <div
             className={`mt-5 rounded-xl border-2 p-4 ${
@@ -218,7 +264,9 @@ function QuizScreen({ round, onComplete }) {
             <p className="text-sm font-semibold mb-1">
               {isCorrect ? "Correct!" : `That was the ${question.vehicle.name}.`}
             </p>
-            <p className="text-sm text-gray-700">💡 {question.vehicle.funFact}</p>
+            {question.funFact && (
+              <p className="text-sm text-gray-700">💡 {question.funFact}</p>
+            )}
           </div>
         )}
 
@@ -279,7 +327,11 @@ function App() {
   const [round, setRound] = useState(null);
   const [finalScore, setFinalScore] = useState(0);
 
-  const vehicles = window.vehicles || [];
+  // Prefer a local draft (saved by the admin) over the deployed file.
+  // Other visitors to the live site won't have a draft, so they see the file.
+  const draft = loadDraftFromStorage();
+  const vehicles = draft || window.vehicles || [];
+  const usingDraft = Boolean(draft);
 
   const startGame = () => {
     setRound(buildRound(vehicles));
@@ -319,7 +371,16 @@ function App() {
     return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} />;
   }
 
-  return <HomeScreen onPlay={startGame} vehicleCount={vehicles.length} />;
+  const playableCount = vehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
+
+  return (
+    <HomeScreen
+      onPlay={startGame}
+      vehicleCount={vehicles.length}
+      playableCount={playableCount}
+      usingDraft={usingDraft}
+    />
+  );
 }
 
 // Mount the app

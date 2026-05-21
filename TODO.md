@@ -111,6 +111,18 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Per-vehicle difficulty status stars (E / M / H rows) _(PR 2)_
 - [x] Bright gold = ready (5+ images), dim = partial, very dim = none _(PR 2)_
 - [x] Category badge + era badge per vehicle, image count _(PR 2)_
+- [x] Click row → read-only details panel (name, ID, badges, fun facts list, image thumbnails) _(PR 3)_
+- [x] Edit button (in details panel) → switch to edit form _(PR 3)_
+- [x] Add vehicle form (name, country, category, era, fun facts) _(PR 3)_
+- [x] Per-image star difficulty selector (1, 2, 3 stars) _(PR 3)_
+- [x] Multi-row fun fact editor (add / remove) — game picks one at random per question _(PR 3)_
+- [x] Auto-ID generation from name (with collision avoidance) _(PR 3)_
+- [x] Permissive validation — save partial drafts; only `name` is required _(PR 3)_
+- [x] Zero-image / zero-fun-fact handling — drafts excluded from game until playable _(PR 3)_
+- [x] localStorage-backed drafts — survives refresh, shared with game tab _(PR 3)_
+- [x] "Reset to file" button to discard local draft _(PR 3)_
+- [x] "Previewing local draft" banner on game when localStorage draft is active _(PR 3)_
+- [ ] Image upload — drag-and-drop / click-to-browse _(deferred — admin uses URL paste; full GitHub-API upload is a future enhancement)_
 - [ ] Add vehicle form (name, country, category, era, fun fact)
 - [ ] Image upload — drag and drop or click to browse
 - [ ] Per-image star difficulty selector (1, 2, 3 stars)

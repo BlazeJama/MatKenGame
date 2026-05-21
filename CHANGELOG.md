@@ -16,6 +16,17 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ### Added
 - **Admin page foundation (PR 1 of 5)** — new `/admin/` URL with separate `index.html` and `admin.jsx`. Includes session-based password gate (stored in `sessionStorage`), desktop-only check with mobile "use a desktop" message, and a two-column shell with placeholders for the vehicle list (PR 2) and add/edit form (PR 3). Service worker cache bumped to v4 to precache the new admin files.
 - **Admin vehicle list (PR 2 of 5)** — left column now lists every vehicle with name, country, category badge, era badge (colour-coded per era), image count, and a 3-row difficulty status indicator (E / M / H) showing per-star-level image counts and readiness (bright gold ★ = 5+ images, dim grey ★ = partial, very dim ★ = none). Includes a live search box, category dropdown filter, "Showing X of Y" counter, empty-state message, and a star-colour legend. Edit / Delete buttons present but disabled — wired up in PR 3 / PR 4. Service worker bumped to v5.
+- **Admin add / edit form + view-first workflow (PR 3 of 5)** — right column is now driven by a mode state (`empty` / `view` / `edit` / `new`):
+  - Click any row → read-only **VehicleDetails** panel with name, ID, badges, difficulty status, fun-facts list, and image thumbnails (each labelled with its star difficulty).
+  - **Edit** button (in the details panel) → switch to the **VehicleForm** with all fields editable.
+  - **+ New Vehicle** button (moved to the left-column header, next to the count) → blank form for adding.
+  - Form: name + auto-generated ID preview, country, category, era, multi-row fun facts with add / remove, multi-row image URLs with per-image star selector and add / remove.
+  - Permissive validation: only `name` is required. Country, fun facts, and images can all be empty so partial drafts can be saved and finished later. Any URL provided must be HTTPS.
+  - Save → returns to the read-only details view.
+- **Multi-fun-fact schema** — `funFact: "..."` migrated to `funFacts: [...]` across the schema docs, `data/vehicles.js` (10 entries), the game (random pick per question, panel hidden when empty), and the admin (add / remove fun-fact rows). Backward-compatibility helper reads either field shape.
+- **Zero-image-vehicle handling in the game** — `buildRound` now filters to vehicles with at least one image. Home screen shows "X playable" + "(N drafts skipped — no images yet)". Play button disables when no vehicles are playable.
+- **localStorage-backed admin drafts** — admin draft is persisted under `matken-draft-vehicles`. Refreshing the admin keeps your work. The game reads the same key and shows a yellow "Previewing local draft" banner when a draft is active. A **Reset to file** button (visible only when dirty) wipes the draft and reloads from `data/vehicles.js`.
+- Service worker bumped to v9.
 
 ---
 
