@@ -14,6 +14,11 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 > Changes being worked on but not yet in a release.
 
 ### Added
+- **PWA icons** — `assets/icons/icon-192.png` and `assets/icons/icon-512.png` generated: white tank silhouette (hull, turret, barrel, wheel cutouts) on navy #1a2744 background. Both declared `maskable` in `manifest.json` so Android adaptive icons clip cleanly to any shape. Service worker bumped to v14 to precache the new files; `.gitkeep` placeholder removed from `assets/icons/`.
+
+---
+
+### Previous unreleased work
 - **Admin page foundation (PR 1 of 5)** — new `/admin/` URL with separate `index.html` and `admin.jsx`. Includes session-based password gate (stored in `sessionStorage`), desktop-only check with mobile "use a desktop" message, and a two-column shell with placeholders for the vehicle list (PR 2) and add/edit form (PR 3). Service worker cache bumped to v4 to precache the new admin files.
 - **Admin vehicle list (PR 2 of 5)** — left column now lists every vehicle with name, country, category badge, era badge (colour-coded per era), image count, and a 3-row difficulty status indicator (E / M / H) showing per-star-level image counts and readiness (bright gold ★ = 5+ images, dim grey ★ = partial, very dim ★ = none). Includes a live search box, category dropdown filter, "Showing X of Y" counter, empty-state message, and a star-colour legend. Edit / Delete buttons present but disabled — wired up in PR 3 / PR 4. Service worker bumped to v5.
 - **Admin add / edit form + view-first workflow (PR 3 of 5)** — right column is now driven by a mode state (`empty` / `view` / `edit` / `new`):

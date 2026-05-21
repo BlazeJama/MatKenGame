@@ -1,6 +1,6 @@
 // MatKenGame service worker
 // Bump CACHE_VERSION every time you change the cached files so old caches are evicted.
-const CACHE_VERSION = "matkengame-v13";
+const CACHE_VERSION = "matkengame-v14";
 
 // Files to precache on install. These are the core local files only —
 // CDN resources (React, Tailwind, Babel) are cached opportunistically on first fetch.
@@ -12,7 +12,9 @@ const PRECACHE_URLS = [
   "data/vehicles.js",
   "admin/",
   "admin/index.html",
-  "admin/admin.jsx"
+  "admin/admin.jsx",
+  "assets/icons/icon-192.png",
+  "assets/icons/icon-512.png"
 ];
 
 // Install: precache the core files

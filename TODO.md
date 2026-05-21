@@ -19,7 +19,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] app.jsx created
 - [x] manifest.json created
 - [x] service-worker.js created
-- [ ] PWA icons created (192px, 512px)
+- [x] PWA icons created (192px, 512px)
 
 ---
 
