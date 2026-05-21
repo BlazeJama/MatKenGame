@@ -107,9 +107,10 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Session-based password authentication _(PR 1)_
 - [x] Two-column desktop layout (list left, form right) _(PR 1)_
 - [x] Desktop-only check with mobile fallback message _(PR 1)_
-- [ ] Vehicle list with search and category filter
-- [ ] Per-vehicle difficulty status stars (E / M / H rows)
-- [ ] Bright gold = ready (5+ images), dim = partial, very dim = none
+- [x] Vehicle list with search and category filter _(PR 2)_
+- [x] Per-vehicle difficulty status stars (E / M / H rows) _(PR 2)_
+- [x] Bright gold = ready (5+ images), dim = partial, very dim = none _(PR 2)_
+- [x] Category badge + era badge per vehicle, image count _(PR 2)_
 - [ ] Add vehicle form (name, country, category, era, fun fact)
 - [ ] Image upload — drag and drop or click to browse
 - [ ] Per-image star difficulty selector (1, 2, 3 stars)
