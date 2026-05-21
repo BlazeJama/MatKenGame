@@ -130,6 +130,8 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Difficulty filter dropdown (1 / 2 / 3 star) _(PR 4)_
 - [x] "Drafts (no images)" filter — quick way to find unfinished vehicles _(PR 4)_
 - [x] Autocomplete for the country form field (HTML5 datalist) _(PR 4)_
+- [x] Export vehicles.js — generated file content with download + copy-to-clipboard _(PR 5)_
+- [x] Modal preview shows the exact file content before exporting _(PR 5)_
 - [ ] Image upload — drag-and-drop / click-to-browse _(deferred — admin uses URL paste; full GitHub-API upload is a future enhancement)_
 - [ ] Add vehicle form (name, country, category, era, fun fact)
 - [ ] Image upload — drag and drop or click to browse

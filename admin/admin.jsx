@@ -1015,6 +1015,211 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
 }
 
 // =============================================================================
+// Export — generate a properly-formatted vehicles.js from the current draft
+// =============================================================================
+
+// Schema doc block copied verbatim from data/vehicles.js so the exported file
+// keeps the same header. If the schema docs change, update both places.
+const EXPORTED_HEADER = `// MatKenGame — Vehicle Database
+// =================================================================
+// This is the ONLY place vehicle data lives. Adding a new vehicle
+// never requires touching game code — just add an entry below.
+//
+// Schema (one entry per vehicle):
+//   id        — unique lowercase string, no spaces (e.g. "challenger2")
+//   name      — display name shown in answer buttons (e.g. "Challenger 2")
+//   country   — country of origin (e.g. "United Kingdom")
+//   category  — "Main Battle Tank" | "APC" | "IFV" | "Artillery" | "Helicopter"
+//               (MVP uses Main Battle Tank only)
+//   era       — "WW2" | "Cold War" | "Modern"
+//   images    — array of { url, stars } objects. Zero or more.
+//                 stars: 1 = easy, 2 = medium, 3 = hard
+//                 MVP picks a random image and ignores stars. Phase 2 will
+//                 filter by difficulty using these stars.
+//                 Vehicles with zero images are excluded from the game
+//                 until at least one is added.
+//   funFacts  — array of zero or more sentences. After the player answers,
+//               one is picked at random and shown. Empty array = no fact shown.
+//
+// Image-URL rules:
+//   - Must be HTTPS Wikimedia Commons URLs
+//   - Each image needs the full URL (right-click on Commons → "Copy image address")
+//   - URLs look like: https://upload.wikimedia.org/wikipedia/commons/.../filename.jpg
+//
+// Loading model:
+//   This file is loaded as a regular <script> in index.html *before* app.jsx,
+//   and exposes the data as \`window.vehicles\`. When the project later adopts
+//   a build step (Phase 2+), this can be swapped to \`export const vehicles\`.
+//
+// =================================================================
+`;
+
+// Format a single vehicle as JS source code (unquoted keys, 2-space indent
+// under the array). Uses JSON.stringify for safe string escaping.
+function formatVehicleEntry(v) {
+  const lines = [];
+  lines.push("  {");
+  lines.push(`    id: ${JSON.stringify(v.id)},`);
+  lines.push(`    name: ${JSON.stringify(v.name)},`);
+  lines.push(`    country: ${JSON.stringify(v.country || "")},`);
+  lines.push(`    category: ${JSON.stringify(v.category)},`);
+  lines.push(`    era: ${JSON.stringify(v.era)},`);
+
+  // Images array
+  if (!v.images || v.images.length === 0) {
+    lines.push("    images: [],");
+  } else {
+    lines.push("    images: [");
+    v.images.forEach((img, i) => {
+      const comma = i < v.images.length - 1 ? "," : "";
+      lines.push(`      { url: ${JSON.stringify(img.url)}, stars: ${img.stars} }${comma}`);
+    });
+    lines.push("    ],");
+  }
+
+  // Fun facts array — always emit `funFacts` (the new schema)
+  const facts = readFunFacts(v);
+  if (facts.length === 0) {
+    lines.push("    funFacts: []");
+  } else {
+    lines.push("    funFacts: [");
+    facts.forEach((fact, i) => {
+      const comma = i < facts.length - 1 ? "," : "";
+      lines.push(`      ${JSON.stringify(fact)}${comma}`);
+    });
+    lines.push("    ]");
+  }
+
+  lines.push("  }");
+  return lines.join("\n");
+}
+
+// Generate the full vehicles.js file content
+function generateVehiclesJs(vehicles) {
+  if (vehicles.length === 0) {
+    return `${EXPORTED_HEADER}\nwindow.vehicles = [];\n\n// Convenience helper — total count, useful for the home-screen stats card\nwindow.vehicleCount = window.vehicles.length;\n`;
+  }
+  const entries = vehicles.map(formatVehicleEntry).join(",\n");
+  return `${EXPORTED_HEADER}\nwindow.vehicles = [\n${entries}\n];\n\n// Convenience helper — total count, useful for the home-screen stats card\nwindow.vehicleCount = window.vehicles.length;\n`;
+}
+
+// Trigger a browser download of `content` as `filename`
+function downloadAsFile(content, filename) {
+  const blob = new Blob([content], { type: "text/javascript;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// =============================================================================
+// Export modal — preview, download, copy
+// =============================================================================
+
+function ExportModal({ vehicles, onClose }) {
+  // useMemo so re-renders (e.g. typing in textarea — though it's readOnly) don't
+  // regenerate the file content unnecessarily
+  const fileContent = React.useMemo(() => generateVehiclesJs(vehicles), [vehicles]);
+  const [copied, setCopied] = useState(false);
+
+  // Close on Escape key
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(fileContent);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (e) {
+      alert("Couldn't copy automatically. Select the text in the preview and press Ctrl+C / Cmd+C.");
+    }
+  };
+
+  const handleDownload = () => {
+    downloadAsFile(fileContent, "vehicles.js");
+  };
+
+  const playableCount = vehicles.filter((v) => v.images && v.images.length > 0).length;
+  const draftCount = vehicles.length - playableCount;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[85vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h2 className="font-semibold text-navy">Export vehicles.js</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {vehicles.length} vehicle{vehicles.length === 1 ? "" : "s"} · {playableCount} playable{draftCount > 0 ? ` · ${draftCount} draft${draftCount === 1 ? "" : "s"}` : ""}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            title="Close (Esc)"
+            className="text-gray-500 hover:text-gray-900 text-xl leading-none"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Instructions */}
+        <div className="px-6 py-3 text-xs text-blue-900 bg-blue-50 border-b border-blue-100">
+          <strong>To deploy:</strong> replace the contents of <code className="bg-white px-1 rounded border border-blue-200">data/vehicles.js</code> with the text below, then <code className="bg-white px-1 rounded border border-blue-200">git commit</code> and <code className="bg-white px-1 rounded border border-blue-200">git push</code>. After deploy, refresh the admin to see the local draft chip disappear.
+        </div>
+
+        {/* Preview textarea */}
+        <textarea
+          readOnly
+          value={fileContent}
+          spellCheck={false}
+          className="flex-1 min-h-0 px-6 py-4 font-mono text-xs text-gray-700 bg-gray-50 border-0 resize-none outline-none overflow-auto whitespace-pre"
+        />
+
+        {/* Footer actions */}
+        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-end gap-3 shrink-0">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-50"
+          >
+            Close
+          </button>
+          <button
+            onClick={handleCopy}
+            className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
+              copied
+                ? "bg-green-600 text-white"
+                : "border border-gray-300 hover:bg-gray-50"
+            }`}
+          >
+            {copied ? "✓ Copied!" : "Copy to clipboard"}
+          </button>
+          <button
+            onClick={handleDownload}
+            className="px-4 py-2 text-sm rounded-lg bg-navy text-white font-medium hover:bg-navy/90"
+          >
+            ⬇ Download as file
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
 // Admin shell (placeholder columns — filled in by later PRs)
 // =============================================================================
 
@@ -1057,6 +1262,9 @@ function AdminShell({ onLogout }) {
   //   edit   → editing selectedId
   //   new    → creating a brand-new vehicle (selectedId is null in this mode)
   const [mode, setMode] = useState("empty");
+
+  // Whether the Export modal is open
+  const [exportOpen, setExportOpen] = useState(false);
 
   const selectedVehicle = selectedId
     ? draftVehicles.find((v) => v.id === selectedId) || null
@@ -1172,6 +1380,18 @@ function AdminShell({ onLogout }) {
           </p>
         </div>
         <div className="flex items-center gap-3 text-sm">
+          <button
+            onClick={() => setExportOpen(true)}
+            disabled={draftVehicles.length === 0}
+            className={`px-3 py-1.5 rounded-lg font-medium transition ${
+              draftVehicles.length === 0
+                ? "bg-white/20 text-white/40 cursor-not-allowed"
+                : "bg-white text-navy hover:bg-white/90"
+            }`}
+            title={draftVehicles.length === 0 ? "No vehicles to export" : "Generate a vehicles.js file you can commit"}
+          >
+            ⬇ Export vehicles.js
+          </button>
           {isDirty && (
             <button
               onClick={handleResetToFile}
@@ -1191,6 +1411,13 @@ function AdminShell({ onLogout }) {
         </div>
       </header>
 
+      {exportOpen && (
+        <ExportModal
+          vehicles={draftVehicles}
+          onClose={() => setExportOpen(false)}
+        />
+      )}
+
       {/* Two-column body */}
       <main className="flex-1 min-h-0 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 p-6 max-w-7xl mx-auto w-full">
         <VehicleList
@@ -1204,7 +1431,7 @@ function AdminShell({ onLogout }) {
       </main>
 
       <footer className="text-center text-xs text-gray-400 py-3 shrink-0">
-        Admin — PR 4 of 5 (delete + multi-select)
+        Admin — full edit-export-commit loop
       </footer>
     </div>
   );
