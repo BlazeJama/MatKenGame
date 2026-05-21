@@ -66,6 +66,12 @@
       .anim-fade  { animation: fadeIn 0.2s ease forwards; }
     }
 
+    /* ── Full-screen quiz shell (dvh = excludes browser chrome on mobile) */
+    .quiz-shell {
+      height: 100vh;   /* safe fallback */
+      height: 100dvh;  /* modern: excludes collapsing address bar */
+    }
+
     /* ── Interactive states ─────────────────────────────── */
     .tac-answer:hover:not(:disabled) {
       border-color: rgba(245,158,11,0.45) !important;

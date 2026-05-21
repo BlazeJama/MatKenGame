@@ -158,7 +158,7 @@ function HomeScreen({ onPlay, vehicleCount, playableCount, usingDraft }) {
       )}
 
       {/* Title block */}
-      <header className="px-6 pt-14 pb-6 text-center">
+      <header className="px-6 pb-6 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}>
         <div
           className="font-data text-xs tracking-widest mb-5"
           style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
@@ -276,7 +276,7 @@ function HomeScreen({ onPlay, vehicleCount, playableCount, usingDraft }) {
         </div>
       </main>
 
-      <footer className="text-center pb-6">
+      <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
         <span
           className="font-data text-xs"
           style={{ color: "#1e293b", letterSpacing: "0.12em" }}
@@ -380,15 +380,16 @@ function QuizScreen({ round, onComplete }) {
 
   return (
     <div
-      className="min-h-screen flex flex-col font-tac"
-      style={{ background: "#070b14" }}
+      className="quiz-shell font-tac"
+      style={{ display: "flex", flexDirection: "column", background: "#070b14", overflow: "hidden" }}
     >
       {/* ── Header ──────────────────────────────────────── */}
       <header
         style={{
           background: "#0d1526",
           borderBottom: "1px solid rgba(245,158,11,0.12)",
-          padding: "12px 16px 10px",
+          padding: "calc(env(safe-area-inset-top, 0px) + 12px) 16px 10px",
+          flexShrink: 0,
         }}
       >
         <div className="max-w-md mx-auto w-full">
@@ -423,14 +424,22 @@ function QuizScreen({ round, onComplete }) {
 
       {/* ── Target image ────────────────────────────────── */}
       <div
-        className="max-w-md mx-auto w-full relative"
-        style={{ background: "#0a0e1a", lineHeight: 0 }}
+        style={{
+          flex: "1 1 0",
+          minHeight: 0,
+          position: "relative",
+          overflow: "hidden",
+          background: "#0a0e1a",
+          maxWidth: 448,
+          width: "100%",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
       >
         <img
           src={question.image.url}
           alt="Military vehicle to identify"
-          className="w-full object-cover"
-          style={{ height: 220, display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
         />
         {/* Targeting brackets */}
         <TargetBrackets size={26} color="#f59e0b" thickness={2} inset={10} />
@@ -452,8 +461,17 @@ function QuizScreen({ round, onComplete }) {
 
       {/* ── Answers + result ───────────────────────────── */}
       <main
-        className="flex-1 max-w-md mx-auto w-full px-4 py-4"
-        style={{ fontFamily: "'Rajdhani', sans-serif" }}
+        style={{
+          flexShrink: 0,
+          overflowY: "auto",
+          padding: "12px 16px",
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
+          maxWidth: 448,
+          marginLeft: "auto",
+          marginRight: "auto",
+          width: "100%",
+          fontFamily: "'Rajdhani', sans-serif",
+        }}
       >
         <div className="flex flex-col gap-2">
           {question.options.map((option, i) => {
@@ -570,7 +588,7 @@ function EndScreen({ score, total, onPlayAgain }) {
 
   return (
     <div className="min-h-screen flex flex-col tac-grid font-tac">
-      <header className="text-center px-6 pt-14 pb-6">
+      <header className="text-center px-6 pb-6" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}>
         <div
           className="font-data text-xs tracking-widest mb-4"
           style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
@@ -653,7 +671,7 @@ function EndScreen({ score, total, onPlayAgain }) {
         </button>
       </main>
 
-      <footer className="text-center pb-6">
+      <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
         <span
           className="font-data text-xs"
           style={{ color: "#1e293b", letterSpacing: "0.12em" }}
