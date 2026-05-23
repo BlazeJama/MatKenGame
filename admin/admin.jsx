@@ -1162,7 +1162,7 @@ function ExportModal({ vehicles, onClose }) {
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <h2 className="font-semibold text-navy">Export vehicles.js</h2>
+            <h2 className="font-semibold text-navy">Save changes to game</h2>
             <p className="text-xs text-gray-500 mt-0.5">
               {vehicles.length} vehicle{vehicles.length === 1 ? "" : "s"} · {playableCount} playable{draftCount > 0 ? ` · ${draftCount} draft${draftCount === 1 ? "" : "s"}` : ""}
             </p>
@@ -1176,9 +1176,32 @@ function ExportModal({ vehicles, onClose }) {
           </button>
         </div>
 
-        {/* Instructions */}
-        <div className="px-6 py-3 text-xs text-blue-900 bg-blue-50 border-b border-blue-100">
-          <strong>To deploy:</strong> replace the contents of <code className="bg-white px-1 rounded border border-blue-200">data/vehicles.js</code> with the text below, then <code className="bg-white px-1 rounded border border-blue-200">git commit</code> and <code className="bg-white px-1 rounded border border-blue-200">git push</code>. After deploy, refresh the admin to see the local draft chip disappear.
+        {/* Instructions — three numbered steps + a fallback for browser-only publishing */}
+        <div className="px-6 py-4 text-sm text-blue-900 bg-blue-50 border-b border-blue-100 space-y-2">
+          <p className="font-semibold text-blue-950">How to publish these changes:</p>
+          <ol className="space-y-1.5 list-decimal list-inside marker:text-blue-700">
+            <li>
+              Click <strong>💾 Download vehicles.js</strong> below.
+            </li>
+            <li>
+              Move the downloaded file into the project's <code className="bg-white px-1 rounded border border-blue-200">data/</code> folder, replacing the existing <code className="bg-white px-1 rounded border border-blue-200">data/vehicles.js</code>.
+            </li>
+            <li>
+              Double-click <code className="bg-white px-1 rounded border border-blue-200">update-game.bat</code> in the project root. It commits and pushes for you — the game updates in about 30 seconds.
+            </li>
+          </ol>
+          <p className="text-xs text-blue-800 pt-1 border-t border-blue-200/70 mt-2">
+            No git on your machine?{" "}
+            <a
+              href="https://github.com/BlazeJama/MatKenGame/edit/main/data/vehicles.js"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-medium hover:text-blue-950"
+            >
+              Edit data/vehicles.js directly on GitHub.com
+            </a>{" "}
+            — paste the contents from the preview below, then "Commit changes" on the GitHub page.
+          </p>
         </div>
 
         {/* Preview textarea */}
@@ -1199,19 +1222,21 @@ function ExportModal({ vehicles, onClose }) {
           </button>
           <button
             onClick={handleCopy}
+            title="Copy the file contents (useful for pasting into GitHub.com or VS Code)"
             className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
               copied
                 ? "bg-green-600 text-white"
                 : "border border-gray-300 hover:bg-gray-50"
             }`}
           >
-            {copied ? "✓ Copied!" : "Copy to clipboard"}
+            {copied ? "✓ Copied!" : "Copy text"}
           </button>
           <button
             onClick={handleDownload}
+            title="Save vehicles.js to your Downloads folder (Step 1)"
             className="px-4 py-2 text-sm rounded-lg bg-navy text-white font-medium hover:bg-navy/90"
           >
-            ⬇ Download as file
+            💾 Download vehicles.js
           </button>
         </div>
       </div>
@@ -1388,9 +1413,9 @@ function AdminShell({ onLogout }) {
                 ? "bg-white/20 text-white/40 cursor-not-allowed"
                 : "bg-white text-navy hover:bg-white/90"
             }`}
-            title={draftVehicles.length === 0 ? "No vehicles to export" : "Generate a vehicles.js file you can commit"}
+            title={draftVehicles.length === 0 ? "No vehicles to save" : "Download vehicles.js + publish to the live game"}
           >
-            ⬇ Export vehicles.js
+            💾 Save
           </button>
           {isDirty && (
             <button
