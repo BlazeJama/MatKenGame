@@ -608,7 +608,7 @@ function QuizScreen({ round, onComplete }) {
 // End Screen
 // ============================================================================
 
-function EndScreen({ score, total, onPlayAgain }) {
+function EndScreen({ score, total, onPlayAgain, onReturnHome }) {
   const pct = Math.round((score / total) * 100);
 
   return (
@@ -677,7 +677,7 @@ function EndScreen({ score, total, onPlayAgain }) {
           </div>
         </TacCard>
 
-        {/* Redeploy button */}
+        {/* Redeploy button (primary — same category again) */}
         <button
           onClick={onPlayAgain}
           className="w-full font-display tracking-widest tac-primary"
@@ -693,6 +693,24 @@ function EndScreen({ score, total, onPlayAgain }) {
           }}
         >
           ↺  REDEPLOY
+        </button>
+
+        {/* Change category button (secondary — back to home) */}
+        <button
+          onClick={onReturnHome}
+          className="w-full mt-3 font-display tracking-widest tac-primary"
+          style={{
+            fontSize: "1.05rem",
+            minHeight: "46px",
+            borderRadius: 2,
+            background: "transparent",
+            color: "#f59e0b",
+            border: "1px solid rgba(245,158,11,0.45)",
+            letterSpacing: "0.14em",
+            cursor: "pointer",
+          }}
+        >
+          ←  CHANGE CATEGORY
         </button>
       </main>
 
@@ -779,8 +797,14 @@ function App() {
     );
   }
 
+  const returnHome = () => {
+    setRound(null);
+    setFinalScore(0);
+    setScreen("home");
+  };
+
   if (screen === "quiz") return <QuizScreen round={round} onComplete={finishGame} />;
-  if (screen === "end")  return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} />;
+  if (screen === "end")  return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} onReturnHome={returnHome} />;
 
   return (
     <HomeScreen
