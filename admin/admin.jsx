@@ -1336,7 +1336,7 @@ function AdminShell({ onLogout }) {
 
   // Delete a vehicle entirely (from the list row or the details panel)
   const handleDelete = (vehicle) => {
-    if (!confirm(`Delete "${vehicle.name}"?\n\nThis removes the vehicle from your draft. You can still revert via "Reset to file" until you export.`)) return;
+    if (!confirm(`Delete "${vehicle.name}"?\n\nThis removes the vehicle from your local draft. Click Save afterwards to publish the deletion to the live game.`)) return;
     setDraftVehicles((prev) => prev.filter((v) => v.id !== vehicle.id));
     // If the deleted vehicle was on screen, clear the right column
     if (selectedId === vehicle.id) {
@@ -1347,7 +1347,27 @@ function AdminShell({ onLogout }) {
 
   // Wipe the localStorage draft and restore from the deployed file
   const handleResetToFile = () => {
-    if (!confirm("Discard all local draft changes and reload the deployed data?\n\nThis cannot be undone.")) return;
+    const draftImages = draftVehicles.reduce((n, v) => n + (v.images?.length || 0), 0);
+    const fileImages  = (window.vehicles || []).reduce((n, v) => n + (v.images?.length || 0), 0);
+    const newImages   = Math.max(0, draftImages - fileImages);
+    const draftCount  = draftVehicles.length;
+    const fileCount   = (window.vehicles || []).length;
+    const newVehicles = Math.max(0, draftCount - fileCount);
+
+    const detail = [];
+    if (newVehicles > 0) detail.push(`• ${newVehicles} new vehicle${newVehicles === 1 ? "" : "s"} you've added`);
+    if (newImages   > 0) detail.push(`• ${newImages} image URL${newImages === 1 ? "" : "s"} you've added`);
+    detail.push("• Any edits to existing vehicles (renames, fun facts, etc.)");
+
+    const message =
+      "⚠ DISCARD ALL LOCAL CHANGES?\n\n" +
+      "You will permanently lose:\n" +
+      detail.join("\n") + "\n\n" +
+      "Your draft will be replaced with the deployed data/vehicles.js.\n" +
+      "This cannot be undone.\n\n" +
+      "Tip: if you want to KEEP your changes, click Save instead, then run update-game.bat to publish.";
+
+    if (!confirm(message)) return;
     clearDraftFromStorage();
     setDraftVehicles(freshDraftFromFile());
     setSelectedId(null);
@@ -1420,10 +1440,10 @@ function AdminShell({ onLogout }) {
           {isDirty && (
             <button
               onClick={handleResetToFile}
-              className="text-white/80 hover:text-white underline"
-              title="Discard all local edits and reload from data/vehicles.js"
+              className="text-red-300 hover:text-red-100 hover:bg-red-900/30 px-2 py-1 rounded transition-colors"
+              title="Permanently delete all local draft changes (added vehicles, image URLs, edits) and reload from data/vehicles.js"
             >
-              Reset to file
+              🗑 Discard draft
             </button>
           )}
           <a href="../" className="text-white/80 hover:text-white underline">View game</a>
