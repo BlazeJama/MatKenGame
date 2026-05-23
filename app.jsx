@@ -516,61 +516,28 @@ function QuizScreen({ round, onComplete }) {
           })}
         </div>
 
-        {/* Result / fun-fact panel */}
-        {hasAnswered && (
-          <div
-            className="mt-4 p-4 anim-panel"
-            style={{
-              borderRadius: 2,
-              border: `1px solid ${isCorrect ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.28)"}`,
-              background: isCorrect
-                ? "rgba(34,197,94,0.06)"
-                : "rgba(239,68,68,0.06)",
-            }}
-          >
-            <p
-              className="font-display tracking-widest mb-1"
-              style={{
-                fontSize: "1.15rem",
-                color: isCorrect ? "#4ade80" : "#f87171",
-                letterSpacing: "0.1em",
-              }}
-            >
-              {isCorrect ? "✓ TARGET ACQUIRED" : "✗ WRONG TARGET"}
-            </p>
-            {!isCorrect && (
-              <p className="text-sm" style={{ color: "#64748b" }}>
-                Correct:{" "}
-                <span style={{ color: "#e2e8f0", fontWeight: 600 }}>
-                  {question.vehicle.name}
-                </span>
-              </p>
-            )}
-            {/* Fun fact intentionally hidden in-game — funFacts remain in the
-                data + admin so this can be re-enabled later by restoring the
-                {question.funFact && (...)} block here. */}
-          </div>
-        )}
+        {/* Result panel intentionally hidden — answer-button styling already
+            signals correct (green) / wrong (red) / dimmed alternatives.
+            Fun fact also remains hidden; both can be restored later. */}
 
-        {/* Next / finish button */}
-        {hasAnswered && (
-          <button
-            onClick={handleNext}
-            className="w-full mt-4 font-display tracking-widest tac-primary anim-fade"
-            style={{
-              fontSize: "1.35rem",
-              minHeight: "52px",
-              borderRadius: 2,
-              background: "#f59e0b",
-              color: "#070b14",
-              border: "none",
-              letterSpacing: "0.14em",
-              cursor: "pointer",
-            }}
-          >
-            {isLastQuestion ? "DEBRIEF  →" : "NEXT TARGET  →"}
-          </button>
-        )}
+        {/* Next / finish button — always visible, disabled until answered */}
+        <button
+          onClick={handleNext}
+          disabled={!hasAnswered}
+          className="w-full mt-4 font-display tracking-widest tac-primary"
+          style={{
+            fontSize: "1.35rem",
+            minHeight: "52px",
+            borderRadius: 2,
+            background: hasAnswered ? "#f59e0b" : "rgba(30,41,59,0.7)",
+            color: hasAnswered ? "#070b14" : "#334155",
+            border: hasAnswered ? "none" : "1px solid rgba(51,65,85,0.5)",
+            letterSpacing: "0.14em",
+            cursor: hasAnswered ? "pointer" : "not-allowed",
+          }}
+        >
+          {isLastQuestion ? "DEBRIEF  →" : "NEXT TARGET  →"}
+        </button>
       </main>
     </div>
   );
