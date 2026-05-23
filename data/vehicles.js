@@ -189,5 +189,335 @@ window.vehicles = [
   }
 ];
 
+  // ══════════════════════════════════════════════════════════════════
+  //  APCs — Armoured Personnel Carriers
+  //  Images: add via the admin page, then run update-game.bat
+  // ══════════════════════════════════════════════════════════════════
+  {
+    id: "m113",
+    name: "M113",
+    country: "United States",
+    category: "APC",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The M113 is the most widely used armoured fighting vehicle in history, with over 80,000 built and operators in more than 50 countries.",
+      "Despite being designed in the 1950s, modified M113s are still used in active service by dozens of militaries today.",
+      "The M113's aluminium hull was controversial at first — critics worried it would melt under fire — but it proved lighter and faster than steel alternatives."
+    ]
+  },
+  {
+    id: "btr80",
+    name: "BTR-80",
+    country: "Russia",
+    category: "APC",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The BTR-80 can cross rivers under its own power using a water jet, with no preparation needed — the crew simply raises the trim vane and drives in.",
+      "Its eight wheels are all driven, giving it excellent cross-country mobility even if two wheels are destroyed by a mine.",
+      "The BTR-80 replaced the BTR-60 and BTR-70 specifically because Soviet troops complained that the older models' exits were dangerous under fire — the new side hatches open forward to provide cover."
+    ]
+  },
+  {
+    id: "stryker",
+    name: "Stryker",
+    country: "United States",
+    category: "APC",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Stryker was specifically sized to fit inside a C-130 Hercules transport aircraft, giving the US Army the ability to deploy armoured units anywhere in the world within hours.",
+      "Unlike most APCs, the Stryker uses a remote weapon station that the gunner operates from inside the vehicle — keeping them protected while engaging targets.",
+      "The Stryker's network of sensors and computers links every vehicle in a unit together, giving commanders a real-time picture of all friendly positions on the battlefield."
+    ]
+  },
+  {
+    id: "fv432",
+    name: "FV432 Trojan",
+    country: "United Kingdom",
+    category: "APC",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The FV432 entered British Army service in 1963 and variants are still in use today — over 60 years of front-line service.",
+      "During the Falklands War, FV432s were used as ambulances and command vehicles, showing how versatile the basic hull design could be.",
+      "The FV432 was designed to be fully amphibious using a flotation screen, though this feature was rarely used in practice."
+    ]
+  },
+  {
+    id: "patria_amv",
+    name: "Patria AMV",
+    country: "Finland",
+    category: "APC",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Patria AMV is one of the most modular APCs ever built — the same hull can be reconfigured as a troop carrier, IFV, mortar carrier, ambulance, or command vehicle in the field.",
+      "Finland designed the AMV to operate reliably at -40°C, with heating systems that keep the engine and crew compartment functional without external power.",
+      "The AMV's hull can be fitted with add-on armour packages that nearly double its protection level, adapting it to different threat environments."
+    ]
+  },
+  {
+    id: "boxer",
+    name: "Boxer",
+    country: "Germany",
+    category: "APC",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Boxer uses a revolutionary 'drive module plus mission module' design — the front crew cab can be separated from the rear payload section and swapped in under an hour.",
+      "This modularity means a single Boxer drive module can serve as an APC one day and an ambulance or command vehicle the next, without any workshop modifications.",
+      "The Boxer is in service with Germany, the Netherlands, Lithuania, and Australia, and is one of the heaviest wheeled APCs ever built — nearly as well protected as some infantry fighting vehicles."
+    ]
+  },
+
+  // ══════════════════════════════════════════════════════════════════
+  //  IFVs — Infantry Fighting Vehicles
+  // ══════════════════════════════════════════════════════════════════
+  {
+    id: "m2bradley",
+    name: "M2 Bradley",
+    country: "United States",
+    category: "IFV",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The Bradley is unusual in that it can both transport soldiers AND fight alongside them — its 25mm chain gun and TOW missiles make it capable of destroying enemy tanks.",
+      "During the 1991 Gulf War, Bradleys destroyed more Iraqi armoured vehicles than M1 Abrams tanks did.",
+      "The Bradley's development was so troubled and expensive that it inspired a satirical 1998 film — 'The Pentagon Wars' — depicting how the original simple APC design grew into a complex fighting vehicle."
+    ]
+  },
+  {
+    id: "bmp2",
+    name: "BMP-2",
+    country: "Russia",
+    category: "IFV",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The BMP-2's 30mm autocannon can engage both ground targets and low-flying helicopters, making it one of the most versatile IFVs ever built.",
+      "Unlike most Western IFVs, the BMP-2 was designed so infantry could fire their personal weapons from inside the vehicle through firing ports along the sides.",
+      "The BMP-2 is amphibious — it swims using its tracks with no preparation, though crews found its low freeboard made river crossings nerve-wracking in rough water."
+    ]
+  },
+  {
+    id: "bmp3",
+    name: "BMP-3",
+    country: "Russia",
+    category: "IFV",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The BMP-3 is the only infantry fighting vehicle in the world armed with a 100mm gun, a 30mm autocannon, and three 7.62mm machine guns — all at the same time.",
+      "Its 100mm gun can fire both conventional shells and laser-guided anti-tank missiles through the same barrel.",
+      "The BMP-3 is fully amphibious and fast — it can reach 10 km/h on water using two water jets, fast enough to conduct river assault crossings under fire."
+    ]
+  },
+  {
+    id: "warrior",
+    name: "Warrior (FV510)",
+    country: "United Kingdom",
+    category: "IFV",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Warrior's armour was specifically designed to protect against 14.5mm heavy machine gun fire on all sides — much tougher than contemporary Soviet IFVs.",
+      "During the 1991 Gulf War, Warriors advanced so quickly across the Iraqi desert that they outpaced the infantry they were supposed to be supporting.",
+      "The Warrior can run on flat tyres — its road wheels are designed to keep the vehicle moving even after being punctured by shrapnel or small-arms fire."
+    ]
+  },
+  {
+    id: "cv90",
+    name: "CV90",
+    country: "Sweden",
+    category: "IFV",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The CV90 was designed to start its engine reliably at -40°C and operate in the deep snow of Nordic terrain, conditions that would stop most other IFVs.",
+      "Its 40mm autocannon is one of the most powerful ever fitted to an IFV, capable of destroying lightly armoured vehicles at over 1,500 metres.",
+      "The CV90 is one of the best-selling IFVs in the world, used by Norway, Sweden, Switzerland, Finland, the Netherlands, and Denmark."
+    ]
+  },
+  {
+    id: "marder",
+    name: "Marder",
+    country: "Germany",
+    category: "IFV",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The Marder was one of the first true infantry fighting vehicles — designed not just to carry troops but to fight alongside them with its own heavy weapons.",
+      "Its design placed such a priority on infantry protection that the troop compartment can withstand hits from 20mm rounds on all sides.",
+      "The Marder has been continuously upgraded since its introduction in 1971 and remained in front-line German service for over 50 years."
+    ]
+  },
+
+  // ══════════════════════════════════════════════════════════════════
+  //  Artillery — Self-Propelled Guns & Howitzers
+  // ══════════════════════════════════════════════════════════════════
+  {
+    id: "m109paladin",
+    name: "M109 Paladin",
+    country: "United States",
+    category: "Artillery",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The M109 Paladin can fire its first round within 60 seconds of stopping and be moving again 60 seconds later — a tactic called 'shoot and scoot' to avoid counter-battery fire.",
+      "It has been continuously upgraded since 1963 and is still the primary self-propelled howitzer of the US Army today.",
+      "The Paladin's 155mm shell can reach targets over 30 kilometres away with standard ammunition — and over 40 km with rocket-assisted rounds."
+    ]
+  },
+  {
+    id: "pzh2000",
+    name: "PzH 2000",
+    country: "Germany",
+    category: "Artillery",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The PzH 2000 can fire three rounds in 9 seconds and sustain 10-13 rounds per minute — faster than almost any other self-propelled howitzer in the world.",
+      "Its automated loading system means the crew of five never has to manually handle the 43 kg shells, reducing fatigue and increasing sustained rate of fire.",
+      "The PzH 2000 saw combat in Afghanistan with Dutch forces and in Ukraine, where its range and accuracy made it one of the most prized artillery systems of that conflict."
+    ]
+  },
+  {
+    id: "msta_s",
+    name: "2S19 Msta-S",
+    country: "Russia",
+    category: "Artillery",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The 2S19 Msta-S uses the same hull as the T-80 tank, giving it excellent cross-country mobility compared to most self-propelled howitzers.",
+      "It can fire a special Krasnopol laser-guided shell that homes in on a target painted by a forward observer, hitting with near-pinpoint accuracy at over 20 km.",
+      "The Msta-S is designed for fully automated ammunition handling — the autoloader can cycle a round every 6–7 seconds without crew intervention."
+    ]
+  },
+  {
+    id: "caesar",
+    name: "CAESAR",
+    country: "France",
+    category: "Artillery",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The CAESAR is mounted on a standard 6×6 truck chassis rather than a tracked hull, making it cheaper to maintain and light enough to be air-transported by C-130.",
+      "A CAESAR crew of five can go from driving down a road to firing a round in under 60 seconds, then be moving again within 30 seconds — one of the fastest deploy-fire-move cycles of any howitzer.",
+      "CAESAR howitzers were donated to Ukraine in 2022 and praised by Ukrainian crews for their reliability, accuracy, and speed of deployment."
+    ]
+  },
+  {
+    id: "k9thunder",
+    name: "K9 Thunder",
+    country: "South Korea",
+    category: "Artillery",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "South Korea's K9 Thunder is one of the most exported self-propelled howitzers in the world, in service with nine countries including India, Egypt, Finland, and Norway.",
+      "The K9 can fire three rounds in 15 seconds and sustain a rate of six rounds per minute for extended bombardment missions.",
+      "India operates the K9 Vajra, a locally produced variant optimised for high-altitude Himalayan operations — the only self-propelled howitzer qualified for use at elevations above 4,000 metres."
+    ]
+  },
+  {
+    id: "as90",
+    name: "AS-90",
+    country: "United Kingdom",
+    category: "Artillery",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The AS-90 can fire a burst of three rounds in under 10 seconds and sustain six rounds per minute for prolonged fire missions.",
+      "Its 155mm gun uses a semi-automatic loading system that eliminates the need for a loader — the crew of five operates entirely from within the armoured turret.",
+      "AS-90s were donated to Ukraine in 2023, where crews valued their combination of range, mobility, and protection compared to older Soviet-era artillery."
+    ]
+  },
+
+  // ══════════════════════════════════════════════════════════════════
+  //  Helicopters — Attack & Utility
+  // ══════════════════════════════════════════════════════════════════
+  {
+    id: "ah64apache",
+    name: "AH-64 Apache",
+    country: "United States",
+    category: "Helicopter",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Apache's fire control radar can track up to 128 targets simultaneously and prioritise which to engage — allowing a single crew to coordinate attacks on an entire armoured column.",
+      "Apache pilots wear helmet-mounted displays that slave the 30mm chain gun directly to where they look — wherever the pilot looks, the gun points.",
+      "The Apache is designed to survive hits from 23mm rounds — its critical components are armoured, its rotor blades can take multiple bullet hits and keep flying, and its engines can run for 30 minutes after losing all oil."
+    ]
+  },
+  {
+    id: "mi24hind",
+    name: "Mi-24 Hind",
+    country: "Russia",
+    category: "Helicopter",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The Mi-24 Hind is unique among attack helicopters — it has a full troop compartment capable of carrying eight fully-equipped soldiers, making it simultaneously a gunship and an assault transport.",
+      "Afghan Mujahideen fighters called the Mi-24 the 'flying tank' and 'devil's chariot' — its armoured hull could absorb small arms fire that would destroy other helicopters.",
+      "The Mi-24 was so feared during the Soviet-Afghan War that the CIA supplied Stinger man-portable missiles to the Mujahideen specifically to counter it."
+    ]
+  },
+  {
+    id: "uh60blackhawk",
+    name: "UH-60 Black Hawk",
+    country: "United States",
+    category: "Helicopter",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "A single UH-60 Black Hawk can carry 11 combat-equipped soldiers, sling-load up to 4 tonnes of external cargo, or be rapidly converted into a medevac aircraft with six stretchers.",
+      "The Black Hawk is specifically designed to be crash-worthy — its airframe is engineered to absorb impacts at up to 13.4 m/s vertical descent, protecting the crew in a hard landing.",
+      "Black Hawks are used by over 30 countries and have served in virtually every US military operation since replacing the UH-1 Huey in 1979."
+    ]
+  },
+  {
+    id: "ch47chinook",
+    name: "CH-47 Chinook",
+    country: "United States",
+    category: "Helicopter",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The Chinook's tandem rotor design means all engine power goes to lifting — with no tail rotor needed, it has one of the best payload-to-weight ratios of any helicopter ever built.",
+      "A CH-47 can carry up to 55 soldiers or lift over 12 tonnes of external sling load — including other helicopters and light artillery pieces.",
+      "Chinooks have been in continuous production and service since 1962, making them one of the longest-serving military helicopters in history — with no replacement in sight."
+    ]
+  },
+  {
+    id: "ka52alligator",
+    name: "Ka-52 Alligator",
+    country: "Russia",
+    category: "Helicopter",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Ka-52 uses a coaxial rotor system — two sets of blades on the same mast spinning in opposite directions — which eliminates the tail rotor entirely and allows it to rotate and fly sideways as easily as forward.",
+      "The Ka-52 is the only attack helicopter in the world fitted with an ejection seat — the rotor blades are blown off explosively before the seat fires, allowing the crew to escape in an emergency.",
+      "Its nose-mounted radar and sensor suite allows it to fly behind terrain using 'pop-up' attack profiles, rising briefly to fire before dropping back into cover."
+    ]
+  },
+  {
+    id: "tiger_had",
+    name: "Tiger HAD",
+    country: "France",
+    category: "Helicopter",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Tiger was designed using radar-absorbing composite materials to reduce its radar cross-section — making it significantly harder to detect than older metal-airframe helicopters.",
+      "Its engine exhausts are shaped and shielded to minimise the infrared signature, making it harder for heat-seeking missiles to lock on.",
+      "The Tiger HAD (Hélicoptère d'Appui Destruction) variant used by France and Spain is one of the most agile attack helicopters in the world — its lightweight composite airframe gives it performance comparable to much smaller scout helicopters."
+    ]
+  }
+];
+
 // Convenience helper — total count, useful for the home-screen stats card
 window.vehicleCount = window.vehicles.length;

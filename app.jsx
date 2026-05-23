@@ -11,6 +11,28 @@ const { useState } = React;
 // uses your in-progress draft instead of the deployed window.vehicles
 const DRAFT_STORAGE_KEY = "matken-draft-vehicles";
 
+// localStorage key for per-category best scores: { "all": 8, "Main Battle Tank": 10, ... }
+const BEST_SCORES_KEY = "matken-best-scores";
+
+function loadBestScores() {
+  try {
+    const raw = localStorage.getItem(BEST_SCORES_KEY);
+    if (raw) { const p = JSON.parse(raw); if (p && typeof p === "object") return p; }
+  } catch (_) {}
+  return {};
+}
+
+// Category options shown in the home-screen selector.
+// id matches the `category` field in vehicles.js (or "all" for no filter).
+const CATEGORY_OPTIONS = [
+  { id: "all",              label: "ALL"  },
+  { id: "Main Battle Tank", label: "MBT"  },
+  { id: "APC",              label: "APC"  },
+  { id: "IFV",              label: "IFV"  },
+  { id: "Artillery",        label: "ARTY" },
+  { id: "Helicopter",       label: "HELO" },
+];
+
 function loadDraftFromStorage() {
   try {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
@@ -135,7 +157,8 @@ function TacCard({ children, className = "", style: extraStyle = {} }) {
 // Home Screen
 // ============================================================================
 
-function HomeScreen({ onPlay, vehicleCount, playableCount, usingDraft }) {
+function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
+                      selectedCategory, onCategoryChange, categoryCounts, bestScore }) {
   const canPlay = playableCount > 0;
 
   return (
@@ -218,20 +241,58 @@ function HomeScreen({ onPlay, vehicleCount, playableCount, usingDraft }) {
               </div>
             </div>
           </div>
-          {playableCount < vehicleCount && (
-            <div
-              className="font-data text-xs mt-5 pt-4"
-              style={{
-                color: "#334155",
-                borderTop: "1px solid rgba(51,65,85,0.5)",
-                letterSpacing: "0.06em",
-              }}
-            >
-              {vehicleCount - playableCount} DRAFT
-              {vehicleCount - playableCount !== 1 ? "S" : ""} PENDING — NO IMAGES YET
-            </div>
-          )}
+          {/* Divider row — drafts note + best score */}
+          <div
+            className="mt-5 pt-4 flex items-center justify-between"
+            style={{ borderTop: "1px solid rgba(51,65,85,0.4)" }}
+          >
+            <span className="font-data text-xs" style={{ color: "#334155", letterSpacing: "0.08em" }}>
+              {totalInCategory - playableCount > 0
+                ? `${totalInCategory - playableCount} DRAFT${totalInCategory - playableCount !== 1 ? "S" : ""} — NO IMAGES`
+                : "ALL VEHICLES READY"}
+            </span>
+            <span className="font-data text-xs" style={{ color: bestScore != null ? "#f59e0b" : "#334155", letterSpacing: "0.08em" }}>
+              BEST&nbsp;
+              <span style={{ color: bestScore != null ? "#f59e0b" : "#1e293b" }}>
+                {bestScore != null ? `${bestScore}/10` : "—"}
+              </span>
+            </span>
+          </div>
         </TacCard>
+
+        {/* Category selector */}
+        <div className="w-full mb-4">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            CATEGORY
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORY_OPTIONS.map((opt) => {
+              const isSelected = selectedCategory === opt.id;
+              const count = categoryCounts[opt.id] ?? 0;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => onCategoryChange(opt.id)}
+                  className="font-data"
+                  style={{
+                    fontSize: "0.72rem",
+                    padding: "5px 12px",
+                    borderRadius: 2,
+                    letterSpacing: "0.1em",
+                    minHeight: 32,
+                    border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                    background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                    color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
+                    opacity: count === 0 && !isSelected ? 0.45 : 1,
+                    cursor: "pointer",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Begin training button */}
         <button
@@ -652,23 +713,48 @@ function EndScreen({ score, total, onPlayAgain }) {
 // ============================================================================
 
 function App() {
-  const [screen, setScreen]       = useState("home");
-  const [round, setRound]         = useState(null);
+  const [screen, setScreen]         = useState("home");
+  const [round, setRound]           = useState(null);
   const [finalScore, setFinalScore] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [bestScores, setBestScores] = useState(loadBestScores);
 
   // Prefer a local draft (saved by the admin) over the deployed file.
   const draft    = loadDraftFromStorage();
   const vehicles = draft || window.vehicles || [];
   const usingDraft = Boolean(draft);
 
+  // Vehicles visible in the current category (all vehicles when "all" selected)
+  const filteredVehicles = selectedCategory === "all"
+    ? vehicles
+    : vehicles.filter((v) => v.category === selectedCategory);
+
+  // Playable = has at least one image
+  const playableCount  = filteredVehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
+  const totalInCategory = filteredVehicles.length;
+
+  // Per-category playable counts for the selector buttons
+  const categoryCounts = CATEGORY_OPTIONS.reduce((acc, opt) => {
+    const list = opt.id === "all" ? vehicles : vehicles.filter((v) => v.category === opt.id);
+    acc[opt.id] = list.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
+    return acc;
+  }, {});
+
   const startGame = () => {
-    setRound(buildRound(vehicles));
+    setRound(buildRound(filteredVehicles));
     setFinalScore(0);
     setScreen("quiz");
   };
 
   const finishGame = (score) => {
     setFinalScore(score);
+    // Persist best score for the category that was just played
+    const prev = bestScores[selectedCategory] ?? -1;
+    if (score > prev) {
+      const updated = { ...bestScores, [selectedCategory]: score };
+      setBestScores(updated);
+      localStorage.setItem(BEST_SCORES_KEY, JSON.stringify(updated));
+    }
     setScreen("end");
   };
 
@@ -696,16 +782,16 @@ function App() {
   if (screen === "quiz") return <QuizScreen round={round} onComplete={finishGame} />;
   if (screen === "end")  return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} />;
 
-  const playableCount = vehicles.filter(
-    (v) => Array.isArray(v.images) && v.images.length > 0
-  ).length;
-
   return (
     <HomeScreen
       onPlay={startGame}
-      vehicleCount={vehicles.length}
+      totalInCategory={totalInCategory}
       playableCount={playableCount}
       usingDraft={usingDraft}
+      selectedCategory={selectedCategory}
+      onCategoryChange={setSelectedCategory}
+      categoryCounts={categoryCounts}
+      bestScore={bestScores[selectedCategory]}
     />
   );
 }
