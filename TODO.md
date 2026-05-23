@@ -58,12 +58,12 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] (Phase 2) Enforce minimum 5 images per difficulty level for filtering
 
 ### PWA
-- [ ] manifest.json configured
-- [ ] Service worker registered
-- [ ] Offline caching working
-- [ ] Installable to iOS home screen
-- [ ] Installable to Android home screen
-- [ ] Tested in Google Sites iframe embed
+- [x] manifest.json configured
+- [x] Service worker registered
+- [x] Offline caching working
+- [x] Installable to iOS home screen — verified on iPhone 11 Pro
+- [ ] Installable to Android home screen _(deferred — no Android device available for testing)_
+- [ ] Tested in Google Sites iframe embed _(deferred — not currently required for launch)_
 
 ---
 
@@ -197,4 +197,4 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ---
 
-*Last updated: 2026-05-20*
+*Last updated: 2026-05-23*

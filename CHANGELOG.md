@@ -14,7 +14,13 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 > Changes being worked on but not yet in a release.
 
 ### Added
+- **Mobile safe-area layout (v17)** — quiz, home, and end screens now respect iOS safe-area insets so nothing hides behind the iPhone status bar / Dynamic Island or the home indicator. New `.quiz-shell` CSS class uses `100dvh` so the layout is exactly one screen tall on mobile (no dead space below the answers). The vehicle image switched from a fixed 220px height to a flex-fill region that grows into the space between the header and the answer buttons. Verified on iPhone 11 Pro.
 - **PWA icons** — `assets/icons/icon-192.png` and `assets/icons/icon-512.png` generated: white tank silhouette (hull, turret, barrel, wheel cutouts) on navy #1a2744 background. Both declared `maskable` in `manifest.json` so Android adaptive icons clip cleanly to any shape. Service worker bumped to v14 to precache the new files; `.gitkeep` placeholder removed from `assets/icons/`.
+
+### Changed
+- **Quiz image now shows the whole vehicle (v18)** — switched the target image from `object-cover` (which cropped tall or wide photos) to `object-contain`, so every photo is shown end-to-end. Any letterboxing sits on the existing dark `#0a0e1a` image backdrop and reads as intentional.
+- **Result panel removed from the quiz (v19)** — the "✓ TARGET ACQUIRED" / "✗ WRONG TARGET" box has been pulled out of the quiz screen. The answer-button styling (green for correct, red for the chosen wrong option, dimmed for the unchosen alternatives, plus ✓ / ✗ glyphs) already carries the full feedback signal, so the panel was redundant. The `funFacts` data, the random-pick logic in `buildRound`, and the admin editor all remain in place — the in-game render can be restored with a single block in `QuizScreen`.
+- **Next button is now always visible (v19)** — the Next / Debrief button used to appear only after an answer was selected, causing the layout to shift. It now renders on every question and is styled disabled (gray background, dim text, `cursor: not-allowed`) until an answer is picked, matching the disabled-button look from the home screen.
 
 ---
 
