@@ -186,8 +186,7 @@ window.vehicles = [
     funFacts: [
       "Over 49,000 M4 Sherman tanks were built during World War 2 — more than any other tank used by the Western Allies."
     ]
-  }
-];
+  },
 
   // ══════════════════════════════════════════════════════════════════
   //  APCs — Armoured Personnel Carriers
@@ -269,6 +268,58 @@ window.vehicles = [
       "The Boxer uses a revolutionary 'drive module plus mission module' design — the front crew cab can be separated from the rear payload section and swapped in under an hour.",
       "This modularity means a single Boxer drive module can serve as an APC one day and an ambulance or command vehicle the next, without any workshop modifications.",
       "The Boxer is in service with Germany, the Netherlands, Lithuania, and Australia, and is one of the heaviest wheeled APCs ever built — nearly as well protected as some infantry fighting vehicles."
+    ]
+  },
+  {
+    id: "btr60",
+    name: "BTR-60",
+    country: "Soviet Union",
+    category: "APC",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The BTR-60 was the first Soviet APC built on its own purpose-designed chassis rather than adapted from a truck — every wheeled Soviet APC since traces its lineage to it.",
+      "The BTR-60 uses two engines, each driving four wheels on its own side. If one engine is destroyed, the vehicle can still drive away on the other.",
+      "Over 25,000 BTR-60s were built, and they served with more than 50 countries — many of them still operating modernised variants today."
+    ]
+  },
+  {
+    id: "vab",
+    name: "VAB",
+    country: "France",
+    category: "APC",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The VAB (Véhicule de l'Avant Blindé) is fully amphibious using two water jets — French marines used it for beach assaults and river crossings without preparation.",
+      "Over 5,000 VABs have been built, and the platform has seen combat with French forces in Lebanon, Bosnia, Mali, Afghanistan, and the Sahel.",
+      "Despite being designed in the 1970s, modernised VABs are still in front-line French service — replacements (the Griffon) only began arriving in the early 2020s."
+    ]
+  },
+  {
+    id: "piranha3",
+    name: "Piranha III",
+    country: "Switzerland",
+    category: "APC",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Piranha family is the foundation for the Stryker, LAV-25, and Pandur — all of those Western APCs are derived from this Swiss 8×8 design.",
+      "Switzerland is officially neutral, yet its arms industry produces the Piranha which serves with more than 20 militaries worldwide.",
+      "The Piranha III can be air-transported by C-130 Hercules and reconfigured between APC, IFV, command vehicle, ambulance, and mortar carrier roles."
+    ]
+  },
+  {
+    id: "eitan",
+    name: "Eitan",
+    country: "Israel",
+    category: "APC",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "Israel's Eitan was designed using lessons from the 2006 Lebanon War — it carries the Trophy active protection system, which can intercept incoming RPGs and anti-tank missiles in flight.",
+      "The Eitan replaces the M113 in Israeli service, which had been criticised for inadequate protection against modern anti-armour weapons.",
+      "Despite weighing over 35 tonnes, the Eitan can reach 90 km/h on roads — making it one of the fastest heavily-armoured wheeled APCs ever built."
     ]
   },
 
@@ -353,6 +404,58 @@ window.vehicles = [
       "The Marder has been continuously upgraded since its introduction in 1971 and remained in front-line German service for over 50 years."
     ]
   },
+  {
+    id: "bmp1",
+    name: "BMP-1",
+    country: "Soviet Union",
+    category: "IFV",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "Introduced in 1966, the BMP-1 was the world's first true infantry fighting vehicle — combining troop transport, armour, and direct fire support in one platform.",
+      "Its 73mm low-pressure gun could fire HEAT rounds capable of penetrating early NATO tanks at close range, making the BMP-1 a serious threat far beyond a typical APC.",
+      "The BMP-1 has been used in nearly every major conflict since the 1973 Yom Kippur War, with over 20,000 built and many still in service today."
+    ]
+  },
+  {
+    id: "puma",
+    name: "Puma",
+    country: "Germany",
+    category: "IFV",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The Puma is one of the most heavily protected IFVs ever built — its modular armour can be upgraded in the field from 'Combat Light' (38 tonnes, air-transportable) to 'Combat' (43 tonnes, maximum protection).",
+      "Its turret is unmanned — the gunner and commander sit inside the hull, removing the most exposed crew positions from harm's way.",
+      "Germany's Puma development programme cost over 10 billion euros, making it one of the most expensive IFVs per unit ever fielded."
+    ]
+  },
+  {
+    id: "k21",
+    name: "K21",
+    country: "South Korea",
+    category: "IFV",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "South Korea's K21 uses inflatable pontoons that deploy from the hull on demand, giving it enough buoyancy to swim across rivers without preparation.",
+      "Its 40mm autocannon is one of the few fitted to any IFV that can engage tanks frontally at close range using armour-piercing rounds.",
+      "The K21 is built largely from glass-fibre composite to keep weight down, making it air-transportable by C-17 and giving it excellent cross-country agility."
+    ]
+  },
+  {
+    id: "zbd04a",
+    name: "ZBD-04A",
+    country: "China",
+    category: "IFV",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The ZBD-04A is China's first true modern IFV, drawing design inspiration from the Russian BMP-3 but with significant Chinese improvements and updated electronics.",
+      "Like the BMP-3, it carries a 100mm gun and 30mm autocannon — but with improved digital fire control and crew interfaces.",
+      "The ZBD-04A is one of the few IFVs in the world capable of swimming at over 12 km/h using water jets, supporting amphibious operations."
+    ]
+  },
 
   // ══════════════════════════════════════════════════════════════════
   //  Artillery — Self-Propelled Guns & Howitzers
@@ -435,6 +538,58 @@ window.vehicles = [
       "AS-90s were donated to Ukraine in 2023, where crews valued their combination of range, mobility, and protection compared to older Soviet-era artillery."
     ]
   },
+  {
+    id: "m270mlrs",
+    name: "M270 MLRS",
+    country: "United States",
+    category: "Artillery",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The M270 can fire 12 rockets in under 40 seconds, blanketing an area the size of six football fields with submunitions.",
+      "It uses the same chassis as the Bradley fighting vehicle, allowing the rocket battery to keep pace with armoured units across rough terrain.",
+      "Iraqi troops in the 1991 Gulf War nicknamed the M270 'Steel Rain' — its area-saturation attacks were devastating to dug-in positions."
+    ]
+  },
+  {
+    id: "2s7pion",
+    name: "2S7 Pion",
+    country: "Soviet Union",
+    category: "Artillery",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The 2S7 Pion's 203mm gun is one of the largest-calibre weapons ever mounted on a tracked chassis — its shells weigh over 100 kg each.",
+      "The Pion can fire a special tactical nuclear shell, making it one of the few Soviet artillery systems with strategic capabilities.",
+      "With a maximum range of over 47 km using conventional rounds, the 2S7 outranges most NATO artillery — a deliberate Soviet design choice during the Cold War."
+    ]
+  },
+  {
+    id: "m777",
+    name: "M777 Howitzer",
+    country: "United Kingdom",
+    category: "Artillery",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The M777 is the lightest 155mm howitzer in the world — its titanium construction makes it light enough to be sling-loaded by a CH-47 Chinook.",
+      "It entered combat in 2005 and has been used extensively in Afghanistan, Iraq, and Ukraine — donated to Ukrainian forces by both the US and UK.",
+      "Despite its low weight, the M777 can fire the GPS-guided Excalibur shell to land within four metres of a target at ranges over 40 km."
+    ]
+  },
+  {
+    id: "plz05",
+    name: "PLZ-05",
+    country: "China",
+    category: "Artillery",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The PLZ-05 is China's primary modern self-propelled howitzer, drawing heavily from the design of the Russian 2S19 Msta-S.",
+      "Its 155mm gun can fire NATO-standard ammunition as well as Chinese laser-guided shells, giving it broad compatibility on the export market.",
+      "The PLZ-05 features a fully automatic loading system, allowing it to sustain eight rounds per minute during prolonged fire missions."
+    ]
+  },
 
   // ══════════════════════════════════════════════════════════════════
   //  Helicopters — Attack & Utility
@@ -515,6 +670,58 @@ window.vehicles = [
       "The Tiger was designed using radar-absorbing composite materials to reduce its radar cross-section — making it significantly harder to detect than older metal-airframe helicopters.",
       "Its engine exhausts are shaped and shielded to minimise the infrared signature, making it harder for heat-seeking missiles to lock on.",
       "The Tiger HAD (Hélicoptère d'Appui Destruction) variant used by France and Spain is one of the most agile attack helicopters in the world — its lightweight composite airframe gives it performance comparable to much smaller scout helicopters."
+    ]
+  },
+  {
+    id: "uh1huey",
+    name: "UH-1 Huey",
+    country: "United States",
+    category: "Helicopter",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The UH-1 Huey is one of the most iconic helicopters ever built — its distinctive 'thump-thump' blade slap became synonymous with the Vietnam War.",
+      "Over 16,000 UH-1s were built, more than any other military helicopter except the Mi-8.",
+      "The Huey is still in active military service with over 30 countries, more than 60 years after its first flight in 1956."
+    ]
+  },
+  {
+    id: "mi8hip",
+    name: "Mi-8 Hip",
+    country: "Soviet Union",
+    category: "Helicopter",
+    era: "Cold War",
+    images: [],
+    funFacts: [
+      "The Mi-8 family is the most-produced helicopter in history, with over 17,000 built since 1961 — more than any Western helicopter design.",
+      "An Mi-8 can carry 24 fully-equipped soldiers — twice the troop capacity of the Black Hawk — making it one of the most capable medium-lift helicopters ever built.",
+      "The Mi-8 has flown in every climate on Earth, from the Arctic Circle to the equator, and has logged more combat hours than perhaps any other helicopter type."
+    ]
+  },
+  {
+    id: "nh90",
+    name: "NH90",
+    country: "France",
+    category: "Helicopter",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The NH90 is the most extensively customised helicopter ever built — virtually every operator nation gets a slightly different configuration tailored to its requirements.",
+      "It was the first helicopter to be designed entirely on computer using CAD/CAM systems — no physical prototypes were built during the initial design phase.",
+      "The NH90's fly-by-wire flight control system gives it stability and precision more typical of fighter jets than transport helicopters."
+    ]
+  },
+  {
+    id: "aw101merlin",
+    name: "AW101 Merlin",
+    country: "United Kingdom",
+    category: "Helicopter",
+    era: "Modern",
+    images: [],
+    funFacts: [
+      "The AW101 Merlin can operate from ship decks in sea states that would ground most other helicopters — its automated flight control system manages pitch and roll to counter ship motion.",
+      "Its three engines give it enormous performance reserves — a Merlin can complete its mission safely even after losing an engine entirely.",
+      "The Royal Navy uses Merlins for anti-submarine warfare, dipping their sonar into the ocean to hunt submarines hundreds of kilometres from their host ship."
     ]
   }
 ];
