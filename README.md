@@ -11,18 +11,19 @@ A Progressive Web App (PWA) quiz game that teaches players to recognize and iden
 
 ## 🌐 Play the Game
 
-> 🚧 **Coming soon** — the live link will go up at `https://blazejama.github.io/MatKenGame` once the MVP is deployed.
+**[Play MatKenGame →](https://blazejama.github.io/MatKenGame)**
 
-> Will be embeddable in Google Sites. Works on iOS, Android, and desktop browsers. Can be installed to your home screen.
+Works on iOS, Android, and desktop browsers. On mobile you can add it to your home screen and play offline.
 
 ## 📦 MVP Features
 
 - 10-question rounds of Main Battle Tank recognition
 - 4 multiple-choice answers per question (vehicle name + country)
-- Instant green/red feedback after each answer
-- Fun fact shown after every answer
-- Final score and Play Again button
+- Instant green/red feedback on the answer buttons themselves
+- Tactical HUD visual style — dark backdrop, amber accents, custom typography
+- Final score with a tactical rating (`ELITE OPERATOR` → `BACK TO BASICS`) and Replay button
 - Multiple images per vehicle, picked at random each round
+- Mobile-first layout that respects iOS safe-area insets (status bar, Dynamic Island, home indicator)
 - Installable as a PWA, works offline after first visit
 
 ## 🔮 Coming Later
@@ -37,8 +38,8 @@ A Progressive Web App (PWA) quiz game that teaches players to recognize and iden
 
 | Phase | Status | Description |
 |---|---|---|
-| MVP | 🛠️ In Setup | Core quiz game — Main Battle Tanks |
-| Phase 2 | ⬜ Planned | More categories, difficulty, hints, admin page |
+| MVP | ✅ Released (v1.0.0) | Core quiz game — Main Battle Tanks, PWA, tactical HUD |
+| Phase 2 | ⬜ Planned | More categories, difficulty modes, hints, expanded admin upload flow |
 | Phase 3 | ⬜ Planned | Special modes, leaderboard, streaks, sound |
 
 ## 🛠️ Tech Stack
@@ -55,6 +56,9 @@ A Progressive Web App (PWA) quiz game that teaches players to recognize and iden
 MatKenGame/
 ├── index.html            ← Entry point
 ├── app.jsx               ← Main React app
+├── admin/                ← Admin page (data editor, desktop-only)
+│   ├── index.html
+│   └── admin.jsx
 ├── data/
 │   └── vehicles.js       ← All vehicle data
 ├── assets/

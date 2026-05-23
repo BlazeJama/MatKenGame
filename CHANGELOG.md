@@ -13,6 +13,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+_Nothing here yet — next chapter is Phase 2._
+
+---
+
+## [1.0.0] - 2026-05-23 — MVP Release 🚀
+
+First public release. Complete playable PWA: Home → 10-question quiz → Debrief → Replay. Tactical HUD aesthetic across all screens. Installable on iOS (verified) and Android (untested but configured). Admin page included as a bonus — full vehicle CRUD, draft persistence, export to `data/vehicles.js`.
+
 ### Added
 - **Mobile safe-area layout (v17)** — quiz, home, and end screens now respect iOS safe-area insets so nothing hides behind the iPhone status bar / Dynamic Island or the home indicator. New `.quiz-shell` CSS class uses `100dvh` so the layout is exactly one screen tall on mobile (no dead space below the answers). The vehicle image switched from a fixed 220px height to a flex-fill region that grows into the space between the header and the answer buttons. Verified on iPhone 11 Pro.
 - **PWA icons** — `assets/icons/icon-192.png` and `assets/icons/icon-512.png` generated: white tank silhouette (hull, turret, barrel, wheel cutouts) on navy #1a2744 background. Both declared `maskable` in `manifest.json` so Android adaptive icons clip cleanly to any shape. Service worker bumped to v14 to precache the new files; `.gitkeep` placeholder removed from `assets/icons/`.
@@ -21,9 +29,6 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 - **Quiz image now shows the whole vehicle (v18)** — switched the target image from `object-cover` (which cropped tall or wide photos) to `object-contain`, so every photo is shown end-to-end. Any letterboxing sits on the existing dark `#0a0e1a` image backdrop and reads as intentional.
 - **Result panel removed from the quiz (v19)** — the "✓ TARGET ACQUIRED" / "✗ WRONG TARGET" box has been pulled out of the quiz screen. The answer-button styling (green for correct, red for the chosen wrong option, dimmed for the unchosen alternatives, plus ✓ / ✗ glyphs) already carries the full feedback signal, so the panel was redundant. The `funFacts` data, the random-pick logic in `buildRound`, and the admin editor all remain in place — the in-game render can be restored with a single block in `QuizScreen`.
 - **Next button is now always visible (v19)** — the Next / Debrief button used to appear only after an answer was selected, causing the layout to shift. It now renders on every question and is styled disabled (gray background, dim text, `cursor: not-allowed`) until an answer is picked, matching the disabled-button look from the home screen.
-
----
-
 - **Tactical HUD visual redesign** — complete UI overhaul across all three screens (Home, Quiz, End):
   - Dark `#070b14` background with a subtle amber grid and fixed scanline overlay (CSS `body::after`)
   - **Bebas Neue** display font for all headings and action labels; **Rajdhani** for body/UI text; **Share Tech Mono** for score counters and metadata readouts — all served from Google Fonts
@@ -36,7 +41,7 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
   - Home screen: `◈ SYSTEM ONLINE ◈` label, MATKENGAME title with amber **GAME** suffix, Mission Intel card, **BEGIN TRAINING** button, Field Briefing section
   - Service worker bumped to v15; `.claude/launch.json` added for local preview server
 
-### Previous unreleased work
+### Admin page (bonus — not strictly required for MVP)
 - **Admin page foundation (PR 1 of 5)** — new `/admin/` URL with separate `index.html` and `admin.jsx`. Includes session-based password gate (stored in `sessionStorage`), desktop-only check with mobile "use a desktop" message, and a two-column shell with placeholders for the vehicle list (PR 2) and add/edit form (PR 3). Service worker cache bumped to v4 to precache the new admin files.
 - **Admin vehicle list (PR 2 of 5)** — left column now lists every vehicle with name, country, category badge, era badge (colour-coded per era), image count, and a 3-row difficulty status indicator (E / M / H) showing per-star-level image counts and readiness (bright gold ★ = 5+ images, dim grey ★ = partial, very dim ★ = none). Includes a live search box, category dropdown filter, "Showing X of Y" counter, empty-state message, and a star-colour legend. Edit / Delete buttons present but disabled — wired up in PR 3 / PR 4. Service worker bumped to v5.
 - **Admin add / edit form + view-first workflow (PR 3 of 5)** — right column is now driven by a mode state (`empty` / `view` / `edit` / `new`):
