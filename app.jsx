@@ -439,7 +439,7 @@ function QuizScreen({ round, onComplete }) {
         <img
           src={question.image.url}
           alt="Military vehicle to identify"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
         />
         {/* Targeting brackets */}
         <TargetBrackets size={26} color="#f59e0b" thickness={2} inset={10} />
@@ -539,19 +539,16 @@ function QuizScreen({ round, onComplete }) {
               {isCorrect ? "✓ TARGET ACQUIRED" : "✗ WRONG TARGET"}
             </p>
             {!isCorrect && (
-              <p className="text-sm mb-2" style={{ color: "#64748b" }}>
+              <p className="text-sm" style={{ color: "#64748b" }}>
                 Correct:{" "}
                 <span style={{ color: "#e2e8f0", fontWeight: 600 }}>
                   {question.vehicle.name}
                 </span>
               </p>
             )}
-            {question.funFact && (
-              <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>
-                <span style={{ color: "#f59e0b" }}>◈ </span>
-                {question.funFact}
-              </p>
-            )}
+            {/* Fun fact intentionally hidden in-game — funFacts remain in the
+                data + admin so this can be re-enabled later by restoring the
+                {question.funFact && (...)} block here. */}
           </div>
         )}
 
