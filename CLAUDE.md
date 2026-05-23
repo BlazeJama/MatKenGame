@@ -110,7 +110,7 @@ export const vehicles = [
 - category is one of: "Main Battle Tank", "APC", "IFV", "Artillery", "Helicopter"
 - era is one of: "WW2", "Cold War", "Modern"
 
-> **MVP note:** the game ignores the `stars` field and picks a random image. The field is recorded now so Phase 2 difficulty filtering can be added without a data migration. The "5 images per difficulty level" rule is a Phase 2 concern, not MVP.
+> **Difficulty (Phase 2, shipped):** the home screen lets you pick EASY (★) / MEDIUM (★★) / HARD (★★★), and the game filters each vehicle's images to that star level. A vehicle is playable at a given difficulty if it has at least one image at that star level. Best scores are tracked separately per category × difficulty.
 
 ---
 

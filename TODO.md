@@ -77,10 +77,10 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Database expanded to 50–75 vehicles
 
 ### Difficulty Levels
-- [ ] Easy mode implemented
-- [ ] Medium mode implemented
-- [ ] Hard mode implemented (similar variants)
-- [ ] Difficulty selector on home screen
+- [x] Easy mode implemented (★ — uses 1-star images per vehicle)
+- [x] Medium mode implemented (★★ — uses 2-star images per vehicle)
+- [x] Hard mode implemented (★★★ — uses 3-star images per vehicle)
+- [x] Difficulty selector on home screen
 
 ### Filters
 - [ ] Category filter (tanks, helicopters, etc.)

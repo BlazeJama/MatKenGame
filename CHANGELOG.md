@@ -13,7 +13,17 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
-_Nothing here yet — next chapter is Phase 2._
+### Added — Phase 2 progress
+- **Difficulty modes (EASY / MEDIUM / HARD)** — the home screen now offers three difficulty levels, mapped to the per-image `stars` field that has been in the data schema since v0.1.0. Each round picks images of the chosen star level only; vehicles without an image at the selected level are excluded from the question pool but still appear as plausible wrong answers (since wrong-answer cards only use the vehicle name, not its image). Difficulty buttons dim when the current category has zero playable images at that level. Default is Easy on first launch.
+- **Best scores are now tracked per category × difficulty.** The localStorage key (`matken-best-scores`) migrates legacy flat scores (`{ category: number }`) into the new nested form (`{ category: { difficulty: number } }`) automatically — old flat scores are treated as Easy-mode results.
+- **Per-category vehicle expansion** — each non-MBT category now has 10 entries with full metadata and 3 fun facts. New additions: APCs (BTR-60, VAB, Piranha III, Eitan); IFVs (BMP-1, Puma, K21, ZBD-04A); Artillery (M270 MLRS, 2S7 Pion, M777, PLZ-05); Helicopters (UH-1 Huey, Mi-8 Hip, NH90, AW101 Merlin). Total: 50 vehicles, 10 per category.
+
+### Changed
+- **`Reset to file` button replaced with `🗑 Discard draft`** on the admin page — red destructive styling, stronger confirm dialog that counts the new vehicles and image URLs being lost, and a tip pointing at Save + update-game.bat as the non-destructive alternative.
+- **End screen now offers two paths** — primary `↺ REDEPLOY` (same category/difficulty again) and secondary `← CHANGE CATEGORY` (back to home).
+
+### Fixed
+- **Stray `];` in `data/vehicles.js`** that prematurely closed the vehicles array after the M4 Sherman entry, leaving the four new categories as dangling syntax errors. The deployed game hadn't crashed because the service worker was still serving the cached pre-expansion file, but the next cache refresh would have triggered a `DATA LOAD FAILURE`. Fixed and verified — the file now parses to exactly 50 vehicles.
 
 ---
 

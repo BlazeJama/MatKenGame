@@ -11,15 +11,30 @@ const { useState } = React;
 // uses your in-progress draft instead of the deployed window.vehicles
 const DRAFT_STORAGE_KEY = "matken-draft-vehicles";
 
-// localStorage key for per-category best scores: { "all": 8, "Main Battle Tank": 10, ... }
+// localStorage key for nested best scores: { "all": { 1: 8, 2: 5, 3: 3 }, "Main Battle Tank": {...}, ... }
 const BEST_SCORES_KEY = "matken-best-scores";
 
 function loadBestScores() {
   try {
     const raw = localStorage.getItem(BEST_SCORES_KEY);
-    if (raw) { const p = JSON.parse(raw); if (p && typeof p === "object") return p; }
-  } catch (_) {}
-  return {};
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    // Migrate from the pre-difficulty flat shape { category: number }
+    // to the new nested shape { category: { difficulty: number } }.
+    // Pre-difficulty scores are treated as Easy (★) scores.
+    const migrated = {};
+    for (const [cat, val] of Object.entries(parsed)) {
+      if (typeof val === "number") {
+        migrated[cat] = { 1: val };
+      } else if (val && typeof val === "object") {
+        migrated[cat] = val;
+      }
+    }
+    return migrated;
+  } catch (_) {
+    return {};
+  }
 }
 
 // Category options shown in the home-screen selector.
@@ -31,6 +46,13 @@ const CATEGORY_OPTIONS = [
   { id: "IFV",              label: "IFV"  },
   { id: "Artillery",        label: "ARTY" },
   { id: "Helicopter",       label: "HELO" },
+];
+
+// Difficulty levels — id matches the `stars` field on each image
+const DIFFICULTY_OPTIONS = [
+  { id: 1, label: "EASY",   stars: "★"   },
+  { id: 2, label: "MEDIUM", stars: "★★"  },
+  { id: 3, label: "HARD",   stars: "★★★" },
 ];
 
 function loadDraftFromStorage() {
@@ -66,15 +88,22 @@ function pickRandom(arr, n) {
 }
 
 // Build one round: up to 10 question objects, each with the correct vehicle,
-// a randomly chosen image, and 4 shuffled answer options.
-// Vehicles with zero images are excluded — they're treated as drafts.
-function buildRound(vehicles) {
+// an image at the chosen difficulty, and 4 shuffled answer options.
+// Vehicles with zero images at the requested difficulty are excluded.
+function buildRound(vehicles, difficulty) {
   const QUESTIONS_PER_ROUND = 10;
-  const playable = vehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0);
+  const hasImageAtDifficulty = (v) =>
+    Array.isArray(v.images) && v.images.some((img) => img.stars === difficulty);
+
+  // Pool used to pick the QUESTION vehicles — must have at least one image
+  // at the requested difficulty so we have something to show.
+  const playable = vehicles.filter(hasImageAtDifficulty);
   const roundVehicles = shuffle(playable).slice(0, QUESTIONS_PER_ROUND);
 
   return roundVehicles.map((vehicle) => {
-    const image = pickRandom(vehicle.images, 1)[0];
+    const imagesAtDifficulty = vehicle.images.filter((img) => img.stars === difficulty);
+    const image = pickRandom(imagesAtDifficulty, 1)[0];
+
     // Pick one fun fact at random per question. Falls back to a singular
     // `funFact` field if the vehicle still uses the legacy schema.
     const facts =
@@ -84,8 +113,11 @@ function buildRound(vehicles) {
         ? [vehicle.funFact]
         : [];
     const funFact = facts.length > 0 ? pickRandom(facts, 1)[0] : "";
-    // Wrong answers: same category, different vehicle, must also have images
-    const wrongPool = playable.filter(
+
+    // Wrong answers: any vehicle in the same category (we only use the name
+    // in the answer options — not the image — so difficulty doesn't apply
+    // to the wrong-answer pool).
+    const wrongPool = vehicles.filter(
       (v) => v.id !== vehicle.id && v.category === vehicle.category
     );
     const wrongAnswers = pickRandom(wrongPool, Math.min(3, wrongPool.length));
@@ -158,7 +190,9 @@ function TacCard({ children, className = "", style: extraStyle = {} }) {
 // ============================================================================
 
 function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
-                      selectedCategory, onCategoryChange, categoryCounts, bestScore }) {
+                      selectedCategory, onCategoryChange, categoryCounts,
+                      selectedDifficulty, onDifficultyChange, difficultyCounts,
+                      bestScore }) {
   const canPlay = playableCount > 0;
 
   return (
@@ -288,6 +322,45 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                   }}
                 >
                   {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Difficulty selector */}
+        <div className="w-full mb-5">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            DIFFICULTY
+          </div>
+          <div className="flex gap-2">
+            {DIFFICULTY_OPTIONS.map((opt) => {
+              const isSelected = selectedDifficulty === opt.id;
+              const count = difficultyCounts[opt.id] ?? 0;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => onDifficultyChange(opt.id)}
+                  className="font-data flex-1"
+                  style={{
+                    fontSize: "0.72rem",
+                    padding: "8px 8px",
+                    borderRadius: 2,
+                    letterSpacing: "0.1em",
+                    minHeight: 38,
+                    border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                    background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                    color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
+                    opacity: count === 0 && !isSelected ? 0.45 : 1,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  <span style={{ color: isSelected ? "#f59e0b" : "#475569", fontSize: "0.85rem" }}>{opt.stars}</span>
+                  <span>{opt.label}</span>
                 </button>
               );
             })}
@@ -734,7 +807,8 @@ function App() {
   const [screen, setScreen]         = useState("home");
   const [round, setRound]           = useState(null);
   const [finalScore, setFinalScore] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory]     = useState("all");
+  const [selectedDifficulty, setSelectedDifficulty] = useState(1);  // 1 = Easy by default
   const [bestScores, setBestScores] = useState(loadBestScores);
 
   // Prefer a local draft (saved by the admin) over the deployed file.
@@ -747,29 +821,45 @@ function App() {
     ? vehicles
     : vehicles.filter((v) => v.category === selectedCategory);
 
-  // Playable = has at least one image
-  const playableCount  = filteredVehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
+  // Playable = has at least one image AT THE SELECTED DIFFICULTY
+  const hasImageAtSelected = (v) =>
+    Array.isArray(v.images) && v.images.some((img) => img.stars === selectedDifficulty);
+  const playableCount   = filteredVehicles.filter(hasImageAtSelected).length;
   const totalInCategory = filteredVehicles.length;
 
-  // Per-category playable counts for the selector buttons
+  // Per-category playable counts (respect current difficulty so the
+  // selector dims categories that have no images at that level)
   const categoryCounts = CATEGORY_OPTIONS.reduce((acc, opt) => {
     const list = opt.id === "all" ? vehicles : vehicles.filter((v) => v.category === opt.id);
-    acc[opt.id] = list.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
+    acc[opt.id] = list.filter(hasImageAtSelected).length;
+    return acc;
+  }, {});
+
+  // Per-difficulty playable counts within the current category (so the
+  // difficulty selector dims levels that have no images in this category)
+  const difficultyCounts = DIFFICULTY_OPTIONS.reduce((acc, opt) => {
+    acc[opt.id] = filteredVehicles.filter(
+      (v) => Array.isArray(v.images) && v.images.some((img) => img.stars === opt.id)
+    ).length;
     return acc;
   }, {});
 
   const startGame = () => {
-    setRound(buildRound(filteredVehicles));
+    setRound(buildRound(filteredVehicles, selectedDifficulty));
     setFinalScore(0);
     setScreen("quiz");
   };
 
   const finishGame = (score) => {
     setFinalScore(score);
-    // Persist best score for the category that was just played
-    const prev = bestScores[selectedCategory] ?? -1;
+    // Persist best score for the category + difficulty that was just played
+    const catScores = bestScores[selectedCategory] || {};
+    const prev = catScores[selectedDifficulty] ?? -1;
     if (score > prev) {
-      const updated = { ...bestScores, [selectedCategory]: score };
+      const updated = {
+        ...bestScores,
+        [selectedCategory]: { ...catScores, [selectedDifficulty]: score },
+      };
       setBestScores(updated);
       localStorage.setItem(BEST_SCORES_KEY, JSON.stringify(updated));
     }
@@ -815,7 +905,10 @@ function App() {
       selectedCategory={selectedCategory}
       onCategoryChange={setSelectedCategory}
       categoryCounts={categoryCounts}
-      bestScore={bestScores[selectedCategory]}
+      selectedDifficulty={selectedDifficulty}
+      onDifficultyChange={setSelectedDifficulty}
+      difficultyCounts={difficultyCounts}
+      bestScore={bestScores[selectedCategory]?.[selectedDifficulty]}
     />
   );
 }
