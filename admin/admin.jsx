@@ -1126,13 +1126,30 @@ function formatVehicleEntry(v) {
   return lines.join("\n");
 }
 
-// Generate the full vehicles.js file content
-function generateVehiclesJs(vehicles) {
-  if (vehicles.length === 0) {
-    return `${EXPORTED_HEADER}\nwindow.vehicles = [];\n\n// Convenience helper — total count, useful for the home-screen stats card\nwindow.vehicleCount = window.vehicles.length;\n`;
-  }
-  const entries = vehicles.map(formatVehicleEntry).join(",\n");
-  return `${EXPORTED_HEADER}\nwindow.vehicles = [\n${entries}\n];\n\n// Convenience helper — total count, useful for the home-screen stats card\nwindow.vehicleCount = window.vehicles.length;\n`;
+// Generate the full vehicles.js file content.
+// pactConfig is the { [country]: pactId } map from the admin's Alliance Config modal.
+function generateVehiclesJs(vehicles, pactConfig = {}) {
+  const vehicleEntries = vehicles.map(formatVehicleEntry).join(",\n");
+  const vehiclesBlock = vehicles.length === 0
+    ? "window.vehicles = [];"
+    : `window.vehicles = [\n${vehicleEntries}\n];`;
+
+  // Emit all pact overrides sorted alphabetically so diffs are stable
+  const pactLines = Object.entries(pactConfig)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([country, pact]) => `  ${JSON.stringify(country)}: ${JSON.stringify(pact)}`);
+  const pactBlock =
+    "// Alliance configuration — maps countries to military alliances.\n" +
+    "// Managed via Admin → 🌐 Alliances. Empty = built-in defaults apply.\n" +
+    `window.pactConfig = {\n${pactLines.join(",\n")}\n};`;
+
+  return (
+    `${EXPORTED_HEADER}\n` +
+    `${vehiclesBlock}\n\n` +
+    `// Convenience helper — total count, useful for the home-screen stats card\n` +
+    `window.vehicleCount = window.vehicles.length;\n\n` +
+    `${pactBlock}\n`
+  );
 }
 
 // Trigger a browser download of `content` as `filename`
@@ -1152,10 +1169,12 @@ function downloadAsFile(content, filename) {
 // Export modal — preview, download, copy
 // =============================================================================
 
-function ExportModal({ vehicles, onClose }) {
-  // useMemo so re-renders (e.g. typing in textarea — though it's readOnly) don't
-  // regenerate the file content unnecessarily
-  const fileContent = React.useMemo(() => generateVehiclesJs(vehicles), [vehicles]);
+function ExportModal({ vehicles, pactConfig, onClose }) {
+  // useMemo so re-renders don't regenerate the file content unnecessarily
+  const fileContent = React.useMemo(
+    () => generateVehiclesJs(vehicles, pactConfig),
+    [vehicles, pactConfig]
+  );
   const [copied, setCopied] = useState(false);
 
   // Close on Escape key
@@ -1640,6 +1659,7 @@ function AdminShell({ onLogout }) {
       {exportOpen && (
         <ExportModal
           vehicles={draftVehicles}
+          pactConfig={pactConfig}
           onClose={() => setExportOpen(false)}
         />
       )}
