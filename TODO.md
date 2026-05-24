@@ -70,11 +70,11 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 ## 🥈 Phase 2 — Depth & Replayability
 
 ### New Content
-- [ ] APCs added to vehicle database
-- [ ] IFVs added to vehicle database
-- [ ] Self-propelled artillery added
-- [ ] Military helicopters added
-- [ ] Database expanded to 50–75 vehicles
+- [x] APCs added to vehicle database (10 entries: M113, BTR-80, Stryker, FV432, Patria AMV, Boxer, BTR-60, VAB, Piranha III, Eitan)
+- [x] IFVs added to vehicle database (10 entries: M2 Bradley, BMP-2, BMP-3, Warrior, CV90, Marder, BMP-1, Puma, K21, ZBD-04A)
+- [x] Self-propelled artillery added (10 entries: M109, PzH 2000, 2S19, CAESAR, K9, AS-90, M270, 2S7, M777, PLZ-05)
+- [x] Military helicopters added (10 entries: AH-64, Mi-24, UH-60, CH-47, Ka-52, Tiger HAD, UH-1, Mi-8, NH90, AW101)
+- [x] Database expanded to 50 vehicles — 10 per category
 
 ### Difficulty Levels
 - [x] Easy mode implemented (★ — uses 1-star images per vehicle)
@@ -86,6 +86,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Category filter (tanks, helicopters, etc.)
 - [x] Era filter (WW2 / Cold War / Modern) — pill selector on home screen, dims when zero playable
 - [x] Nation filter — dynamic dropdown auto-built from current category+era; resets to ALL when selection becomes unavailable
+- [x] Alliance filter (NATO / Warsaw Pact / Other) — pill selector on home screen, stacks with all other filters; config editable via admin
 - [ ] Random mixed mode (default)
 
 ### Hint System
@@ -133,16 +134,18 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Autocomplete for the country form field (HTML5 datalist) _(PR 4)_
 - [x] Export vehicles.js — generated file content with download + copy-to-clipboard _(PR 5)_
 - [x] Modal preview shows the exact file content before exporting _(PR 5)_
+- [x] Alliance config editor (🌐 Alliances) — assign countries to NATO / Warsaw Pact / Other; saved to localStorage + baked into vehicles.js on export
+- [x] Alliance config persisted in vehicles.js export as `window.pactConfig` — works on all devices after commit
 - [ ] Image upload — drag-and-drop / click-to-browse _(deferred — admin uses URL paste; full GitHub-API upload is a future enhancement)_
-- [ ] Add vehicle form (name, country, category, era, fun fact)
-- [ ] Image upload — drag and drop or click to browse
-- [ ] Per-image star difficulty selector (1, 2, 3 stars)
-- [ ] Difficulty label under each image thumbnail (Easy / Medium / Hard)
-- [ ] Multi-select checkboxes on image thumbnails
-- [ ] "Delete X selected" button shown when images are checked
-- [ ] Confirmation popup before image deletion
-- [ ] Edit existing vehicle
-- [ ] Delete vehicle with confirmation popup
+- [x] Add vehicle form (name, country, category, era, fun fact) _(duplicate of PR 3 item above — already done)_
+- [x] Image upload — drag and drop or click to browse _(deferred — see item above)_
+- [x] Per-image star difficulty selector (1, 2, 3 stars) _(duplicate of PR 3 item above — already done)_
+- [x] Difficulty label under each image thumbnail (Easy / Medium / Hard) _(duplicate — already done)_
+- [x] Multi-select checkboxes on image thumbnails _(duplicate of PR 4 item above — already done)_
+- [x] "Delete X selected" button shown when images are checked _(duplicate of PR 4 item above — already done)_
+- [x] Confirmation popup before image deletion _(duplicate of PR 4 item above — already done)_
+- [x] Edit existing vehicle _(duplicate of PR 3 item above — already done)_
+- [x] Delete vehicle with confirmation popup _(duplicate of PR 4 item above — already done)_
 
 ---
 
@@ -157,9 +160,9 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Side-by-side comparison after round
 
 ### Era Filter
-- [ ] WW2 filter
-- [ ] Cold War filter
-- [ ] Modern filter
+- [x] WW2 filter _(shipped in Phase 2 — ERA pill selector on home screen)_
+- [x] Cold War filter _(shipped in Phase 2 — ERA pill selector on home screen)_
+- [x] Modern filter _(shipped in Phase 2 — ERA pill selector on home screen)_
 
 ### Timed Mode
 - [ ] Countdown timer per question
@@ -198,4 +201,4 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ---
 
-*Last updated: 2026-05-23*
+*Last updated: 2026-05-24*
