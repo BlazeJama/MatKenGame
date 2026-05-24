@@ -87,8 +87,17 @@ const WARSAW_COUNTRIES = new Set([
   "Soviet Union", "Russia",
 ]);
 
-// Returns the pact id ("NATO" | "Warsaw Pact" | "Other") for a given country string.
+// localStorage key for custom alliance assignments set via the admin page
+const PACT_CONFIG_KEY = "matken-pact-config";
+
+// Returns the pact id ("NATO" | "Warsaw Pact" | "Other") for a given country.
+// Checks the admin-configured localStorage mapping first; falls back to the
+// hardcoded sets so the game works correctly without any admin intervention.
 function getVehiclePact(country) {
+  try {
+    const config = JSON.parse(localStorage.getItem(PACT_CONFIG_KEY) || "{}");
+    if (config[country]) return config[country];
+  } catch (_) {}
   if (NATO_COUNTRIES.has(country))   return "NATO";
   if (WARSAW_COUNTRIES.has(country)) return "Warsaw Pact";
   return "Other";

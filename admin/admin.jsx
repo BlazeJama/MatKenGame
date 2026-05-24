@@ -20,8 +20,9 @@ const { useState, useEffect } = React;
 const ADMIN_PASSWORD = "matken";
 
 // Storage keys
-const SESSION_AUTH_KEY = "matken-admin-auth";
-const DRAFT_STORAGE_KEY = "matken-draft-vehicles";
+const SESSION_AUTH_KEY   = "matken-admin-auth";
+const DRAFT_STORAGE_KEY  = "matken-draft-vehicles";
+const PACT_CONFIG_KEY    = "matken-pact-config";
 
 // ---- localStorage helpers for the working draft -----------------------------
 // The admin edits a draft that persists across refreshes via localStorage.
@@ -52,6 +53,37 @@ function clearDraftFromStorage() {
   try {
     localStorage.removeItem(DRAFT_STORAGE_KEY);
   } catch (e) {}
+}
+
+// ---- Alliance (pact) config helpers -----------------------------------------
+// Mirrors the sets in app.jsx — must be kept in sync when new members are added.
+const NATO_COUNTRIES = new Set([
+  "United States", "United Kingdom", "France", "Germany", "Italy",
+  "Netherlands", "Belgium", "Canada", "Norway", "Denmark", "Portugal",
+  "Spain", "Turkey", "Greece", "Poland", "Czech Republic", "Hungary",
+  "Romania", "Bulgaria", "Slovakia", "Slovenia", "Estonia", "Latvia",
+  "Lithuania", "Albania", "Croatia", "Montenegro", "North Macedonia",
+  "Finland", "Sweden",
+]);
+const WARSAW_COUNTRIES = new Set(["Soviet Union", "Russia"]);
+
+// Hardcoded default pact for a country (same logic as app.jsx)
+function defaultPact(country) {
+  if (NATO_COUNTRIES.has(country))   return "NATO";
+  if (WARSAW_COUNTRIES.has(country)) return "Warsaw Pact";
+  return "Other";
+}
+
+function loadPactConfig() {
+  try {
+    const raw = localStorage.getItem(PACT_CONFIG_KEY);
+    if (raw) return JSON.parse(raw) || {};
+  } catch (_) {}
+  return {};
+}
+
+function savePactConfig(config) {
+  try { localStorage.setItem(PACT_CONFIG_KEY, JSON.stringify(config)); } catch (_) {}
 }
 
 // Below this width (px) we show a "use a desktop" message instead of the admin UI
@@ -1245,6 +1277,127 @@ function ExportModal({ vehicles, onClose }) {
 }
 
 // =============================================================================
+// Alliance Config modal
+// =============================================================================
+
+const PACT_OPTIONS_ADMIN = [
+  { value: "NATO",         label: "NATO"         },
+  { value: "Warsaw Pact",  label: "Warsaw Pact"  },
+  { value: "Other",        label: "Other"        },
+];
+
+function AllianceConfigModal({ vehicles, pactConfig, onConfigChange, onResetConfig, onClose }) {
+  // Unique countries with vehicle counts, sorted alphabetically
+  const countryMap = {};
+  vehicles.forEach((v) => {
+    if (v.country) countryMap[v.country] = (countryMap[v.country] || 0) + 1;
+  });
+  const countries = Object.keys(countryMap).sort();
+
+  // Close on Escape
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const getAssignment = (country) => pactConfig[country] || defaultPact(country);
+  const isOverridden  = (country) => Boolean(pactConfig[country]);
+
+  const handleReset = () => {
+    if (!confirm("Reset all alliance assignments back to the built-in defaults?\n\nAny custom assignments you've made will be lost.")) return;
+    onResetConfig();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between shrink-0">
+          <div>
+            <h2 className="font-semibold text-navy">Alliance Configuration</h2>
+            <p className="text-xs text-gray-500 mt-0.5">{countries.length} countr{countries.length === 1 ? "y" : "ies"} in the current vehicle database</p>
+          </div>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-900 text-xl leading-none">✕</button>
+        </div>
+
+        {/* Info banner */}
+        <div className="px-6 py-3 bg-blue-50 border-b border-blue-100 text-xs text-blue-800 shrink-0">
+          Changes apply instantly in the game — no export needed. The configuration is stored locally in your browser.
+        </div>
+
+        {/* Country table */}
+        <div className="flex-1 overflow-y-auto">
+          {countries.length === 0 ? (
+            <p className="text-sm text-gray-500 text-center py-10">No vehicles in the database yet.</p>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-gray-50 border-b border-gray-200">
+                <tr className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  <th className="px-6 py-3 text-left">Country</th>
+                  <th className="px-6 py-3 text-center">Vehicles</th>
+                  <th className="px-6 py-3 text-right">Alliance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {countries.map((country, i) => {
+                  const current    = getAssignment(country);
+                  const overridden = isOverridden(country);
+                  return (
+                    <tr key={country} className={`border-b border-gray-100 ${i % 2 === 0 ? "" : "bg-gray-50/40"}`}>
+                      <td className="px-6 py-3 font-medium text-navy">
+                        {country}
+                        {overridden && (
+                          <span className="ml-2 text-xs text-amber-600 font-normal">★ custom</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-3 text-gray-500 text-center tabular-nums">{countryMap[country]}</td>
+                      <td className="px-6 py-3 text-right">
+                        <select
+                          value={current}
+                          onChange={(e) => onConfigChange(country, e.target.value)}
+                          className="text-sm rounded-lg border border-gray-200 bg-white px-2 py-1.5 focus:border-navy outline-none"
+                        >
+                          {PACT_OPTIONS_ADMIN.map((opt) => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between shrink-0">
+          <button
+            onClick={handleReset}
+            className="text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg px-3 py-1.5 transition"
+          >
+            Reset to defaults
+          </button>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm rounded-lg bg-navy text-white font-medium hover:bg-navy/90"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
 // Admin shell (placeholder columns — filled in by later PRs)
 // =============================================================================
 
@@ -1290,6 +1443,23 @@ function AdminShell({ onLogout }) {
 
   // Whether the Export modal is open
   const [exportOpen, setExportOpen] = useState(false);
+
+  // Alliance config — stored in its own localStorage key (separate from the vehicle draft)
+  const [pactConfig, setPactConfig] = useState(loadPactConfig);
+  const [allianceOpen, setAllianceOpen] = useState(false);
+
+  const handlePactConfigChange = (country, pactId) => {
+    const updated = { ...pactConfig, [country]: pactId };
+    savePactConfig(updated);
+    setPactConfig(updated);
+  };
+
+  const handleResetPactConfig = () => {
+    localStorage.removeItem(PACT_CONFIG_KEY);
+    setPactConfig({});
+  };
+
+  const hasCustomPactConfig = Object.keys(pactConfig).length > 0;
 
   const selectedVehicle = selectedId
     ? draftVehicles.find((v) => v.id === selectedId) || null
@@ -1426,6 +1596,17 @@ function AdminShell({ onLogout }) {
         </div>
         <div className="flex items-center gap-3 text-sm">
           <button
+            onClick={() => setAllianceOpen(true)}
+            title="Configure which alliance each country belongs to"
+            className={`px-3 py-1.5 rounded-lg font-medium transition border ${
+              hasCustomPactConfig
+                ? "border-amber-400 text-amber-300 hover:bg-amber-400/10"
+                : "border-white/30 text-white/80 hover:text-white hover:border-white/60"
+            }`}
+          >
+            🌐 Alliances{hasCustomPactConfig ? " ★" : ""}
+          </button>
+          <button
             onClick={() => setExportOpen(true)}
             disabled={draftVehicles.length === 0}
             className={`px-3 py-1.5 rounded-lg font-medium transition ${
@@ -1460,6 +1641,16 @@ function AdminShell({ onLogout }) {
         <ExportModal
           vehicles={draftVehicles}
           onClose={() => setExportOpen(false)}
+        />
+      )}
+
+      {allianceOpen && (
+        <AllianceConfigModal
+          vehicles={draftVehicles}
+          pactConfig={pactConfig}
+          onConfigChange={handlePactConfigChange}
+          onResetConfig={handleResetPactConfig}
+          onClose={() => setAllianceOpen(false)}
         />
       )}
 
