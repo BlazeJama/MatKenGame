@@ -13,6 +13,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Phase 3: Leaderboard
+- **Global leaderboard** — powered by Supabase (PostgreSQL, RLS-secured). Scores are posted to a `leaderboard` table with callsign, score, total, category, difficulty, and timestamp. Uses the browser-safe publishable key with Row Level Security: all reads are public, inserts are validated server-side (score 0–10, difficulty 1–3, callsign 1–16 chars).
+- **Callsign system** — players pick a 1–16 character callsign (auto-uppercased) stored in `localStorage` under `matken-callsign`. The `CallsignModal` overlay prompts on first submit and can be re-opened at any time from the End Screen.
+- **End Screen — leaderboard submission card** — new `TacCard` below the score shows the current callsign and a "SUBMIT SCORE" button. State cycles: idle → transmitting → ✓ SCORE SUBMITTED. Error messages surface if the POST fails. Also shows session badges (category abbreviation + difficulty stars).
+- **End Screen — leaderboard navigation** — bottom button row now has "⊞ LEADERBOARD" (pre-filtered to the session's category + difficulty) alongside "← CHANGE CAT".
+- **LeaderboardScreen** — accessible from End Screen and Home Screen (⊞ LEADERBOARD button). Shows top-20 entries in a table (rank, callsign, score/10, category, difficulty stars, time ago). Category and difficulty filters update the fetch live. A "↻ REFRESH" button re-fetches without a page reload. Empty-state and error-state handled.
+- **Home Screen — leaderboard button** — the single "◆ PERFORMANCE LOG" ghost button is now a side-by-side pair: "◆ PERF LOG" + "⊞ LEADERBOARD" (opens the global ALL × ALL board).
+
 ### Added — Phase 2 progress
 - **Alliance filter** — new ALLIANCE pill row on the home screen with four options: ALL / NATO / WARSAW / OTHER. NATO covers all current NATO member states (including Finland and Sweden); Warsaw Pact covers Soviet Union and Russia; Other covers Switzerland, Israel, South Korea, China, and any country not in the above two groups. Pills dim when the current category+era+nation+difficulty combination has zero playable vehicles for that alliance. Stacks with all other filters.
 - **Alliance config editor in admin** — new **🌐 Alliances** button in the admin header opens a modal listing every country in the vehicle database with its vehicle count and an alliance dropdown. Changes save to localStorage instantly (no export needed for live preview). The button gains an amber ★ indicator when any custom assignment is active. A "Reset to defaults" option wipes all overrides.

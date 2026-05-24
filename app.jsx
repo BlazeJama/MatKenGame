@@ -5,7 +5,7 @@
 // Each round picks 10 random vehicles, one random image per vehicle, and 3 random wrong
 // answers from the same category for each question.
 
-const { useState } = React;
+const { useState, useEffect } = React;
 
 // localStorage key shared with the admin page — when present, the game
 // uses your in-progress draft instead of the deployed window.vehicles
@@ -89,6 +89,12 @@ const WARSAW_COUNTRIES = new Set([
 
 // localStorage key for custom alliance assignments set via the admin page
 const PACT_CONFIG_KEY = "matken-pact-config";
+
+// ── Supabase leaderboard ───────────────────────────────────────────────────
+const SUPABASE_URL      = "https://eftpalpigevckaisugmp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Lx6cMTZg5n9ZKQ6I4rYoFQ_1W1nhhsr";
+// localStorage key for the player's callsign (shown on the leaderboard)
+const CALLSIGN_KEY = "matken-callsign";
 
 // Returns the pact id ("NATO" | "Warsaw Pact" | "Other") for a given country.
 // Priority:
@@ -200,6 +206,54 @@ function scoreLabelColor(score) {
   return "#ef4444";
 }
 
+// ── Leaderboard helpers ────────────────────────────────────────────────────
+
+// Human-readable relative time from an ISO timestamp string
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
+// POST one score row to the Supabase leaderboard table
+async function submitScore({ callsign, score, total, category, difficulty }) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Prefer": "return=minimal",
+    },
+    body: JSON.stringify({ callsign, score, total, category, difficulty }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Submit failed (${res.status})${text ? ": " + text : ""}`);
+  }
+}
+
+// GET top-20 scores, optionally filtered by category and/or difficulty
+async function fetchLeaderboard(category, difficulty) {
+  let url = `${SUPABASE_URL}/rest/v1/leaderboard`
+    + `?select=callsign,score,total,category,difficulty,created_at`
+    + `&order=score.desc,created_at.asc&limit=20`;
+  if (category && category !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
+  if (difficulty && difficulty !== "all") url += `&difficulty=eq.${difficulty}`;
+  const res = await fetch(url, {
+    headers: {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  });
+  if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+  return res.json();
+}
+
 // ============================================================================
 // Shared UI primitives
 // ============================================================================
@@ -236,6 +290,99 @@ function TacCard({ children, className = "", style: extraStyle = {} }) {
   );
 }
 
+// Fullscreen overlay for setting / changing the operator callsign
+function CallsignModal({ current, onSave, onCancel }) {
+  const [value, setValue] = useState(current || "");
+  const trimmed = value.trim();
+  const canSave = trimmed.length >= 1 && trimmed.length <= 16;
+
+  const handleSave = () => { if (canSave) onSave(trimmed.toUpperCase()); };
+  const handleKey  = (e) => {
+    if (e.key === "Enter" && canSave) handleSave();
+    if (e.key === "Escape" && onCancel) onCancel();
+  };
+
+  return (
+    <div
+      style={{
+        position: "fixed", inset: 0, zIndex: 200,
+        background: "rgba(7,11,20,0.93)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: 24,
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget && onCancel) onCancel(); }}
+    >
+      <TacCard style={{ padding: "32px 28px", maxWidth: 360, width: "100%" }}>
+        <div
+          className="font-data text-xs tracking-widest mb-6 text-center"
+          style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
+        >
+          ◈ OPERATOR IDENT ◈
+        </div>
+        <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+          CALLSIGN (1–16 CHARS)
+        </div>
+        <input
+          type="text"
+          value={value}
+          maxLength={16}
+          autoFocus
+          spellCheck={false}
+          onChange={(e) => setValue(e.target.value.toUpperCase())}
+          onKeyDown={handleKey}
+          placeholder="GHOST"
+          style={{
+            display: "block",
+            width: "100%",
+            background: "rgba(15,23,42,0.8)",
+            border: `1px solid ${canSave ? "rgba(245,158,11,0.4)" : "rgba(51,65,85,0.5)"}`,
+            borderRadius: 2,
+            padding: "10px 14px",
+            color: "#f59e0b",
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: "1.8rem",
+            letterSpacing: "0.1em",
+            outline: "none",
+            marginBottom: 20,
+            boxSizing: "border-box",
+          }}
+        />
+        <button
+          onClick={handleSave}
+          disabled={!canSave}
+          className="w-full font-display tracking-widest"
+          style={{
+            fontSize: "1.25rem",
+            minHeight: 50,
+            borderRadius: 2,
+            background: canSave ? "#f59e0b" : "rgba(30,41,59,0.7)",
+            color: canSave ? "#070b14" : "#334155",
+            border: canSave ? "none" : "1px solid rgba(51,65,85,0.5)",
+            letterSpacing: "0.14em",
+            cursor: canSave ? "pointer" : "not-allowed",
+            marginBottom: onCancel ? 10 : 0,
+          }}
+        >
+          CONFIRM CALLSIGN
+        </button>
+        {onCancel && (
+          <button
+            onClick={onCancel}
+            className="w-full font-data text-xs"
+            style={{
+              background: "transparent", border: "none",
+              color: "#475569", letterSpacing: "0.1em",
+              cursor: "pointer", padding: "8px 0",
+            }}
+          >
+            CANCEL
+          </button>
+        )}
+      </TacCard>
+    </div>
+  );
+}
+
 // ============================================================================
 // Home Screen
 // ============================================================================
@@ -246,7 +393,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                       selectedPact, onPactChange, pactCounts,
                       selectedNation, onNationChange, availableNations,
                       selectedDifficulty, onDifficultyChange, difficultyCounts,
-                      bestScore, onViewStats }) {
+                      bestScore, onViewStats, onViewLeaderboard }) {
   const canPlay = playableCount > 0;
 
   return (
@@ -556,22 +703,39 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           {canPlay ? "▶  BEGIN TRAINING" : "NO VEHICLES LOADED"}
         </button>
 
-        {/* Performance log link */}
-        <button
-          onClick={onViewStats}
-          className="w-full font-data text-xs mb-5"
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(51,65,85,0.35)",
-            borderRadius: 2,
-            color: "#475569",
-            letterSpacing: "0.14em",
-            cursor: "pointer",
-            minHeight: 36,
-          }}
-        >
-          ◆ PERFORMANCE LOG
-        </button>
+        {/* Secondary nav row — Performance log + Leaderboard */}
+        <div className="w-full flex gap-2 mb-5">
+          <button
+            onClick={onViewStats}
+            className="flex-1 font-data text-xs"
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(51,65,85,0.35)",
+              borderRadius: 2,
+              color: "#475569",
+              letterSpacing: "0.12em",
+              cursor: "pointer",
+              minHeight: 36,
+            }}
+          >
+            ◆ PERF LOG
+          </button>
+          <button
+            onClick={onViewLeaderboard}
+            className="flex-1 font-data text-xs"
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(51,65,85,0.35)",
+              borderRadius: 2,
+              color: "#475569",
+              letterSpacing: "0.12em",
+              cursor: "pointer",
+              minHeight: 36,
+            }}
+          >
+            ⊞ LEADERBOARD
+          </button>
+        </div>
 
         {/* Field briefing */}
         <div
@@ -868,8 +1032,28 @@ function QuizScreen({ round, onComplete }) {
 // End Screen
 // ============================================================================
 
-function EndScreen({ score, total, onPlayAgain, onReturnHome }) {
+function EndScreen({ score, total, onPlayAgain, onReturnHome,
+                    callsign, onEditCallsign,
+                    selectedCategory, selectedDifficulty, onViewLeaderboard }) {
   const pct = Math.round((score / total) * 100);
+  const [submitState, setSubmitState] = useState("idle"); // "idle"|"submitting"|"submitted"|"error"
+  const [submitError, setSubmitError]  = useState("");
+
+  const handleSubmit = async () => {
+    if (!callsign || submitState !== "idle") return;
+    setSubmitState("submitting");
+    try {
+      await submitScore({ callsign, score, total, category: selectedCategory, difficulty: selectedDifficulty });
+      setSubmitState("submitted");
+    } catch (err) {
+      setSubmitError(err.message || "Submission failed — check your connection");
+      setSubmitState("error");
+    }
+  };
+
+  const diffLabel = DIFFICULTY_OPTIONS.find((d) => d.id === selectedDifficulty)?.stars ?? "";
+  const catLabel  = { "all": "ALL", "Main Battle Tank": "MBT", "APC": "APC",
+                      "IFV": "IFV", "Artillery": "ARTY", "Helicopter": "HELO" }[selectedCategory] ?? selectedCategory;
 
   return (
     <div className="min-h-screen flex flex-col tac-grid font-tac">
@@ -890,7 +1074,7 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome }) {
 
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-10 max-w-md mx-auto w-full">
         {/* Score card */}
-        <TacCard className="w-full text-center mb-8" style={{ padding: "32px 28px" }}>
+        <TacCard className="w-full text-center mb-5" style={{ padding: "28px 28px" }}>
           {/* Score fraction */}
           <div
             className="font-display"
@@ -901,40 +1085,87 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome }) {
           </div>
 
           {/* Percent bar */}
-          <div
-            className="mx-auto my-5"
-            style={{
-              height: 3,
-              background: "rgba(245,158,11,0.12)",
-              borderRadius: 2,
-              maxWidth: 180,
-            }}
-          >
-            <div
-              style={{
-                height: "100%",
-                width: `${pct}%`,
-                background: "#f59e0b",
-                borderRadius: 2,
-                transition: "width 0.7s ease",
-              }}
-            />
+          <div className="mx-auto my-4" style={{ height: 3, background: "rgba(245,158,11,0.12)", borderRadius: 2, maxWidth: 180 }}>
+            <div style={{ height: "100%", width: `${pct}%`, background: "#f59e0b", borderRadius: 2, transition: "width 0.7s ease" }} />
           </div>
 
           {/* Rating */}
           <div
             className="font-display tracking-widest mb-2"
-            style={{
-              fontSize: "1.5rem",
-              color: scoreLabelColor(score),
-              letterSpacing: "0.12em",
-            }}
+            style={{ fontSize: "1.5rem", color: scoreLabelColor(score), letterSpacing: "0.12em" }}
           >
             {scoreLabel(score)}
           </div>
-          <div style={{ color: "#475569", fontSize: "0.95rem" }}>
-            {scoreSubtext(score)}
+          <div style={{ color: "#475569", fontSize: "0.95rem" }}>{scoreSubtext(score)}</div>
+
+          {/* Session badges */}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <span className="font-data text-xs px-2 py-1" style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 2, color: "#64748b", letterSpacing: "0.08em" }}>
+              {catLabel}
+            </span>
+            <span className="font-data text-xs px-2 py-1" style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 2, color: "#64748b", letterSpacing: "0.08em" }}>
+              {diffLabel}
+            </span>
           </div>
+        </TacCard>
+
+        {/* Leaderboard submission card */}
+        <TacCard className="w-full mb-5" style={{ padding: "18px 20px" }}>
+          <div className="font-data text-xs mb-3" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            LEADERBOARD SUBMISSION
+          </div>
+
+          {/* Callsign display + edit */}
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <div className="font-data text-xs mb-1" style={{ color: "#334155", letterSpacing: "0.08em" }}>CALLSIGN</div>
+              <div className="font-display" style={{ fontSize: "1.5rem", color: callsign ? "#f59e0b" : "#475569", letterSpacing: "0.06em" }}>
+                {callsign || "NOT SET"}
+              </div>
+            </div>
+            <button
+              onClick={onEditCallsign}
+              className="font-data text-xs"
+              style={{
+                background: "rgba(15,23,42,0.8)", border: "1px solid rgba(51,65,85,0.5)",
+                borderRadius: 2, color: "#475569", letterSpacing: "0.1em",
+                cursor: "pointer", padding: "6px 12px",
+              }}
+            >
+              {callsign ? "CHANGE" : "SET"}
+            </button>
+          </div>
+
+          {/* Submit button */}
+          {submitState === "submitted" ? (
+            <div className="w-full font-data text-xs text-center py-3" style={{ color: "#4ade80", letterSpacing: "0.1em" }}>
+              ✓ SCORE SUBMITTED TO LEADERBOARD
+            </div>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={!callsign || submitState === "submitting"}
+              className="w-full font-display tracking-widest"
+              style={{
+                fontSize: "1.1rem",
+                minHeight: 44,
+                borderRadius: 2,
+                background: callsign && submitState === "idle" ? "rgba(245,158,11,0.15)" : "rgba(15,23,42,0.5)",
+                color: callsign && submitState === "idle" ? "#f59e0b" : "#334155",
+                border: `1px solid ${callsign && submitState === "idle" ? "rgba(245,158,11,0.4)" : "rgba(51,65,85,0.3)"}`,
+                letterSpacing: "0.14em",
+                cursor: callsign && submitState === "idle" ? "pointer" : "not-allowed",
+              }}
+            >
+              {submitState === "submitting" ? "TRANSMITTING..." : "SUBMIT SCORE"}
+            </button>
+          )}
+
+          {submitState === "error" && (
+            <div className="font-data text-xs mt-2 text-center" style={{ color: "#f87171", letterSpacing: "0.06em" }}>
+              {submitError}
+            </div>
+          )}
         </TacCard>
 
         {/* Redeploy button (primary — same category again) */}
@@ -950,35 +1181,51 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome }) {
             border: "none",
             letterSpacing: "0.14em",
             cursor: "pointer",
+            marginBottom: 10,
           }}
         >
           ↺  REDEPLOY
         </button>
 
-        {/* Change category button (secondary — back to home) */}
-        <button
-          onClick={onReturnHome}
-          className="w-full mt-3 font-display tracking-widest tac-primary"
-          style={{
-            fontSize: "1.05rem",
-            minHeight: "46px",
-            borderRadius: 2,
-            background: "transparent",
-            color: "#f59e0b",
-            border: "1px solid rgba(245,158,11,0.45)",
-            letterSpacing: "0.14em",
-            cursor: "pointer",
-          }}
-        >
-          ←  CHANGE CATEGORY
-        </button>
+        {/* View leaderboard + change category */}
+        <div className="w-full flex gap-2 mb-2">
+          <button
+            onClick={() => onViewLeaderboard(selectedCategory, selectedDifficulty)}
+            className="flex-1 font-display tracking-widest"
+            style={{
+              fontSize: "0.95rem",
+              minHeight: "44px",
+              borderRadius: 2,
+              background: "transparent",
+              color: "#f59e0b",
+              border: "1px solid rgba(245,158,11,0.35)",
+              letterSpacing: "0.1em",
+              cursor: "pointer",
+            }}
+          >
+            ⊞ LEADERBOARD
+          </button>
+          <button
+            onClick={onReturnHome}
+            className="flex-1 font-display tracking-widest"
+            style={{
+              fontSize: "0.95rem",
+              minHeight: "44px",
+              borderRadius: 2,
+              background: "transparent",
+              color: "#64748b",
+              border: "1px solid rgba(51,65,85,0.4)",
+              letterSpacing: "0.1em",
+              cursor: "pointer",
+            }}
+          >
+            ← CHANGE CAT
+          </button>
+        </div>
       </main>
 
       <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
-        <span
-          className="font-data text-xs"
-          style={{ color: "#1e293b", letterSpacing: "0.12em" }}
-        >
+        <span className="font-data text-xs" style={{ color: "#1e293b", letterSpacing: "0.12em" }}>
           v0.2.0 · CLASSIFIED
         </span>
       </footer>
@@ -1202,6 +1449,234 @@ function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
 }
 
 // ============================================================================
+// Leaderboard Screen
+// ============================================================================
+
+// Difficulty star labels for the table
+const DIFF_STARS = { 1: "★", 2: "★★", 3: "★★★" };
+
+// Readable category abbreviations for leaderboard display
+const CAT_LABEL = {
+  "all":              "ALL",
+  "Main Battle Tank": "MBT",
+  "APC":              "APC",
+  "IFV":              "IFV",
+  "Artillery":        "ARTY",
+  "Helicopter":       "HELO",
+};
+
+// Leaderboard difficulty options — includes an "ALL" option that shows every level
+const LB_DIFFICULTY_OPTIONS = [
+  { id: "all", label: "ALL", stars: "—"   },
+  ...DIFFICULTY_OPTIONS,
+];
+
+function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome }) {
+  const [category,   setCategory]   = useState(initialCategory  || "all");
+  const [difficulty, setDifficulty] = useState(
+    initialDifficulty !== undefined ? initialDifficulty : "all"
+  );
+  const [entries,    setEntries]    = useState([]);
+  const [status,     setStatus]     = useState("loading"); // "loading"|"ok"|"error"
+  const [errorMsg,   setErrorMsg]   = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    setStatus("loading");
+    fetchLeaderboard(category, difficulty)
+      .then((data) => { if (!cancelled) { setEntries(data); setStatus("ok"); } })
+      .catch((err)  => { if (!cancelled) { setErrorMsg(err.message || "Network error"); setStatus("error"); } });
+    return () => { cancelled = true; };
+  }, [category, difficulty, refreshKey]);
+
+  return (
+    <div className="min-h-screen flex flex-col tac-grid font-tac">
+      {/* Header */}
+      <header className="px-5 pb-4 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}>
+        <div
+          className="font-data text-xs tracking-widest mb-5"
+          style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
+        >
+          ◈ GLOBAL RANKINGS ◈
+        </div>
+        <h1 className="font-display text-white" style={{ fontSize: "3.6rem", lineHeight: 1, letterSpacing: "0.04em" }}>
+          LEADER<span style={{ color: "#f59e0b" }}>BOARD</span>
+        </h1>
+      </header>
+
+      <main className="flex-1 flex flex-col items-center px-5 pb-10 max-w-md mx-auto w-full">
+        {/* Filter row */}
+        <div className="w-full mb-4">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>CATEGORY</div>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORY_OPTIONS.map((opt) => {
+              const sel = category === opt.id;
+              return (
+                <button key={opt.id} onClick={() => setCategory(opt.id)} className="font-data"
+                  style={{
+                    fontSize: "0.72rem", padding: "5px 12px", borderRadius: 2,
+                    letterSpacing: "0.1em", minHeight: 30,
+                    border: `1px solid ${sel ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                    background: sel ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                    color: sel ? "#f59e0b" : "#64748b", cursor: "pointer",
+                  }}
+                >{opt.label}</button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="w-full mb-4">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>DIFFICULTY</div>
+          <div className="flex gap-2">
+            {LB_DIFFICULTY_OPTIONS.map((opt) => {
+              const sel = difficulty === opt.id;
+              return (
+                <button key={opt.id} onClick={() => setDifficulty(opt.id)} className="font-data flex-1"
+                  style={{
+                    fontSize: "0.72rem", padding: "6px 4px", borderRadius: 2,
+                    letterSpacing: "0.08em", minHeight: 30,
+                    border: `1px solid ${sel ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                    background: sel ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                    color: sel ? "#f59e0b" : "#64748b", cursor: "pointer",
+                  }}
+                >{opt.stars !== "—" ? opt.stars : ""} {opt.label}</button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Table */}
+        {status === "loading" && (
+          <div className="w-full text-center font-data text-xs py-10" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            LOADING INTEL...
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="w-full text-center font-data text-xs py-6" style={{ color: "#f87171", letterSpacing: "0.08em", lineHeight: 2 }}>
+            SIGNAL LOST<br />
+            <span style={{ color: "#334155" }}>{errorMsg}</span>
+          </div>
+        )}
+
+        {status === "ok" && entries.length === 0 && (
+          <div className="w-full text-center font-data text-xs py-10" style={{ color: "#334155", letterSpacing: "0.1em", lineHeight: 2 }}>
+            NO ENTRIES ON FILE<br />
+            <span style={{ color: "#1e293b" }}>Be the first to post a score</span>
+          </div>
+        )}
+
+        {status === "ok" && entries.length > 0 && (
+          <TacCard className="w-full mb-4" style={{ padding: 0, overflow: "hidden" }}>
+            {/* Table header */}
+            <div
+              className="grid font-data text-xs"
+              style={{
+                gridTemplateColumns: "32px 1fr 48px 52px 52px",
+                padding: "9px 14px",
+                borderBottom: "1px solid rgba(245,158,11,0.1)",
+                color: "#334155", letterSpacing: "0.08em",
+              }}
+            >
+              <div>#</div>
+              <div>CALLSIGN</div>
+              <div className="text-center">SCORE</div>
+              <div className="text-center">CAT</div>
+              <div className="text-center">DIFF</div>
+            </div>
+
+            {entries.map((entry, i) => {
+              const isTop = i === 0;
+              return (
+                <div
+                  key={i}
+                  className="grid"
+                  style={{
+                    gridTemplateColumns: "32px 1fr 48px 52px 52px",
+                    padding: "10px 14px",
+                    borderBottom: i < entries.length - 1 ? "1px solid rgba(30,41,59,0.4)" : "none",
+                    background: isTop ? "rgba(245,158,11,0.04)" : "transparent",
+                    alignItems: "center",
+                  }}
+                >
+                  {/* Rank */}
+                  <div className="font-display" style={{ fontSize: "1.1rem", color: isTop ? "#f59e0b" : "#334155" }}>
+                    {i + 1}
+                  </div>
+                  {/* Callsign + time */}
+                  <div>
+                    <div className="font-display" style={{ fontSize: "1rem", color: isTop ? "#fcd34d" : "#94a3b8", letterSpacing: "0.04em" }}>
+                      {entry.callsign}
+                    </div>
+                    <div className="font-data" style={{ fontSize: "0.62rem", color: "#334155", letterSpacing: "0.06em" }}>
+                      {timeAgo(entry.created_at)}
+                    </div>
+                  </div>
+                  {/* Score */}
+                  <div className="font-display text-center" style={{ fontSize: "1.2rem", color: isTop ? "#f59e0b" : "#64748b" }}>
+                    {entry.score}<span style={{ fontSize: "0.7rem", color: "#334155" }}>/{entry.total}</span>
+                  </div>
+                  {/* Category badge */}
+                  <div className="text-center font-data" style={{ fontSize: "0.62rem", color: "#475569", letterSpacing: "0.06em" }}>
+                    {CAT_LABEL[entry.category] ?? entry.category}
+                  </div>
+                  {/* Difficulty badge */}
+                  <div className="text-center font-data" style={{ fontSize: "0.72rem", color: "#475569" }}>
+                    {DIFF_STARS[entry.difficulty] ?? "?"}
+                  </div>
+                </div>
+              );
+            })}
+          </TacCard>
+        )}
+
+        {/* Refresh + Back */}
+        <div className="w-full flex gap-2 mt-2">
+          <button
+            onClick={() => setRefreshKey((k) => k + 1)}
+            disabled={status === "loading"}
+            className="font-data text-xs"
+            style={{
+              flex: "0 0 auto",
+              minHeight: 44, padding: "0 18px",
+              borderRadius: 2, letterSpacing: "0.1em", cursor: "pointer",
+              background: "transparent",
+              border: "1px solid rgba(51,65,85,0.4)",
+              color: status === "loading" ? "#1e293b" : "#475569",
+            }}
+          >
+            ↻ REFRESH
+          </button>
+          <button
+            onClick={onReturnHome}
+            className="flex-1 font-display tracking-widest"
+            style={{
+              fontSize: "1.2rem",
+              minHeight: "44px",
+              borderRadius: 2,
+              background: "#f59e0b",
+              color: "#070b14",
+              border: "none",
+              letterSpacing: "0.14em",
+              cursor: "pointer",
+            }}
+          >
+            ← BACK TO BASE
+          </button>
+        </div>
+      </main>
+
+      <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
+        <span className="font-data text-xs" style={{ color: "#1e293b", letterSpacing: "0.12em" }}>
+          v0.2.0 · CLASSIFIED
+        </span>
+      </footer>
+    </div>
+  );
+}
+
+// ============================================================================
 // App (screen router)
 // ============================================================================
 
@@ -1215,6 +1690,14 @@ function App() {
   const [selectedPact, setSelectedPact]             = useState("all");
   const [selectedNation, setSelectedNation]         = useState("all");
   const [bestScores, setBestScores] = useState(loadBestScores);
+
+  // Callsign — persisted to localStorage, shown on leaderboard
+  const [callsign, setCallsign] = useState(() => localStorage.getItem(CALLSIGN_KEY) || "");
+  const [callsignModalOpen, setCallsignModalOpen] = useState(false);
+
+  // Leaderboard filter memory — pre-seeded from the last finished game
+  const [lbInitCategory,   setLbInitCategory]   = useState("all");
+  const [lbInitDifficulty, setLbInitDifficulty] = useState("all");
 
   // Prefer a local draft (saved by the admin) over the deployed file.
   const draft    = loadDraftFromStorage();
@@ -1356,6 +1839,12 @@ function App() {
     );
   }
 
+  const handleCallsignSave = (newCallsign) => {
+    setCallsign(newCallsign);
+    localStorage.setItem(CALLSIGN_KEY, newCallsign);
+    setCallsignModalOpen(false);
+  };
+
   const returnHome = () => {
     setRound(null);
     setFinalScore(0);
@@ -1364,14 +1853,48 @@ function App() {
 
   const goToStats = () => setScreen("stats");
 
+  const goToLeaderboard = (cat, diff) => {
+    setLbInitCategory(cat   !== undefined ? cat  : "all");
+    setLbInitDifficulty(diff !== undefined ? diff : "all");
+    setScreen("leaderboard");
+  };
+
   const clearScores = () => {
     localStorage.removeItem(BEST_SCORES_KEY);
     setBestScores({});
   };
 
   if (screen === "quiz")  return <QuizScreen round={round} onComplete={finishGame} />;
-  if (screen === "end")   return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} onReturnHome={returnHome} />;
+  if (screen === "end")   return (
+    <>
+      <EndScreen
+        score={finalScore}
+        total={round.length}
+        onPlayAgain={startGame}
+        onReturnHome={returnHome}
+        callsign={callsign}
+        onEditCallsign={() => setCallsignModalOpen(true)}
+        selectedCategory={selectedCategory}
+        selectedDifficulty={selectedDifficulty}
+        onViewLeaderboard={goToLeaderboard}
+      />
+      {callsignModalOpen && (
+        <CallsignModal
+          current={callsign}
+          onSave={handleCallsignSave}
+          onCancel={() => setCallsignModalOpen(false)}
+        />
+      )}
+    </>
+  );
   if (screen === "stats") return <StatsScreen bestScores={bestScores} onReturnHome={returnHome} onClearScores={clearScores} />;
+  if (screen === "leaderboard") return (
+    <LeaderboardScreen
+      initialCategory={lbInitCategory}
+      initialDifficulty={lbInitDifficulty}
+      onReturnHome={returnHome}
+    />
+  );
 
   return (
     <HomeScreen
@@ -1396,6 +1919,7 @@ function App() {
       difficultyCounts={difficultyCounts}
       bestScore={bestScores[selectedCategory]?.[selectedDifficulty]}
       onViewStats={goToStats}
+      onViewLeaderboard={() => goToLeaderboard("all", "all")}
     />
   );
 }

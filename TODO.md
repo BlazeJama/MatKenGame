@@ -176,10 +176,10 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Streak displayed on quiz screen
 
 ### Leaderboard
-- [ ] Backend service set up (Supabase or Firebase free tier)
-- [ ] Score submission after round
-- [ ] Leaderboard screen created
-- [ ] Nickname entry for leaderboard
+- [x] Backend service set up (Supabase — PostgreSQL + RLS)
+- [x] Score submission after round
+- [x] Leaderboard screen created (category + difficulty filters, top 20, refresh)
+- [x] Callsign entry for leaderboard (localStorage-persisted, CallsignModal)
 
 ### Social & Sound
 - [ ] Share score button (iOS/Android share sheet)
@@ -201,4 +201,4 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ---
 
-*Last updated: 2026-05-24*
+*Last updated: 2026-05-25*
