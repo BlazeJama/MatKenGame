@@ -777,7 +777,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
 // Quiz Screen
 // ============================================================================
 
-function QuizScreen({ round, onComplete }) {
+function QuizScreen({ round, onComplete, onAbort }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [score, setScore]                 = useState(0);
   const [selectedId, setSelectedId]       = useState(null);
@@ -786,6 +786,12 @@ function QuizScreen({ round, onComplete }) {
   const isLastQuestion = questionIndex === round.length - 1;
   const hasAnswered   = selectedId !== null;
   const isCorrect     = hasAnswered && selectedId === question.vehicle.id;
+
+  const handleAbort = () => {
+    if (confirm("Abort mission? Your progress in this round will be lost.")) {
+      onAbort();
+    }
+  };
 
   const handleSelect = (vehicleId) => {
     if (hasAnswered) return;
@@ -878,7 +884,25 @@ function QuizScreen({ round, onComplete }) {
         }}
       >
         <div className="max-w-md mx-auto w-full">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2" style={{ gap: 8 }}>
+            <button
+              onClick={handleAbort}
+              className="font-data"
+              style={{
+                fontSize: "0.66rem",
+                padding: "4px 9px",
+                minHeight: 26,
+                background: "rgba(15,23,42,0.6)",
+                border: "1px solid rgba(239,68,68,0.35)",
+                borderRadius: 2,
+                color: "#f87171",
+                letterSpacing: "0.1em",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            >
+              ✕ ABORT
+            </button>
             <span className="font-data text-xs" style={{ color: "#475569", letterSpacing: "0.1em" }}>
               QUESTION{" "}
               <span style={{ color: "#f59e0b" }}>{questionIndex + 1}</span>
@@ -1887,7 +1911,7 @@ function App() {
     setBestScores({});
   };
 
-  if (screen === "quiz")  return <QuizScreen round={round} onComplete={finishGame} />;
+  if (screen === "quiz")  return <QuizScreen round={round} onComplete={finishGame} onAbort={returnHome} />;
   if (screen === "end")   return (
     <>
       <EndScreen
