@@ -63,6 +63,37 @@ const ERA_OPTIONS = [
   { id: "Modern",   label: "MODERN"   },
 ];
 
+// Military pact options
+const PACT_OPTIONS = [
+  { id: "all",          label: "ALL"    },
+  { id: "NATO",         label: "NATO"   },
+  { id: "Warsaw Pact",  label: "WARSAW" },
+  { id: "Other",        label: "OTHER"  },
+];
+
+// Countries belonging to each pact.
+// Russia is grouped with the Warsaw Pact as the direct successor to Soviet military doctrine.
+// Finland and Sweden reflect their current NATO membership.
+const NATO_COUNTRIES = new Set([
+  "United States", "United Kingdom", "France", "Germany", "Italy",
+  "Netherlands", "Belgium", "Canada", "Norway", "Denmark", "Portugal",
+  "Spain", "Turkey", "Greece", "Poland", "Czech Republic", "Hungary",
+  "Romania", "Bulgaria", "Slovakia", "Slovenia", "Estonia", "Latvia",
+  "Lithuania", "Albania", "Croatia", "Montenegro", "North Macedonia",
+  "Finland", "Sweden",
+]);
+
+const WARSAW_COUNTRIES = new Set([
+  "Soviet Union", "Russia",
+]);
+
+// Returns the pact id ("NATO" | "Warsaw Pact" | "Other") for a given country string.
+function getVehiclePact(country) {
+  if (NATO_COUNTRIES.has(country))   return "NATO";
+  if (WARSAW_COUNTRIES.has(country)) return "Warsaw Pact";
+  return "Other";
+}
+
 function loadDraftFromStorage() {
   try {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
@@ -200,6 +231,7 @@ function TacCard({ children, className = "", style: extraStyle = {} }) {
 function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                       selectedCategory, onCategoryChange, categoryCounts,
                       selectedEra, onEraChange, eraCounts,
+                      selectedPact, onPactChange, pactCounts,
                       selectedNation, onNationChange, availableNations,
                       selectedDifficulty, onDifficultyChange, difficultyCounts,
                       bestScore, onViewStats }) {
@@ -351,6 +383,40 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                 <button
                   key={opt.id}
                   onClick={() => onEraChange(opt.id)}
+                  className="font-data"
+                  style={{
+                    fontSize: "0.72rem",
+                    padding: "5px 12px",
+                    borderRadius: 2,
+                    letterSpacing: "0.1em",
+                    minHeight: 32,
+                    border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                    background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                    color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
+                    opacity: count === 0 && !isSelected ? 0.45 : 1,
+                    cursor: "pointer",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Pact selector */}
+        <div className="w-full mb-4">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            ALLIANCE
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {PACT_OPTIONS.map((opt) => {
+              const isSelected = selectedPact === opt.id;
+              const count = pactCounts[opt.id] ?? 0;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => onPactChange(opt.id)}
                   className="font-data"
                   style={{
                     fontSize: "0.72rem",
@@ -1134,6 +1200,7 @@ function App() {
   const [selectedCategory, setSelectedCategory]     = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);  // 1 = Easy by default
   const [selectedEra, setSelectedEra]               = useState("all");
+  const [selectedPact, setSelectedPact]             = useState("all");
   const [selectedNation, setSelectedNation]         = useState("all");
   const [bestScores, setBestScores] = useState(loadBestScores);
 
@@ -1142,7 +1209,7 @@ function App() {
   const vehicles = draft || window.vehicles || [];
   const usingDraft = Boolean(draft);
 
-  // ── Filter chain: category → era → nation ───────────────────────────────
+  // ── Filter chain: category → era → pact → nation ───────────────────────
   const vehiclesByCategory = selectedCategory === "all"
     ? vehicles
     : vehicles.filter((v) => v.category === selectedCategory);
@@ -1151,15 +1218,19 @@ function App() {
     ? vehiclesByCategory
     : vehiclesByCategory.filter((v) => v.era === selectedEra);
 
-  // Available nations are derived from category+era (before nation filter)
-  // so the dropdown always shows what's reachable at the current settings.
+  const vehiclesByCatEraPact = selectedPact === "all"
+    ? vehiclesByCatEra
+    : vehiclesByCatEra.filter((v) => getVehiclePact(v.country) === selectedPact);
+
+  // Available nations derived from category+era+pact (before nation filter)
+  // so the dropdown always reflects what's reachable at current settings.
   const availableNations = Array.from(
-    new Set(vehiclesByCatEra.map((v) => v.country).filter(Boolean))
+    new Set(vehiclesByCatEraPact.map((v) => v.country).filter(Boolean))
   ).sort();
 
   const filteredVehicles = selectedNation === "all"
-    ? vehiclesByCatEra
-    : vehiclesByCatEra.filter((v) => v.country === selectedNation);
+    ? vehiclesByCatEraPact
+    : vehiclesByCatEraPact.filter((v) => v.country === selectedNation);
 
   // Playable = has at least one image AT THE SELECTED DIFFICULTY
   const hasImageAtSelected = (v) =>
@@ -1167,19 +1238,29 @@ function App() {
   const playableCount   = filteredVehicles.filter(hasImageAtSelected).length;
   const totalInCategory = filteredVehicles.length;
 
-  // Per-category counts: respect era + nation + difficulty so pills dim correctly
+  // Per-category counts: respect era + pact + nation + difficulty
   const categoryCounts = CATEGORY_OPTIONS.reduce((acc, opt) => {
-    const byCat   = opt.id === "all" ? vehicles : vehicles.filter((v) => v.category === opt.id);
-    const byEra   = selectedEra    === "all" ? byCat   : byCat.filter((v) => v.era     === selectedEra);
-    const byNat   = selectedNation === "all" ? byEra   : byEra.filter((v) => v.country === selectedNation);
+    const byCat  = opt.id === "all" ? vehicles : vehicles.filter((v) => v.category === opt.id);
+    const byEra  = selectedEra    === "all" ? byCat  : byCat.filter((v) => v.era === selectedEra);
+    const byPact = selectedPact   === "all" ? byEra  : byEra.filter((v) => getVehiclePact(v.country) === selectedPact);
+    const byNat  = selectedNation === "all" ? byPact : byPact.filter((v) => v.country === selectedNation);
     acc[opt.id] = byNat.filter(hasImageAtSelected).length;
     return acc;
   }, {});
 
-  // Per-era counts: respect category + nation + difficulty
+  // Per-era counts: respect category + pact + nation + difficulty
   const eraCounts = ERA_OPTIONS.reduce((acc, opt) => {
-    const byEra = opt.id === "all" ? vehiclesByCategory : vehiclesByCategory.filter((v) => v.era === opt.id);
-    const byNat = selectedNation === "all" ? byEra : byEra.filter((v) => v.country === selectedNation);
+    const byEra  = opt.id === "all" ? vehiclesByCategory : vehiclesByCategory.filter((v) => v.era === opt.id);
+    const byPact = selectedPact   === "all" ? byEra  : byEra.filter((v) => getVehiclePact(v.country) === selectedPact);
+    const byNat  = selectedNation === "all" ? byPact : byPact.filter((v) => v.country === selectedNation);
+    acc[opt.id] = byNat.filter(hasImageAtSelected).length;
+    return acc;
+  }, {});
+
+  // Per-pact counts: respect category + era + nation + difficulty
+  const pactCounts = PACT_OPTIONS.reduce((acc, opt) => {
+    const byPact = opt.id === "all" ? vehiclesByCatEra : vehiclesByCatEra.filter((v) => getVehiclePact(v.country) === opt.id);
+    const byNat  = selectedNation === "all" ? byPact : byPact.filter((v) => v.country === selectedNation);
     acc[opt.id] = byNat.filter(hasImageAtSelected).length;
     return acc;
   }, {});
@@ -1192,20 +1273,30 @@ function App() {
     return acc;
   }, {});
 
-  // Category/era change handlers: auto-reset nation when it's no longer available
+  // Change handlers — each resets nation when it's no longer available in the new context
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
-    const byCat = cat === "all" ? vehicles : vehicles.filter((v) => v.category === cat);
-    const byEra = selectedEra === "all" ? byCat : byCat.filter((v) => v.era === selectedEra);
-    if (selectedNation !== "all" && !byEra.some((v) => v.country === selectedNation)) {
+    const byCat  = cat === "all" ? vehicles : vehicles.filter((v) => v.category === cat);
+    const byEra  = selectedEra  === "all" ? byCat  : byCat.filter((v) => v.era === selectedEra);
+    const byPact = selectedPact === "all" ? byEra  : byEra.filter((v) => getVehiclePact(v.country) === selectedPact);
+    if (selectedNation !== "all" && !byPact.some((v) => v.country === selectedNation)) {
       setSelectedNation("all");
     }
   };
 
   const handleEraChange = (era) => {
     setSelectedEra(era);
-    const byEra = era === "all" ? vehiclesByCategory : vehiclesByCategory.filter((v) => v.era === era);
-    if (selectedNation !== "all" && !byEra.some((v) => v.country === selectedNation)) {
+    const byEra  = era === "all" ? vehiclesByCategory : vehiclesByCategory.filter((v) => v.era === era);
+    const byPact = selectedPact === "all" ? byEra : byEra.filter((v) => getVehiclePact(v.country) === selectedPact);
+    if (selectedNation !== "all" && !byPact.some((v) => v.country === selectedNation)) {
+      setSelectedNation("all");
+    }
+  };
+
+  const handlePactChange = (pact) => {
+    setSelectedPact(pact);
+    const byPact = pact === "all" ? vehiclesByCatEra : vehiclesByCatEra.filter((v) => getVehiclePact(v.country) === pact);
+    if (selectedNation !== "all" && !byPact.some((v) => v.country === selectedNation)) {
       setSelectedNation("all");
     }
   };
@@ -1282,6 +1373,9 @@ function App() {
       selectedEra={selectedEra}
       onEraChange={handleEraChange}
       eraCounts={eraCounts}
+      selectedPact={selectedPact}
+      onPactChange={handlePactChange}
+      pactCounts={pactCounts}
       selectedNation={selectedNation}
       onNationChange={setSelectedNation}
       availableNations={availableNations}
