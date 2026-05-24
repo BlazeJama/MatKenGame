@@ -1115,50 +1115,73 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
             LEADERBOARD SUBMISSION
           </div>
 
-          {/* Callsign display + edit */}
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <div className="font-data text-xs mb-1" style={{ color: "#334155", letterSpacing: "0.08em" }}>CALLSIGN</div>
-              <div className="font-display" style={{ fontSize: "1.5rem", color: callsign ? "#f59e0b" : "#475569", letterSpacing: "0.06em" }}>
-                {callsign || "NOT SET"}
-              </div>
-            </div>
+          {/* No callsign yet — show a prominent prompt */}
+          {!callsign && (
             <button
               onClick={onEditCallsign}
-              className="font-data text-xs"
+              className="w-full font-display tracking-widest mb-2"
               style={{
-                background: "rgba(15,23,42,0.8)", border: "1px solid rgba(51,65,85,0.5)",
-                borderRadius: 2, color: "#475569", letterSpacing: "0.1em",
-                cursor: "pointer", padding: "6px 12px",
-              }}
-            >
-              {callsign ? "CHANGE" : "SET"}
-            </button>
-          </div>
-
-          {/* Submit button */}
-          {submitState === "submitted" ? (
-            <div className="w-full font-data text-xs text-center py-3" style={{ color: "#4ade80", letterSpacing: "0.1em" }}>
-              ✓ SCORE SUBMITTED TO LEADERBOARD
-            </div>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={!callsign || submitState === "submitting"}
-              className="w-full font-display tracking-widest"
-              style={{
-                fontSize: "1.1rem",
-                minHeight: 44,
+                fontSize: "1.25rem",
+                minHeight: 52,
                 borderRadius: 2,
-                background: callsign && submitState === "idle" ? "rgba(245,158,11,0.15)" : "rgba(15,23,42,0.5)",
-                color: callsign && submitState === "idle" ? "#f59e0b" : "#334155",
-                border: `1px solid ${callsign && submitState === "idle" ? "rgba(245,158,11,0.4)" : "rgba(51,65,85,0.3)"}`,
+                background: "#f59e0b",
+                color: "#070b14",
+                border: "none",
                 letterSpacing: "0.14em",
-                cursor: callsign && submitState === "idle" ? "pointer" : "not-allowed",
+                cursor: "pointer",
               }}
             >
-              {submitState === "submitting" ? "TRANSMITTING..." : "SUBMIT SCORE"}
+              ✎  SET CALLSIGN
             </button>
+          )}
+
+          {/* Callsign set — show name + change button + submit */}
+          {callsign && (
+            <>
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="font-data text-xs mb-1" style={{ color: "#334155", letterSpacing: "0.08em" }}>CALLSIGN</div>
+                  <div className="font-display" style={{ fontSize: "1.5rem", color: "#f59e0b", letterSpacing: "0.06em" }}>
+                    {callsign}
+                  </div>
+                </div>
+                <button
+                  onClick={onEditCallsign}
+                  className="font-data text-xs"
+                  style={{
+                    background: "rgba(15,23,42,0.8)", border: "1px solid rgba(51,65,85,0.5)",
+                    borderRadius: 2, color: "#475569", letterSpacing: "0.1em",
+                    cursor: "pointer", padding: "6px 12px",
+                  }}
+                >
+                  CHANGE
+                </button>
+              </div>
+
+              {submitState === "submitted" ? (
+                <div className="w-full font-data text-xs text-center py-3" style={{ color: "#4ade80", letterSpacing: "0.1em" }}>
+                  ✓ SCORE SUBMITTED TO LEADERBOARD
+                </div>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitState === "submitting"}
+                  className="w-full font-display tracking-widest"
+                  style={{
+                    fontSize: "1.1rem",
+                    minHeight: 44,
+                    borderRadius: 2,
+                    background: submitState === "idle" ? "rgba(245,158,11,0.15)" : "rgba(15,23,42,0.5)",
+                    color: submitState === "idle" ? "#f59e0b" : "#334155",
+                    border: `1px solid ${submitState === "idle" ? "rgba(245,158,11,0.4)" : "rgba(51,65,85,0.3)"}`,
+                    letterSpacing: "0.14em",
+                    cursor: submitState === "idle" ? "pointer" : "not-allowed",
+                  }}
+                >
+                  {submitState === "submitting" ? "TRANSMITTING..." : "SUBMIT SCORE"}
+                </button>
+              )}
+            </>
           )}
 
           {submitState === "error" && (
