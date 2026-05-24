@@ -55,6 +55,14 @@ const DIFFICULTY_OPTIONS = [
   { id: 3, label: "HARD",   stars: "★★★" },
 ];
 
+// Era options — id matches the `era` field in vehicles.js
+const ERA_OPTIONS = [
+  { id: "all",      label: "ALL"      },
+  { id: "WW2",      label: "WW2"      },
+  { id: "Cold War", label: "COLD WAR" },
+  { id: "Modern",   label: "MODERN"   },
+];
+
 function loadDraftFromStorage() {
   try {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
@@ -191,8 +199,10 @@ function TacCard({ children, className = "", style: extraStyle = {} }) {
 
 function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                       selectedCategory, onCategoryChange, categoryCounts,
+                      selectedEra, onEraChange, eraCounts,
+                      selectedNation, onNationChange, availableNations,
                       selectedDifficulty, onDifficultyChange, difficultyCounts,
-                      bestScore }) {
+                      bestScore, onViewStats }) {
   const canPlay = playableCount > 0;
 
   return (
@@ -328,6 +338,88 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           </div>
         </div>
 
+        {/* Era selector */}
+        <div className="w-full mb-4">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            ERA
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {ERA_OPTIONS.map((opt) => {
+              const isSelected = selectedEra === opt.id;
+              const count = eraCounts[opt.id] ?? 0;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => onEraChange(opt.id)}
+                  className="font-data"
+                  style={{
+                    fontSize: "0.72rem",
+                    padding: "5px 12px",
+                    borderRadius: 2,
+                    letterSpacing: "0.1em",
+                    minHeight: 32,
+                    border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                    background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                    color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
+                    opacity: count === 0 && !isSelected ? 0.45 : 1,
+                    cursor: "pointer",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Nation selector */}
+        <div className="w-full mb-4">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            NATION
+          </div>
+          <div className="relative">
+            <select
+              value={selectedNation}
+              onChange={(e) => onNationChange(e.target.value)}
+              className="w-full font-data"
+              style={{
+                fontSize: "0.72rem",
+                padding: "8px 32px 8px 12px",
+                borderRadius: 2,
+                letterSpacing: "0.1em",
+                minHeight: 38,
+                border: `1px solid ${selectedNation !== "all" ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                background: selectedNation !== "all" ? "rgba(245,158,11,0.08)" : "rgba(15,23,42,0.5)",
+                color: selectedNation !== "all" ? "#f59e0b" : "#64748b",
+                appearance: "none",
+                WebkitAppearance: "none",
+                width: "100%",
+                cursor: "pointer",
+              }}
+            >
+              <option value="all" style={{ background: "#0d1526", color: "#94a3b8" }}>ALL NATIONS</option>
+              {availableNations.map((nation) => (
+                <option key={nation} value={nation} style={{ background: "#0d1526", color: "#e2e8f0" }}>
+                  {nation.toUpperCase()}
+                </option>
+              ))}
+            </select>
+            <div
+              className="pointer-events-none absolute"
+              style={{
+                right: 12,
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: selectedNation !== "all" ? "#f59e0b" : "#475569",
+                fontSize: "0.75rem",
+                lineHeight: 1,
+              }}
+            >
+              ▾
+            </div>
+          </div>
+        </div>
+
         {/* Difficulty selector */}
         <div className="w-full mb-5">
           <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
@@ -384,6 +476,23 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           }}
         >
           {canPlay ? "▶  BEGIN TRAINING" : "NO VEHICLES LOADED"}
+        </button>
+
+        {/* Performance log link */}
+        <button
+          onClick={onViewStats}
+          className="w-full font-data text-xs mb-5"
+          style={{
+            background: "transparent",
+            border: "1px solid rgba(51,65,85,0.35)",
+            borderRadius: 2,
+            color: "#475569",
+            letterSpacing: "0.14em",
+            cursor: "pointer",
+            minHeight: 36,
+          }}
+        >
+          ◆ PERFORMANCE LOG
         </button>
 
         {/* Field briefing */}
@@ -800,6 +909,221 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome }) {
 }
 
 // ============================================================================
+// Stats Screen
+// ============================================================================
+
+function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
+  const getScore = (catId, diffId) => bestScores?.[catId]?.[diffId] ?? null;
+
+  const hasAnyScore = CATEGORY_OPTIONS.some((cat) =>
+    DIFFICULTY_OPTIONS.some((diff) => getScore(cat.id, diff.id) !== null)
+  );
+
+  // Highest single score across all category × difficulty combinations
+  let overallBest = null;
+  CATEGORY_OPTIONS.forEach((cat) => {
+    DIFFICULTY_OPTIONS.forEach((diff) => {
+      const s = getScore(cat.id, diff.id);
+      if (s !== null && (overallBest === null || s > overallBest)) overallBest = s;
+    });
+  });
+
+  const handleClear = () => {
+    if (confirm("Clear all performance records? This cannot be undone.")) {
+      onClearScores();
+    }
+  };
+
+  // Full category labels for the stats table (more readable than abbreviations)
+  const categoryLabels = {
+    "all":              "ALL",
+    "Main Battle Tank": "MBT",
+    "APC":              "APC",
+    "IFV":              "IFV",
+    "Artillery":        "ARTY",
+    "Helicopter":       "HELO",
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col tac-grid font-tac">
+      {/* Header */}
+      <header className="px-6 pb-4 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}>
+        <div
+          className="font-data text-xs tracking-widest mb-5"
+          style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
+        >
+          ◈ INTEL ARCHIVE ◈
+        </div>
+        <h1
+          className="font-display text-white"
+          style={{ fontSize: "4rem", lineHeight: 1, letterSpacing: "0.04em" }}
+        >
+          PERFORM<span style={{ color: "#f59e0b" }}>ANCE</span>
+        </h1>
+        <p
+          className="font-data text-xs mt-3"
+          style={{ color: "#475569", letterSpacing: "0.16em" }}
+        >
+          PERSONAL BEST SCORES
+        </p>
+      </header>
+
+      <main className="flex-1 flex flex-col items-center px-5 pb-10 max-w-md mx-auto w-full">
+        {/* Overall best callout */}
+        {overallBest !== null && (
+          <div className="w-full flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px" style={{ background: "rgba(245,158,11,0.12)" }} />
+            <span className="font-data text-xs whitespace-nowrap" style={{ color: "#475569", letterSpacing: "0.12em" }}>
+              PERSONAL BEST&nbsp;
+              <span className="font-display" style={{ fontSize: "1.2rem", color: "#f59e0b", verticalAlign: "middle" }}>
+                {overallBest}
+              </span>
+              <span style={{ color: "#334155" }}>/10</span>
+            </span>
+            <div className="flex-1 h-px" style={{ background: "rgba(245,158,11,0.12)" }} />
+          </div>
+        )}
+
+        {/* Score table */}
+        <TacCard className="w-full mb-5" style={{ padding: 0, overflow: "hidden" }}>
+          {/* Column headers */}
+          <div
+            className="grid font-data text-xs"
+            style={{
+              gridTemplateColumns: "1fr 60px 60px 60px",
+              padding: "10px 16px",
+              borderBottom: "1px solid rgba(245,158,11,0.1)",
+              color: "#334155",
+              letterSpacing: "0.1em",
+            }}
+          >
+            <div>CATEGORY</div>
+            {DIFFICULTY_OPTIONS.map((d) => (
+              <div key={d.id} className="text-center" style={{ color: "#475569" }}>
+                {d.stars}
+              </div>
+            ))}
+          </div>
+
+          {/* One row per category */}
+          {CATEGORY_OPTIONS.map((cat, i) => {
+            const scores      = DIFFICULTY_OPTIONS.map((d) => getScore(cat.id, d.id));
+            const rowHasScore = scores.some((s) => s !== null);
+            const isLast      = i === CATEGORY_OPTIONS.length - 1;
+            return (
+              <div
+                key={cat.id}
+                className="grid"
+                style={{
+                  gridTemplateColumns: "1fr 60px 60px 60px",
+                  padding: "12px 16px",
+                  borderBottom: isLast ? "none" : "1px solid rgba(30,41,59,0.45)",
+                  background: rowHasScore ? "rgba(245,158,11,0.02)" : "transparent",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  className="font-data"
+                  style={{
+                    fontSize: "0.7rem",
+                    letterSpacing: "0.09em",
+                    color: rowHasScore ? "#94a3b8" : "#334155",
+                  }}
+                >
+                  {categoryLabels[cat.id] ?? cat.label}
+                </div>
+                {scores.map((score, di) => {
+                  const isTopScore = score !== null && score === overallBest;
+                  return (
+                    <div
+                      key={di}
+                      className="font-display text-center"
+                      style={{
+                        fontSize: score !== null ? "1.3rem" : "0.9rem",
+                        lineHeight: 1,
+                        color: score !== null
+                          ? isTopScore ? "#fcd34d" : "#f59e0b"
+                          : "#1e293b",
+                      }}
+                    >
+                      {score !== null ? score : "—"}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </TacCard>
+
+        {/* Difficulty legend */}
+        <div className="w-full flex justify-end gap-4 mb-5">
+          {DIFFICULTY_OPTIONS.map((d) => (
+            <span key={d.id} className="font-data text-xs" style={{ color: "#2d3f55", letterSpacing: "0.08em" }}>
+              {d.stars} {d.label}
+            </span>
+          ))}
+        </div>
+
+        {/* Empty state */}
+        {!hasAnyScore && (
+          <div
+            className="w-full text-center font-data text-xs mb-5"
+            style={{ color: "#334155", letterSpacing: "0.1em", lineHeight: 2 }}
+          >
+            NO RECORDS ON FILE
+            <br />
+            <span style={{ color: "#1e293b" }}>Complete a training session to log your performance</span>
+          </div>
+        )}
+
+        {/* Back to base */}
+        <button
+          onClick={onReturnHome}
+          className="w-full font-display tracking-widest"
+          style={{
+            fontSize: "1.35rem",
+            minHeight: "52px",
+            borderRadius: 2,
+            background: "#f59e0b",
+            color: "#070b14",
+            border: "none",
+            letterSpacing: "0.14em",
+            cursor: "pointer",
+            marginBottom: 14,
+          }}
+        >
+          ←  BACK TO BASE
+        </button>
+
+        {/* Clear records — only shown when there's something to clear */}
+        {hasAnyScore && (
+          <button
+            onClick={handleClear}
+            className="font-data text-xs"
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#334155",
+              letterSpacing: "0.1em",
+              cursor: "pointer",
+              padding: "6px 12px",
+            }}
+          >
+            🗑 CLEAR ALL RECORDS
+          </button>
+        )}
+      </main>
+
+      <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
+        <span className="font-data text-xs" style={{ color: "#1e293b", letterSpacing: "0.12em" }}>
+          v0.2.0 · CLASSIFIED
+        </span>
+      </footer>
+    </div>
+  );
+}
+
+// ============================================================================
 // App (screen router)
 // ============================================================================
 
@@ -809,6 +1133,8 @@ function App() {
   const [finalScore, setFinalScore] = useState(0);
   const [selectedCategory, setSelectedCategory]     = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);  // 1 = Easy by default
+  const [selectedEra, setSelectedEra]               = useState("all");
+  const [selectedNation, setSelectedNation]         = useState("all");
   const [bestScores, setBestScores] = useState(loadBestScores);
 
   // Prefer a local draft (saved by the admin) over the deployed file.
@@ -816,10 +1142,24 @@ function App() {
   const vehicles = draft || window.vehicles || [];
   const usingDraft = Boolean(draft);
 
-  // Vehicles visible in the current category (all vehicles when "all" selected)
-  const filteredVehicles = selectedCategory === "all"
+  // ── Filter chain: category → era → nation ───────────────────────────────
+  const vehiclesByCategory = selectedCategory === "all"
     ? vehicles
     : vehicles.filter((v) => v.category === selectedCategory);
+
+  const vehiclesByCatEra = selectedEra === "all"
+    ? vehiclesByCategory
+    : vehiclesByCategory.filter((v) => v.era === selectedEra);
+
+  // Available nations are derived from category+era (before nation filter)
+  // so the dropdown always shows what's reachable at the current settings.
+  const availableNations = Array.from(
+    new Set(vehiclesByCatEra.map((v) => v.country).filter(Boolean))
+  ).sort();
+
+  const filteredVehicles = selectedNation === "all"
+    ? vehiclesByCatEra
+    : vehiclesByCatEra.filter((v) => v.country === selectedNation);
 
   // Playable = has at least one image AT THE SELECTED DIFFICULTY
   const hasImageAtSelected = (v) =>
@@ -827,22 +1167,48 @@ function App() {
   const playableCount   = filteredVehicles.filter(hasImageAtSelected).length;
   const totalInCategory = filteredVehicles.length;
 
-  // Per-category playable counts (respect current difficulty so the
-  // selector dims categories that have no images at that level)
+  // Per-category counts: respect era + nation + difficulty so pills dim correctly
   const categoryCounts = CATEGORY_OPTIONS.reduce((acc, opt) => {
-    const list = opt.id === "all" ? vehicles : vehicles.filter((v) => v.category === opt.id);
-    acc[opt.id] = list.filter(hasImageAtSelected).length;
+    const byCat   = opt.id === "all" ? vehicles : vehicles.filter((v) => v.category === opt.id);
+    const byEra   = selectedEra    === "all" ? byCat   : byCat.filter((v) => v.era     === selectedEra);
+    const byNat   = selectedNation === "all" ? byEra   : byEra.filter((v) => v.country === selectedNation);
+    acc[opt.id] = byNat.filter(hasImageAtSelected).length;
     return acc;
   }, {});
 
-  // Per-difficulty playable counts within the current category (so the
-  // difficulty selector dims levels that have no images in this category)
+  // Per-era counts: respect category + nation + difficulty
+  const eraCounts = ERA_OPTIONS.reduce((acc, opt) => {
+    const byEra = opt.id === "all" ? vehiclesByCategory : vehiclesByCategory.filter((v) => v.era === opt.id);
+    const byNat = selectedNation === "all" ? byEra : byEra.filter((v) => v.country === selectedNation);
+    acc[opt.id] = byNat.filter(hasImageAtSelected).length;
+    return acc;
+  }, {});
+
+  // Per-difficulty counts: respect all other active filters
   const difficultyCounts = DIFFICULTY_OPTIONS.reduce((acc, opt) => {
     acc[opt.id] = filteredVehicles.filter(
       (v) => Array.isArray(v.images) && v.images.some((img) => img.stars === opt.id)
     ).length;
     return acc;
   }, {});
+
+  // Category/era change handlers: auto-reset nation when it's no longer available
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    const byCat = cat === "all" ? vehicles : vehicles.filter((v) => v.category === cat);
+    const byEra = selectedEra === "all" ? byCat : byCat.filter((v) => v.era === selectedEra);
+    if (selectedNation !== "all" && !byEra.some((v) => v.country === selectedNation)) {
+      setSelectedNation("all");
+    }
+  };
+
+  const handleEraChange = (era) => {
+    setSelectedEra(era);
+    const byEra = era === "all" ? vehiclesByCategory : vehiclesByCategory.filter((v) => v.era === era);
+    if (selectedNation !== "all" && !byEra.some((v) => v.country === selectedNation)) {
+      setSelectedNation("all");
+    }
+  };
 
   const startGame = () => {
     setRound(buildRound(filteredVehicles, selectedDifficulty));
@@ -893,8 +1259,16 @@ function App() {
     setScreen("home");
   };
 
-  if (screen === "quiz") return <QuizScreen round={round} onComplete={finishGame} />;
-  if (screen === "end")  return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} onReturnHome={returnHome} />;
+  const goToStats = () => setScreen("stats");
+
+  const clearScores = () => {
+    localStorage.removeItem(BEST_SCORES_KEY);
+    setBestScores({});
+  };
+
+  if (screen === "quiz")  return <QuizScreen round={round} onComplete={finishGame} />;
+  if (screen === "end")   return <EndScreen score={finalScore} total={round.length} onPlayAgain={startGame} onReturnHome={returnHome} />;
+  if (screen === "stats") return <StatsScreen bestScores={bestScores} onReturnHome={returnHome} onClearScores={clearScores} />;
 
   return (
     <HomeScreen
@@ -903,12 +1277,19 @@ function App() {
       playableCount={playableCount}
       usingDraft={usingDraft}
       selectedCategory={selectedCategory}
-      onCategoryChange={setSelectedCategory}
+      onCategoryChange={handleCategoryChange}
       categoryCounts={categoryCounts}
+      selectedEra={selectedEra}
+      onEraChange={handleEraChange}
+      eraCounts={eraCounts}
+      selectedNation={selectedNation}
+      onNationChange={setSelectedNation}
+      availableNations={availableNations}
       selectedDifficulty={selectedDifficulty}
       onDifficultyChange={setSelectedDifficulty}
       difficultyCounts={difficultyCounts}
       bestScore={bestScores[selectedCategory]?.[selectedDifficulty]}
+      onViewStats={goToStats}
     />
   );
 }

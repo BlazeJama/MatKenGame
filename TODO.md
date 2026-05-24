@@ -83,8 +83,9 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Difficulty selector on home screen
 
 ### Filters
-- [ ] Category filter (tanks, helicopters, etc.)
-- [ ] Nation filter (Russian, NATO, etc.)
+- [x] Category filter (tanks, helicopters, etc.)
+- [x] Era filter (WW2 / Cold War / Modern) — pill selector on home screen, dims when zero playable
+- [x] Nation filter — dynamic dropdown auto-built from current category+era; resets to ALL when selection becomes unavailable
 - [ ] Random mixed mode (default)
 
 ### Hint System
@@ -97,9 +98,9 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Fun facts written for all vehicles in database
 
 ### Progress Tracking
-- [ ] Best score saved per category (localStorage)
-- [ ] Stats screen created
-- [ ] Stats accessible from home screen
+- [x] Best score saved per category (localStorage)
+- [x] Stats screen created — PERFORMANCE LOG with best score per category × difficulty, overall best callout, "Clear All Records" option
+- [x] Stats accessible from home screen — "◆ PERFORMANCE LOG" ghost button below BEGIN TRAINING
 
 ### Admin Page
 *Being built in 5 PRs — see CHANGELOG for status.*
