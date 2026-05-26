@@ -1251,10 +1251,51 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
               <span style={{ color: "#f59e0b" }}>{questionIndex + 1}</span>
               <span style={{ color: "#334155" }}>/{round.length}</span>
             </span>
-            <span className="font-data text-xs" style={{ color: "#475569", letterSpacing: "0.1em" }}>
-              SCORE{" "}
-              <span style={{ color: "#f59e0b" }}>{score}</span>
-            </span>
+            {/* Score + Hint chip grouped on the right */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span className="font-data text-xs" style={{ color: "#475569", letterSpacing: "0.1em" }}>
+                SCORE{" "}
+                <span style={{ color: "#f59e0b" }}>{score}</span>
+              </span>
+              <button
+                onClick={handleHint}
+                disabled={!canUseHint}
+                className="font-data"
+                style={{
+                  fontSize: "0.62rem",
+                  padding: "0 10px",
+                  minHeight: 28,
+                  letterSpacing: "0.1em",
+                  borderRadius: 2,
+                  background: canUseHint ? "rgba(245,158,11,0.1)" : "transparent",
+                  border: `1px solid ${canUseHint ? "rgba(245,158,11,0.3)" : "rgba(30,41,59,0.35)"}`,
+                  color: canUseHint ? "#f59e0b" : "#1e293b",
+                  cursor: canUseHint ? "pointer" : "not-allowed",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  flexShrink: 0,
+                }}
+              >
+                HINT
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 16,
+                    height: 16,
+                    borderRadius: "50%",
+                    background: canUseHint ? "rgba(245,158,11,0.2)" : "rgba(30,41,59,0.4)",
+                    fontSize: "0.6rem",
+                    lineHeight: 1,
+                    color: canUseHint ? "#f59e0b" : "#1e293b",
+                  }}
+                >
+                  {MAX_HINTS - hintsUsed}
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Round progress bar */}
@@ -1402,35 +1443,6 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
           })}
         </div>
 
-        {/* Hint button — visible before answering, hides once answered */}
-        {!hasAnswered && (
-          <div className="flex justify-center mt-3">
-            <button
-              onClick={handleHint}
-              disabled={!canUseHint}
-              className="font-data"
-              style={{
-                fontSize: "0.68rem",
-                padding: "0 18px",
-                minHeight: 44,
-                letterSpacing: "0.12em",
-                borderRadius: 2,
-                background: canUseHint ? "rgba(245,158,11,0.07)" : "transparent",
-                border: `1px solid ${canUseHint ? "rgba(245,158,11,0.25)" : "rgba(30,41,59,0.3)"}`,
-                color: canUseHint ? "#f59e0b" : "#1e293b",
-                cursor: canUseHint ? "pointer" : "not-allowed",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              ◈ USE HINT
-              <span style={{ fontSize: "0.58rem", opacity: canUseHint ? 0.7 : 0.3 }}>
-                {MAX_HINTS - hintsUsed} LEFT · −{HINT_PENALTY} PTS EA
-              </span>
-            </button>
-          </div>
-        )}
 
         {/* Timed-out label — replaces the next button briefly while auto-advancing */}
         {timedOut && (
