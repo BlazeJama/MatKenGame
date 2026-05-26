@@ -1383,7 +1383,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
         <img
           src={question.image.url}
           alt="Military vehicle to identify"
-          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block", clipPath: "inset(10px)" }}
         />
         {/* Targeting brackets */}
         <TargetBrackets size={26} color="#f59e0b" thickness={2} inset={10} />
