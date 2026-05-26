@@ -1436,10 +1436,12 @@ function timeAgo(dateStr) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-// Fetch all leaderboard entries (up to 1000) — no limit for the admin view
+// Fetch all leaderboard entries (up to 1000) — no limit for the admin view.
+// Note: hints_used is intentionally excluded; it isn't displayed and may not
+// exist on older schema versions, which would cause a 400 from Supabase.
 async function adminFetchLeaderboard() {
   const url = `${SUPABASE_URL}/rest/v1/leaderboard`
-    + `?select=id,callsign,score,total,category,difficulty,mode,hints_used,created_at`
+    + `?select=id,callsign,score,total,category,difficulty,mode,created_at`
     + `&order=score.desc,created_at.asc&limit=1000`;
   const res = await fetch(url, {
     headers: {
