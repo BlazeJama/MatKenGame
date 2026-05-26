@@ -617,15 +617,9 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
 
       {/* Title block */}
       <header className="px-6 pb-6 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}>
-        <div
-          className="font-data text-xs tracking-widest mb-5"
-          style={{ color: "rgba(245,158,11,0.5)", letterSpacing: "0.18em" }}
-        >
-          ◈ SYSTEM ONLINE ◈
-        </div>
         <h1
           className="font-display text-white"
-          style={{ fontSize: "4.8rem", lineHeight: 1, letterSpacing: "0.04em" }}
+          style={{ fontSize: "clamp(3rem, 13vw, 4.8rem)", lineHeight: 1, letterSpacing: "0.04em", textAlign: "center", width: "100%" }}
         >
           MATKEN<span style={{ color: "#f59e0b" }}>GAME</span>
         </h1>
@@ -1006,28 +1000,6 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           </button>
         </div>
 
-        {/* Field briefing */}
-        <div
-          className="w-full px-5 py-4 text-sm leading-relaxed"
-          style={{
-            background: "rgba(15,23,42,0.6)",
-            border: "1px solid rgba(148,163,184,0.07)",
-            borderRadius: 2,
-            color: "#64748b",
-          }}
-        >
-          <div
-            className="font-data text-xs tracking-widest mb-3"
-            style={{ color: "#334155", letterSpacing: "0.12em" }}
-          >
-            FIELD BRIEFING
-          </div>
-          <p style={{ color: "#94a3b8" }}>
-            Examine the vehicle photograph and select the correct identification
-            from four options. Each session contains up to{" "}
-            <span style={{ color: "#f59e0b" }}>10 targets</span>.
-          </p>
-        </div>
       </main>
 
       <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
