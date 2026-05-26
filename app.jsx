@@ -71,8 +71,8 @@ const CATEGORY_OPTIONS = [
   { id: "Main Battle Tank", label: "MBT"  },
   { id: "APC",              label: "APC"  },
   { id: "IFV",              label: "IFV"  },
-  { id: "Artillery",        label: "ARTY" },
-  { id: "Helicopter",       label: "HELO" },
+  { id: "Artillery",        label: "ARTY", hidden: true },  // HIDDEN — remove `hidden: true` to restore
+  { id: "Helicopter",       label: "HELO", hidden: true },  // HIDDEN — remove `hidden: true` to restore
 ];
 
 // Difficulty levels — id matches the `stars` field on each image
@@ -85,9 +85,9 @@ const DIFFICULTY_OPTIONS = [
 // Era options — id matches the `era` field in vehicles.js
 const ERA_OPTIONS = [
   { id: "all",      label: "ALL"      },
-  { id: "WW2",      label: "WW2"      },
-  { id: "Cold War", label: "COLD WAR" },
+  { id: "WW2",      label: "WW2",      hidden: true },  // HIDDEN — remove `hidden: true` to restore
   { id: "Modern",   label: "MODERN"   },
+  { id: "Cold War", label: "COLD WAR" },
 ];
 
 // Military pact options
@@ -95,7 +95,7 @@ const PACT_OPTIONS = [
   { id: "all",          label: "ALL"    },
   { id: "NATO",         label: "NATO"   },
   { id: "Warsaw Pact",  label: "WARSAW" },
-  { id: "Other",        label: "OTHER"  },
+  { id: "Other",        label: "OTHER",  hidden: true },  // HIDDEN — remove `hidden: true` to restore
 ];
 
 // Countries belonging to each pact.
@@ -630,31 +630,6 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           MILITARY VEHICLE RECOGNITION TRAINING
         </p>
 
-        {/* Operator callsign chip — tap to edit */}
-        {callsign && (
-          <button
-            onClick={onEditCallsign}
-            className="font-data mt-4 inline-flex items-center"
-            style={{
-              gap: 6,
-              background: "rgba(15,23,42,0.6)",
-              border: "1px solid rgba(245,158,11,0.22)",
-              borderRadius: 2,
-              color: "#94a3b8",
-              fontSize: "0.7rem",
-              letterSpacing: "0.14em",
-              padding: "5px 11px",
-              cursor: "pointer",
-              minHeight: 44,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            OPERATOR&nbsp;
-            <span style={{ color: "#f59e0b", letterSpacing: "0.06em" }}>{callsign}</span>
-            <span style={{ color: "#475569", fontSize: "0.65rem" }}>✎</span>
-          </button>
-        )}
       </header>
 
       <main
@@ -724,7 +699,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
             CATEGORY
           </div>
           <div className="flex flex-wrap gap-2">
-            {CATEGORY_OPTIONS.map((opt) => {
+            {CATEGORY_OPTIONS.filter((opt) => !opt.hidden).map((opt) => {
               const isSelected = selectedCategory === opt.id;
               const count = categoryCounts[opt.id] ?? 0;
               return (
@@ -758,7 +733,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
             ERA
           </div>
           <div className="flex flex-wrap gap-2">
-            {ERA_OPTIONS.map((opt) => {
+            {ERA_OPTIONS.filter((opt) => !opt.hidden).map((opt) => {
               const isSelected = selectedEra === opt.id;
               const count = eraCounts[opt.id] ?? 0;
               return (
@@ -792,7 +767,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
             ALLIANCE
           </div>
           <div className="flex flex-wrap gap-2">
-            {PACT_OPTIONS.map((opt) => {
+            {PACT_OPTIONS.filter((opt) => !opt.hidden).map((opt) => {
               const isSelected = selectedPact === opt.id;
               const count = pactCounts[opt.id] ?? 0;
               return (
@@ -820,8 +795,8 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           </div>
         </div>
 
-        {/* Nation selector */}
-        <div className="w-full mb-4">
+        {/* Nation selector — HIDDEN: change `false` to `true` to restore */}
+        {false && <div className="w-full mb-4">
           <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
             NATION
           </div>
@@ -866,7 +841,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
               ▾
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* Difficulty selector */}
         <div className="w-full mb-5">
@@ -966,7 +941,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           {canPlay ? "▶  BEGIN TRAINING" : "NO VEHICLES LOADED"}
         </button>
 
-        {/* Secondary nav row — Performance log + Leaderboard */}
+        {/* Secondary nav row — Performance log + Leaderboard + Operator chip */}
         <div className="w-full flex gap-2 mb-5">
           <button
             onClick={onViewStats}
@@ -998,6 +973,29 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           >
             ⊞ LEADERBOARD
           </button>
+          {/* Operator callsign chip — tap to edit */}
+          {callsign && (
+            <button
+              onClick={onEditCallsign}
+              className="flex-1 font-data text-xs"
+              style={{
+                background: "transparent",
+                border: "1px solid rgba(245,158,11,0.22)",
+                borderRadius: 2,
+                color: "#475569",
+                letterSpacing: "0.1em",
+                cursor: "pointer",
+                minHeight: 44,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 5,
+              }}
+            >
+              <span style={{ color: "#f59e0b" }}>{callsign}</span>
+              <span style={{ fontSize: "0.6rem", opacity: 0.5 }}>✎</span>
+            </button>
+          )}
         </div>
 
       </main>
