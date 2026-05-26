@@ -165,15 +165,15 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Modern filter _(shipped in Phase 2 — ERA pill selector on home screen)_
 
 ### Timed Mode
-- [ ] Countdown timer per question
-- [ ] Bonus points for fast answers
-- [ ] Timer toggle on home screen
+- [x] Countdown timer per question
+- [x] Bonus points for fast answers
+- [x] Timer toggle on home screen
 
 ### Streak & Scoring
 - [x] Points-based scoring (100/correct, max 1000) — replaces 0–10 raw counts
 - [x] Supabase schema upgraded with `mode` + `hints_used` columns (`score` constraint widened to 0–1500)
 - [ ] Hint system (button on quiz screen, 2 hints/round, eliminate one wrong answer, −150 per hint at round end)
-- [ ] Timed mode (15s/question, +50 speed bonus for fast answers, separate leaderboard track)
+- [x] Timed mode (15s/question, +50 speed bonus for fast answers, separate leaderboard track)
 - [ ] Streak counter (reset on wrong answer, displayed on quiz screen) — deferred until after hints + timed
 
 ### Leaderboard
@@ -183,7 +183,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Callsign entry for leaderboard (localStorage-persisted, CallsignModal)
 - [x] Welcome Screen on first visit — required callsign entry before home
 - [x] OPERATOR display on home screen with tap-to-edit
-- [ ] Top 10 instead of top 20 + personal highlight + pinned own entry if outside top 10
+- [x] Top 10 instead of top 20 + personal highlight + pinned own entry if outside top 10
 - [ ] Mode filter (NORMAL / TIMED) on leaderboard screen
 - [ ] Admin leaderboard page — view all entries, filter by callsign / cat / diff / mode, delete individual entries
 - [ ] Admin nav bar — VEHICLES / LEADERBOARD tabs sharing a single session
@@ -208,4 +208,4 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ---
 
-*Last updated: 2026-05-25*
+*Last updated: 2026-05-26*

@@ -13,6 +13,27 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Leaderboard: one best score per player per slot
+- **Database trigger `enforce_best_score`** — a BEFORE INSERT trigger on the `leaderboard` table enforces one entry per `(callsign, category, difficulty, mode)` slot. If the incoming score is lower than or equal to the existing one, the insert is silently discarded. If it is higher, the old row is deleted and the new one takes its place.
+- **EndScreen feedback** — the submission result now distinguishes between two outcomes: `✓ NEW PERSONAL BEST — LEADERBOARD UPDATED` (green) when the row was actually inserted, and `NOT A NEW PERSONAL BEST — SCORE NOT RECORDED` (grey) when the trigger discarded it. Uses `Prefer: return=representation` so the client can inspect the response body.
+
+### Added — Phase 3 Stage 4: Timed mode
+- **TIMED mode toggle** on the Home Screen — a new MODE row (NORMAL / TIMED) sits between the difficulty selector and the begin button. NORMAL is the default (unchanged scoring). TIMED activates the countdown.
+- **15-second countdown per question** — a depleting bar below the round-progress bar shows time remaining. Colour transitions amber → orange → red as time runs low. A large countdown number sits at the right end of the bar.
+- **Speed bonus** — in timed mode, a correct answer earns 100 pts + up to 50 speed-bonus pts. Full 50 bonus if answered within 5 s, linearly scaled to 0 at 5 s, nothing after that. Max round score is 1500 (10 × 150).
+- **Auto-advance on timeout** — when the 15 s expires the correct answer highlights green for 1.5 s ("TIME EXPIRED — ADVANCING...") then the next question loads automatically.
+- **Leaderboard separation** — timed scores are submitted with `mode: "timed"` and `total: 1500`. The schema already had the `mode` column from Stage 1.
+- **Best scores per mode** — `matken-best-scores` now tracks normal and timed bests independently per category × difficulty. The BEST display on the home screen switches between the two as the mode toggle changes.
+- **End Screen mode badge** — a third badge alongside CAT and DIFF shows `⏱ TIMED` (red tint) or `NORMAL` to clearly identify the session mode.
+- `useRef` added to the React destructuring (`useState, useEffect, useRef`) for the timer interval ref.
+- Service worker bumped to v37.
+
+### Added — Phase 3 Stage 3: Leaderboard polish
+- **Top 10** — leaderboard now shows the top 10 entries instead of 20. More competitive, faster to scan.
+- **Own callsign highlight** — any row in the top 10 that matches the player's callsign gets an amber tint background and a small `YOU` badge next to the callsign. Multiple entries from the same callsign are all highlighted.
+- **Pinned own entry** — when the player's callsign is not in the top 10, a secondary "YOUR STANDING" section appears below a dashed separator showing their personal best for the current filter with an approximate rank (fetched via a HEAD + `Prefer: count=exact` query to Supabase). Rank shows `—` if the secondary fetch fails (offline, CORS, etc.) — graceful degradation.
+- Service worker bumped to v36.
+
 ### Added — Phase 3 Stage 2: Welcome flow + operator callsign on home
 - **Welcome Screen** — first-visit registration. Shown only when `localStorage` has no callsign. Asks for a 1–16 char callsign (auto-uppercased Bebas Neue input) and lands the player on the home screen on confirm. Once a callsign is saved this screen is never shown again unless localStorage is cleared.
 - **OPERATOR chip on Home Screen** — a small tappable pill under the subtitle shows `OPERATOR <CALLSIGN> ✎`. Tap to open the existing `CallsignModal` and change it. Changing the callsign only affects *future* score submissions — old leaderboard entries keep the previous name.

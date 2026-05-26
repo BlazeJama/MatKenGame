@@ -5,7 +5,7 @@
 // Each round picks 10 random vehicles, one random image per vehicle, and 3 random wrong
 // answers from the same category for each question.
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 // localStorage key shared with the admin page — when present, the game
 // uses your in-progress draft instead of the deployed window.vehicles
@@ -251,6 +251,8 @@ function timeAgo(dateStr) {
 // POST one score row to the Supabase leaderboard table.
 // New (Phase 3) columns: mode ('normal' | 'timed'), hints_used (0–2).
 // total is the max possible for the mode (1000 normal, 1500 timed).
+// Returns { newBest: true } when the row was inserted, { newBest: false } when
+// the trigger discarded it (player already has an equal or better score in that slot).
 async function submitScore({ callsign, score, total, category, difficulty, mode = "normal", hintsUsed = 0 }) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
     method: "POST",
@@ -258,7 +260,9 @@ async function submitScore({ callsign, score, total, category, difficulty, mode 
       "Content-Type": "application/json",
       "apikey": SUPABASE_ANON_KEY,
       "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "Prefer": "return=minimal",
+      // return=representation so we can check whether a row was actually inserted.
+      // If the before-insert trigger cancels the insert the response body is [].
+      "Prefer": "return=representation",
     },
     body: JSON.stringify({
       callsign, score, total, category, difficulty,
@@ -269,13 +273,15 @@ async function submitScore({ callsign, score, total, category, difficulty, mode 
     const text = await res.text().catch(() => "");
     throw new Error(`Submit failed (${res.status})${text ? ": " + text : ""}`);
   }
+  const data = await res.json();
+  return { newBest: Array.isArray(data) && data.length > 0 };
 }
 
 // GET top-20 scores, optionally filtered by category and/or difficulty
 async function fetchLeaderboard(category, difficulty) {
   let url = `${SUPABASE_URL}/rest/v1/leaderboard`
     + `?select=callsign,score,total,category,difficulty,created_at`
-    + `&order=score.desc,created_at.asc&limit=20`;
+    + `&order=score.desc,created_at.asc&limit=10`;
   if (category && category !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
   if (difficulty && difficulty !== "all") url += `&difficulty=eq.${difficulty}`;
   const res = await fetch(url, {
@@ -286,6 +292,47 @@ async function fetchLeaderboard(category, difficulty) {
   });
   if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
   return res.json();
+}
+
+// GET the calling player's personal best entry for a given filter combination.
+// Returns the single highest-scoring row or null if none found.
+async function fetchPlayerBest(callsign, category, difficulty) {
+  let url = `${SUPABASE_URL}/rest/v1/leaderboard`
+    + `?select=callsign,score,total,category,difficulty,created_at`
+    + `&callsign=eq.${encodeURIComponent(callsign)}`
+    + `&order=score.desc&limit=1`;
+  if (category && category !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
+  if (difficulty && difficulty !== "all") url += `&difficulty=eq.${difficulty}`;
+  const res = await fetch(url, {
+    headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data[0] || null;
+}
+
+// Count entries ranked above `score` in the leaderboard (same filters) via a
+// HEAD request — no row data transferred. Returns rank (count + 1) or null on error.
+async function fetchRankAbove(score, category, difficulty) {
+  let url = `${SUPABASE_URL}/rest/v1/leaderboard?score=gt.${score}`;
+  if (category && category !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
+  if (difficulty && difficulty !== "all") url += `&difficulty=eq.${difficulty}`;
+  try {
+    const res = await fetch(url, {
+      method: "HEAD",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Prefer": "count=exact",
+      },
+    });
+    const cr = res.headers.get("content-range");
+    if (cr) {
+      const count = parseInt(cr.split("/")[1]);
+      if (!isNaN(count)) return count + 1;
+    }
+  } catch (_) {}
+  return null;
 }
 
 // ============================================================================
@@ -539,6 +586,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                       selectedPact, onPactChange, pactCounts,
                       selectedNation, onNationChange, availableNations,
                       selectedDifficulty, onDifficultyChange, difficultyCounts,
+                      selectedMode, onModeChange,
                       bestScore, onViewStats, onViewLeaderboard,
                       callsign, onEditCallsign }) {
   const canPlay = playableCount > 0;
@@ -657,7 +705,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                 : "ALL VEHICLES READY"}
             </span>
             <span className="font-data text-xs" style={{ color: bestScore != null ? "#f59e0b" : "#334155", letterSpacing: "0.08em" }}>
-              BEST&nbsp;
+              {selectedMode === "timed" ? "⏱ " : ""}BEST&nbsp;
               <span style={{ color: bestScore != null ? "#f59e0b" : "#1e293b" }}>
                 {bestScore != null ? `${bestScore}` : "—"}
               </span>
@@ -854,6 +902,46 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           </div>
         </div>
 
+        {/* Mode selector */}
+        <div className="w-full mb-5">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>
+            MODE
+          </div>
+          <div className="flex gap-2">
+            {[
+              { id: "normal", label: "NORMAL", sub: "10 × 100 pts" },
+              { id: "timed",  label: "TIMED",  sub: "15s · speed bonus" },
+            ].map((opt) => {
+              const isSel = selectedMode === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => onModeChange(opt.id)}
+                  className="font-data flex-1"
+                  style={{
+                    padding: "8px",
+                    borderRadius: 2,
+                    letterSpacing: "0.1em",
+                    minHeight: 46,
+                    border: `1px solid ${isSel ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                    background: isSel ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                    color: isSel ? "#f59e0b" : "#64748b",
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 3,
+                  }}
+                >
+                  <span style={{ fontSize: "0.72rem" }}>{opt.label}</span>
+                  <span style={{ fontSize: "0.58rem", opacity: 0.65, letterSpacing: "0.06em" }}>{opt.sub}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Begin training button */}
         <button
           onClick={onPlay}
@@ -947,28 +1035,82 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
 // Quiz Screen
 // ============================================================================
 
-function QuizScreen({ round, onComplete, onAbort }) {
+function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [score, setScore]                 = useState(0);
   const [selectedId, setSelectedId]       = useState(null);
+  const [timedOut, setTimedOut]           = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(QUESTION_TIME_MS);
 
-  const question      = round[questionIndex];
+  // Refs so timer callbacks always see fresh values without stale-closure issues
+  const timerIntervalRef  = useRef(null);
+  const questionStartRef  = useRef(null);
+
+  const isTimed        = mode === "timed";
+  const question       = round[questionIndex];
   const isLastQuestion = questionIndex === round.length - 1;
-  const hasAnswered   = selectedId !== null;
-  const isCorrect     = hasAnswered && selectedId === question.vehicle.id;
+  const hasAnswered    = selectedId !== null || timedOut;
+  const isCorrect      = selectedId !== null && selectedId === question.vehicle.id;
+
+  // Start (or restart) the countdown whenever the question index changes
+  useEffect(() => {
+    if (!isTimed) return;
+    setTimeRemaining(QUESTION_TIME_MS);
+    setTimedOut(false);
+    questionStartRef.current = Date.now();
+
+    timerIntervalRef.current = setInterval(() => {
+      const elapsed   = Date.now() - questionStartRef.current;
+      const remaining = Math.max(0, QUESTION_TIME_MS - elapsed);
+      setTimeRemaining(remaining);
+      if (remaining === 0) {
+        clearInterval(timerIntervalRef.current);
+        setTimedOut(true);
+      }
+    }, 100);
+
+    return () => clearInterval(timerIntervalRef.current);
+  }, [questionIndex, isTimed]);
+
+  // After a timeout, briefly show the correct answer then auto-advance
+  useEffect(() => {
+    if (!timedOut) return;
+    const t = setTimeout(() => {
+      if (isLastQuestion) {
+        onComplete(score);
+      } else {
+        setQuestionIndex((i) => i + 1);
+        setSelectedId(null);
+        setTimedOut(false);
+      }
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [timedOut]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAbort = () => {
     if (confirm("Abort mission? Your progress in this round will be lost.")) {
+      clearInterval(timerIntervalRef.current);
       onAbort();
     }
   };
 
   const handleSelect = (vehicleId) => {
     if (hasAnswered) return;
+    clearInterval(timerIntervalRef.current);
     setSelectedId(vehicleId);
-    // Normal mode awards 100 points per correct answer (max 1000 over 10 questions).
-    // Timed mode + hint penalty come in their own follow-up commits.
-    if (vehicleId === question.vehicle.id) setScore((s) => s + POINTS_PER_CORRECT);
+
+    if (vehicleId === question.vehicle.id) {
+      let pts = POINTS_PER_CORRECT;
+      // Speed bonus: full 50 pts if answered within SPEED_BONUS_MAX_MS, linear falloff to 0
+      if (isTimed && questionStartRef.current) {
+        const elapsed = Date.now() - questionStartRef.current;
+        const bonus   = Math.round(
+          SPEED_BONUS_MAX * Math.max(0, (SPEED_BONUS_MAX_MS - elapsed) / SPEED_BONUS_MAX_MS)
+        );
+        pts += bonus;
+      }
+      setScore((s) => s + pts);
+    }
   };
 
   const handleNext = () => {
@@ -977,8 +1119,15 @@ function QuizScreen({ round, onComplete, onAbort }) {
     } else {
       setQuestionIndex((i) => i + 1);
       setSelectedId(null);
+      setTimedOut(false);
     }
   };
+
+  // Timer bar visuals — amber with plenty of time, orange at 8s, red below 4s
+  const timerPct   = (timeRemaining / QUESTION_TIME_MS) * 100;
+  const timerColor = timeRemaining > 8000 ? "#f59e0b"
+                   : timeRemaining > 4000 ? "#fb923c"
+                   : "#ef4444";
 
   // Inline style for each answer button based on current state
   const optionStyle = (optionId) => {
@@ -1085,10 +1234,11 @@ function QuizScreen({ round, onComplete, onAbort }) {
               <span style={{ color: "#f59e0b" }}>{score}</span>
             </span>
           </div>
-          {/* Progress bar */}
+
+          {/* Round progress bar */}
           <div
             className="w-full rounded-full overflow-hidden"
-            style={{ height: 3, background: "rgba(245,158,11,0.1)" }}
+            style={{ height: 3, background: "rgba(245,158,11,0.1)", marginBottom: isTimed ? 5 : 0 }}
           >
             <div
               style={{
@@ -1100,6 +1250,39 @@ function QuizScreen({ round, onComplete, onAbort }) {
               }}
             />
           </div>
+
+          {/* Countdown timer bar — timed mode only */}
+          {isTimed && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div
+                className="flex-1 overflow-hidden"
+                style={{ height: 4, background: "rgba(239,68,68,0.12)", borderRadius: 2 }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${timerPct}%`,
+                    background: timerColor,
+                    borderRadius: 2,
+                    transition: "background 0.3s ease",
+                  }}
+                />
+              </div>
+              <span
+                className="font-display"
+                style={{
+                  fontSize: "1rem",
+                  lineHeight: 1,
+                  color: timedOut ? "#ef4444" : timerColor,
+                  minWidth: 24,
+                  textAlign: "right",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {timedOut ? "0" : Math.ceil(timeRemaining / 1000)}
+              </span>
+            </div>
+          )}
         </div>
       </header>
 
@@ -1201,24 +1384,37 @@ function QuizScreen({ round, onComplete, onAbort }) {
             signals correct (green) / wrong (red) / dimmed alternatives.
             Fun fact also remains hidden; both can be restored later. */}
 
-        {/* Next / finish button — always visible, disabled until answered */}
-        <button
-          onClick={handleNext}
-          disabled={!hasAnswered}
-          className="w-full mt-4 font-display tracking-widest tac-primary"
-          style={{
-            fontSize: "1.35rem",
-            minHeight: "52px",
-            borderRadius: 2,
-            background: hasAnswered ? "#f59e0b" : "rgba(30,41,59,0.7)",
-            color: hasAnswered ? "#070b14" : "#334155",
-            border: hasAnswered ? "none" : "1px solid rgba(51,65,85,0.5)",
-            letterSpacing: "0.14em",
-            cursor: hasAnswered ? "pointer" : "not-allowed",
-          }}
-        >
-          {isLastQuestion ? "DEBRIEF  →" : "NEXT TARGET  →"}
-        </button>
+        {/* Timed-out label — replaces the next button briefly while auto-advancing */}
+        {timedOut && (
+          <div
+            className="w-full mt-4 font-data text-xs text-center"
+            style={{ color: "#ef4444", letterSpacing: "0.14em", minHeight: 52,
+              display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            TIME EXPIRED — ADVANCING...
+          </div>
+        )}
+
+        {/* Next / finish button — visible once answered (not on timeout, which auto-advances) */}
+        {!timedOut && (
+          <button
+            onClick={handleNext}
+            disabled={!hasAnswered}
+            className="w-full mt-4 font-display tracking-widest tac-primary"
+            style={{
+              fontSize: "1.35rem",
+              minHeight: "52px",
+              borderRadius: 2,
+              background: hasAnswered ? "#f59e0b" : "rgba(30,41,59,0.7)",
+              color: hasAnswered ? "#070b14" : "#334155",
+              border: hasAnswered ? "none" : "1px solid rgba(51,65,85,0.5)",
+              letterSpacing: "0.14em",
+              cursor: hasAnswered ? "pointer" : "not-allowed",
+            }}
+          >
+            {isLastQuestion ? "DEBRIEF  →" : "NEXT TARGET  →"}
+          </button>
+        )}
       </main>
     </div>
   );
@@ -1235,16 +1431,18 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
   const pct = Math.min(100, Math.round((score / total) * 100));
   const [submitState, setSubmitState] = useState("idle"); // "idle"|"submitting"|"submitted"|"error"
   const [submitError, setSubmitError]  = useState("");
+  const [wasNewBest,  setWasNewBest]   = useState(false);
 
   const handleSubmit = async () => {
     if (!callsign || submitState !== "idle") return;
     setSubmitState("submitting");
     try {
-      await submitScore({
+      const { newBest } = await submitScore({
         callsign, score, total,
         category: selectedCategory, difficulty: selectedDifficulty,
         mode, hintsUsed,
       });
+      setWasNewBest(newBest);
       setSubmitState("submitted");
     } catch (err) {
       setSubmitError(err.message || "Submission failed — check your connection");
@@ -1300,12 +1498,15 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
           <div style={{ color: "#475569", fontSize: "0.95rem" }}>{scoreSubtext(score)}</div>
 
           {/* Session badges */}
-          <div className="flex items-center justify-center gap-2 mt-4">
+          <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
             <span className="font-data text-xs px-2 py-1" style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 2, color: "#64748b", letterSpacing: "0.08em" }}>
               {catLabel}
             </span>
             <span className="font-data text-xs px-2 py-1" style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 2, color: "#64748b", letterSpacing: "0.08em" }}>
               {diffLabel}
+            </span>
+            <span className="font-data text-xs px-2 py-1" style={{ background: mode === "timed" ? "rgba(239,68,68,0.08)" : "rgba(245,158,11,0.08)", border: `1px solid ${mode === "timed" ? "rgba(239,68,68,0.25)" : "rgba(245,158,11,0.2)"}`, borderRadius: 2, color: mode === "timed" ? "#fca5a5" : "#64748b", letterSpacing: "0.08em" }}>
+              {mode === "timed" ? "⏱ TIMED" : "NORMAL"}
             </span>
           </div>
         </TacCard>
@@ -1360,8 +1561,12 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
               </div>
 
               {submitState === "submitted" ? (
-                <div className="w-full font-data text-xs text-center py-3" style={{ color: "#4ade80", letterSpacing: "0.1em" }}>
-                  ✓ SCORE SUBMITTED TO LEADERBOARD
+                <div className="w-full font-data text-xs text-center py-3" style={{ letterSpacing: "0.1em" }}>
+                  {wasNewBest ? (
+                    <span style={{ color: "#4ade80" }}>✓ NEW PERSONAL BEST — LEADERBOARD UPDATED</span>
+                  ) : (
+                    <span style={{ color: "#475569" }}>NOT A NEW PERSONAL BEST — SCORE NOT RECORDED</span>
+                  )}
                 </div>
               ) : (
                 <button
@@ -1697,7 +1902,7 @@ const LB_DIFFICULTY_OPTIONS = [
   ...DIFFICULTY_OPTIONS,
 ];
 
-function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome }) {
+function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome, callsign }) {
   const [category,   setCategory]   = useState(initialCategory  || "all");
   const [difficulty, setDifficulty] = useState(
     initialDifficulty !== undefined ? initialDifficulty : "all"
@@ -1706,15 +1911,114 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
   const [status,     setStatus]     = useState("loading"); // "loading"|"ok"|"error"
   const [errorMsg,   setErrorMsg]   = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  // Own entry pinned below top 10 (only populated when player is outside top 10)
+  const [ownEntry,   setOwnEntry]   = useState(null);
+  const [ownRank,    setOwnRank]    = useState(null);
 
   useEffect(() => {
     let cancelled = false;
     setStatus("loading");
+    setOwnEntry(null);
+    setOwnRank(null);
+
     fetchLeaderboard(category, difficulty)
-      .then((data) => { if (!cancelled) { setEntries(data); setStatus("ok"); } })
-      .catch((err)  => { if (!cancelled) { setErrorMsg(err.message || "Network error"); setStatus("error"); } });
+      .then(async (data) => {
+        if (cancelled) return;
+        setEntries(data);
+        setStatus("ok");
+
+        // If the player's callsign isn't anywhere in the top 10, fetch their
+        // personal best and pin it below the table with an approximate rank.
+        const isInTop10 = callsign && data.some((e) => e.callsign === callsign);
+        if (!isInTop10 && callsign) {
+          try {
+            const own = await fetchPlayerBest(callsign, category, difficulty);
+            if (own && !cancelled) {
+              setOwnEntry(own);
+              const rank = await fetchRankAbove(own.score, category, difficulty);
+              if (!cancelled) setOwnRank(rank);
+            }
+          } catch (_) {}
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) { setErrorMsg(err.message || "Network error"); setStatus("error"); }
+      });
     return () => { cancelled = true; };
   }, [category, difficulty, refreshKey]);
+
+  // Reusable row renderer — used for both the top-10 list and the pinned own entry
+  const renderRow = (entry, rank, isOwnPinned = false) => {
+    const isRank1 = rank === 1 && !isOwnPinned;
+    const isYou   = isOwnPinned || (callsign && entry.callsign === callsign);
+    return (
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "28px 1fr 58px 44px 44px",
+          padding: "10px 14px",
+          background: isYou
+            ? "rgba(245,158,11,0.07)"
+            : isRank1 ? "rgba(245,158,11,0.04)" : "transparent",
+          alignItems: "center",
+        }}
+      >
+        {/* Rank */}
+        <div
+          className="font-display"
+          style={{ fontSize: "1.1rem", color: isRank1 || isYou ? "#f59e0b" : "#334155" }}
+        >
+          {rank ?? "—"}
+        </div>
+        {/* Callsign + timestamp */}
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div
+              className="font-display"
+              style={{
+                fontSize: "1rem",
+                color: isRank1 ? "#fcd34d" : isYou ? "#f59e0b" : "#94a3b8",
+                letterSpacing: "0.04em",
+              }}
+            >
+              {entry.callsign}
+            </div>
+            {isYou && (
+              <span
+                className="font-data"
+                style={{
+                  fontSize: "0.55rem", letterSpacing: "0.1em",
+                  background: "rgba(245,158,11,0.15)",
+                  border: "1px solid rgba(245,158,11,0.3)",
+                  borderRadius: 2, padding: "1px 4px", color: "#f59e0b",
+                }}
+              >
+                YOU
+              </span>
+            )}
+          </div>
+          <div className="font-data" style={{ fontSize: "0.62rem", color: "#334155", letterSpacing: "0.06em" }}>
+            {timeAgo(entry.created_at)}
+          </div>
+        </div>
+        {/* Score */}
+        <div
+          className="font-display text-center"
+          style={{ fontSize: "1.05rem", color: isRank1 || isYou ? "#f59e0b" : "#64748b", letterSpacing: "0.02em" }}
+        >
+          {entry.score}
+        </div>
+        {/* Category */}
+        <div className="text-center font-data" style={{ fontSize: "0.62rem", color: "#475569", letterSpacing: "0.06em" }}>
+          {CAT_LABEL[entry.category] ?? entry.category}
+        </div>
+        {/* Difficulty */}
+        <div className="text-center font-data" style={{ fontSize: "0.72rem", color: "#475569" }}>
+          {DIFF_STARS[entry.difficulty] ?? "?"}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col tac-grid font-tac">
@@ -1732,7 +2036,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
       </header>
 
       <main className="flex-1 flex flex-col items-center px-5 pb-10 max-w-md mx-auto w-full">
-        {/* Filter row */}
+        {/* Category filter */}
         <div className="w-full mb-4">
           <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>CATEGORY</div>
           <div className="flex flex-wrap gap-2">
@@ -1752,6 +2056,8 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
             })}
           </div>
         </div>
+
+        {/* Difficulty filter */}
         <div className="w-full mb-4">
           <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>DIFFICULTY</div>
           <div className="flex gap-2">
@@ -1772,13 +2078,14 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
           </div>
         </div>
 
-        {/* Table */}
+        {/* Loading */}
         {status === "loading" && (
           <div className="w-full text-center font-data text-xs py-10" style={{ color: "#334155", letterSpacing: "0.12em" }}>
             LOADING INTEL...
           </div>
         )}
 
+        {/* Error */}
         {status === "error" && (
           <div className="w-full text-center font-data text-xs py-6" style={{ color: "#f87171", letterSpacing: "0.08em", lineHeight: 2 }}>
             SIGNAL LOST<br />
@@ -1786,6 +2093,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
           </div>
         )}
 
+        {/* Empty */}
         {status === "ok" && entries.length === 0 && (
           <div className="w-full text-center font-data text-xs py-10" style={{ color: "#334155", letterSpacing: "0.1em", lineHeight: 2 }}>
             NO ENTRIES ON FILE<br />
@@ -1793,9 +2101,10 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
           </div>
         )}
 
+        {/* Table */}
         {status === "ok" && entries.length > 0 && (
           <TacCard className="w-full mb-4" style={{ padding: 0, overflow: "hidden" }}>
-            {/* Table header */}
+            {/* Column headers */}
             <div
               className="grid font-data text-xs"
               style={{
@@ -1812,48 +2121,31 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
               <div className="text-center">DIFF</div>
             </div>
 
-            {entries.map((entry, i) => {
-              const isTop = i === 0;
-              return (
+            {/* Top-10 rows */}
+            {entries.map((entry, i) => (
+              <div key={i} style={{ borderBottom: i < entries.length - 1 || ownEntry ? "1px solid rgba(30,41,59,0.4)" : "none" }}>
+                {renderRow(entry, i + 1, false)}
+              </div>
+            ))}
+
+            {/* Pinned own entry — only when player is outside the visible top 10 */}
+            {ownEntry && (
+              <>
                 <div
-                  key={i}
-                  className="grid"
                   style={{
-                    gridTemplateColumns: "28px 1fr 58px 44px 44px",
-                    padding: "10px 14px",
-                    borderBottom: i < entries.length - 1 ? "1px solid rgba(30,41,59,0.4)" : "none",
-                    background: isTop ? "rgba(245,158,11,0.04)" : "transparent",
-                    alignItems: "center",
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "6px 14px 4px",
+                    borderTop: "1px dashed rgba(245,158,11,0.2)",
                   }}
                 >
-                  {/* Rank */}
-                  <div className="font-display" style={{ fontSize: "1.1rem", color: isTop ? "#f59e0b" : "#334155" }}>
-                    {i + 1}
-                  </div>
-                  {/* Callsign + time */}
-                  <div>
-                    <div className="font-display" style={{ fontSize: "1rem", color: isTop ? "#fcd34d" : "#94a3b8", letterSpacing: "0.04em" }}>
-                      {entry.callsign}
-                    </div>
-                    <div className="font-data" style={{ fontSize: "0.62rem", color: "#334155", letterSpacing: "0.06em" }}>
-                      {timeAgo(entry.created_at)}
-                    </div>
-                  </div>
-                  {/* Score — raw points (0-1000 normal / 0-1500 timed) */}
-                  <div className="font-display text-center" style={{ fontSize: "1.05rem", color: isTop ? "#f59e0b" : "#64748b", letterSpacing: "0.02em" }}>
-                    {entry.score}
-                  </div>
-                  {/* Category badge */}
-                  <div className="text-center font-data" style={{ fontSize: "0.62rem", color: "#475569", letterSpacing: "0.06em" }}>
-                    {CAT_LABEL[entry.category] ?? entry.category}
-                  </div>
-                  {/* Difficulty badge */}
-                  <div className="text-center font-data" style={{ fontSize: "0.72rem", color: "#475569" }}>
-                    {DIFF_STARS[entry.difficulty] ?? "?"}
-                  </div>
+                  <span className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.12em", color: "#475569", whiteSpace: "nowrap" }}>
+                    YOUR STANDING
+                  </span>
+                  <div style={{ flex: 1, height: 1, background: "rgba(245,158,11,0.08)" }} />
                 </div>
-              );
-            })}
+                {renderRow(ownEntry, ownRank, true)}
+              </>
+            )}
           </TacCard>
         )}
 
@@ -1912,6 +2204,7 @@ function App() {
   const [finalScore, setFinalScore] = useState(0);
   const [selectedCategory, setSelectedCategory]     = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);  // 1 = Easy by default
+  const [selectedMode, setSelectedMode]             = useState("normal");
   const [selectedEra, setSelectedEra]               = useState("all");
   const [selectedPact, setSelectedPact]             = useState("all");
   const [selectedNation, setSelectedNation]         = useState("all");
@@ -2030,9 +2323,9 @@ function App() {
 
   const finishGame = (score) => {
     setFinalScore(score);
-    // Persist best score for category + difficulty + mode (normal by default).
+    // Persist best score for category + difficulty + mode.
     // Shape: { cat: { diff: { normal: pts, timed: pts } } }
-    const mode = "normal";
+    const mode = selectedMode;
     const catScores  = bestScores[selectedCategory] || {};
     const diffScores = catScores[selectedDifficulty] || {};
     const prev = diffScores[mode] ?? -1;
@@ -2106,12 +2399,12 @@ function App() {
   // Pick the active screen
   let body;
   if (screen === "quiz") {
-    body = <QuizScreen round={round} onComplete={finishGame} onAbort={returnHome} />;
+    body = <QuizScreen round={round} onComplete={finishGame} onAbort={returnHome} mode={selectedMode} />;
   } else if (screen === "end") {
     body = (
       <EndScreen
         score={finalScore}
-        total={1000}  /* normal-mode max; timed mode (future) will pass 1500 */
+        total={selectedMode === "timed" ? 1500 : 1000}
         onPlayAgain={startGame}
         onReturnHome={returnHome}
         callsign={callsign}
@@ -2119,7 +2412,7 @@ function App() {
         selectedCategory={selectedCategory}
         selectedDifficulty={selectedDifficulty}
         onViewLeaderboard={goToLeaderboard}
-        mode="normal"
+        mode={selectedMode}
         hintsUsed={0}
       />
     );
@@ -2131,6 +2424,7 @@ function App() {
         initialCategory={lbInitCategory}
         initialDifficulty={lbInitDifficulty}
         onReturnHome={returnHome}
+        callsign={callsign}
       />
     );
   } else {
@@ -2155,7 +2449,9 @@ function App() {
         selectedDifficulty={selectedDifficulty}
         onDifficultyChange={setSelectedDifficulty}
         difficultyCounts={difficultyCounts}
-        bestScore={bestScores[selectedCategory]?.[selectedDifficulty]?.normal}
+        selectedMode={selectedMode}
+        onModeChange={setSelectedMode}
+        bestScore={bestScores[selectedCategory]?.[selectedDifficulty]?.[selectedMode]}
         onViewStats={goToStats}
         onViewLeaderboard={() => goToLeaderboard("all", "all")}
         callsign={callsign}
