@@ -1052,6 +1052,11 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
   const [selectedId, setSelectedId]       = useState(null);
   const [timedOut, setTimedOut]           = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(QUESTION_TIME_MS);
+  // Hint system — hintsUsed accumulates across the whole round;
+  // eliminatedIds resets per question so only the current question's
+  // wrong answers can be eliminated.
+  const [hintsUsed, setHintsUsed]         = useState(0);
+  const [eliminatedIds, setEliminatedIds] = useState(() => new Set());
 
   // Refs so timer callbacks always see fresh values without stale-closure issues
   const timerIntervalRef  = useRef(null);
@@ -1062,6 +1067,12 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
   const isLastQuestion = questionIndex === round.length - 1;
   const hasAnswered    = selectedId !== null || timedOut;
   const isCorrect      = selectedId !== null && selectedId === question.vehicle.id;
+
+  // How many wrong answers can still be eliminated on this question
+  const eliminableWrong = question.options.filter(
+    (opt) => opt.id !== question.vehicle.id && !eliminatedIds.has(opt.id)
+  ).length;
+  const canUseHint = !hasAnswered && hintsUsed < MAX_HINTS && eliminableWrong > 0;
 
   // Start (or restart) the countdown whenever the question index changes
   useEffect(() => {
@@ -1083,12 +1094,17 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
     return () => clearInterval(timerIntervalRef.current);
   }, [questionIndex, isTimed]);
 
+  // Reset eliminated IDs whenever the question advances
+  useEffect(() => {
+    setEliminatedIds(new Set());
+  }, [questionIndex]);
+
   // After a timeout, briefly show the correct answer then auto-advance
   useEffect(() => {
     if (!timedOut) return;
     const t = setTimeout(() => {
       if (isLastQuestion) {
-        onComplete(score);
+        onComplete(score, hintsUsed);
       } else {
         setQuestionIndex((i) => i + 1);
         setSelectedId(null);
@@ -1103,6 +1119,17 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
       clearInterval(timerIntervalRef.current);
       onAbort();
     }
+  };
+
+  // Eliminate one random wrong answer on the current question
+  const handleHint = () => {
+    if (!canUseHint) return;
+    const wrong = question.options.filter(
+      (opt) => opt.id !== question.vehicle.id && !eliminatedIds.has(opt.id)
+    );
+    const pick = wrong[Math.floor(Math.random() * wrong.length)];
+    setEliminatedIds((prev) => new Set([...prev, pick.id]));
+    setHintsUsed((n) => n + 1);
   };
 
   const handleSelect = (vehicleId) => {
@@ -1126,7 +1153,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
 
   const handleNext = () => {
     if (isLastQuestion) {
-      onComplete(score);
+      onComplete(score, hintsUsed);
     } else {
       setQuestionIndex((i) => i + 1);
       setSelectedId(null);
@@ -1155,6 +1182,15 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
       cursor: hasAnswered ? "default" : "pointer",
       border: "1px solid",
       transition: "border-color 0.15s, background 0.15s",
+    };
+    // Eliminated by hint — heavily dimmed, before answering only
+    if (!hasAnswered && eliminatedIds.has(optionId)) return {
+      ...base,
+      background: "rgba(15,23,42,0.2)",
+      borderColor: "rgba(30,41,59,0.2)",
+      color: "#1e293b",
+      opacity: 0.3,
+      cursor: "not-allowed",
     };
     if (!hasAnswered) return {
       ...base,
@@ -1192,6 +1228,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
       fontSize: "1.1rem",
       flexShrink: 0,
     };
+    if (!hasAnswered && eliminatedIds.has(optionId)) return { ...base, background: "rgba(15,23,42,0.2)", color: "#1e293b" };
     if (!hasAnswered) return { ...base, background: "rgba(245,158,11,0.15)", color: "#f59e0b" };
     if (optionId === question.vehicle.id) return { ...base, background: "rgba(34,197,94,0.2)", color: "#4ade80" };
     if (optionId === selectedId)          return { ...base, background: "rgba(239,68,68,0.2)",  color: "#f87171" };
@@ -1358,7 +1395,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
               <button
                 key={option.id}
                 onClick={() => handleSelect(option.id)}
-                disabled={hasAnswered}
+                disabled={hasAnswered || eliminatedIds.has(option.id)}
                 style={optionStyle(option.id)}
                 className={!hasAnswered ? "tac-answer" : ""}
               >
@@ -1393,9 +1430,35 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
           })}
         </div>
 
-        {/* Result panel intentionally hidden — answer-button styling already
-            signals correct (green) / wrong (red) / dimmed alternatives.
-            Fun fact also remains hidden; both can be restored later. */}
+        {/* Hint button — visible before answering, hides once answered */}
+        {!hasAnswered && (
+          <div className="flex justify-center mt-3">
+            <button
+              onClick={handleHint}
+              disabled={!canUseHint}
+              className="font-data"
+              style={{
+                fontSize: "0.68rem",
+                padding: "0 18px",
+                minHeight: 44,
+                letterSpacing: "0.12em",
+                borderRadius: 2,
+                background: canUseHint ? "rgba(245,158,11,0.07)" : "transparent",
+                border: `1px solid ${canUseHint ? "rgba(245,158,11,0.25)" : "rgba(30,41,59,0.3)"}`,
+                color: canUseHint ? "#f59e0b" : "#1e293b",
+                cursor: canUseHint ? "pointer" : "not-allowed",
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+              }}
+            >
+              ◈ USE HINT
+              <span style={{ fontSize: "0.58rem", opacity: canUseHint ? 0.7 : 0.3 }}>
+                {MAX_HINTS - hintsUsed} LEFT · −{HINT_PENALTY} PTS EA
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* Timed-out label — replaces the next button briefly while auto-advancing */}
         {timedOut && (
@@ -1509,6 +1572,16 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
             {scoreLabel(score)}
           </div>
           <div style={{ color: "#475569", fontSize: "0.95rem" }}>{scoreSubtext(score)}</div>
+
+          {/* Hint penalty note */}
+          {hintsUsed > 0 && (
+            <div
+              className="font-data text-xs mt-3"
+              style={{ color: "#f87171", letterSpacing: "0.08em" }}
+            >
+              −{hintsUsed * HINT_PENALTY} PTS · {hintsUsed} HINT{hintsUsed > 1 ? "S" : ""} USED
+            </div>
+          )}
 
           {/* Session badges */}
           <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
@@ -2252,7 +2325,8 @@ function App() {
   const [selectedEra, setSelectedEra]               = useState("all");
   const [selectedPact, setSelectedPact]             = useState("all");
   const [selectedNation, setSelectedNation]         = useState("all");
-  const [bestScores, setBestScores] = useState(loadBestScores);
+  const [bestScores, setBestScores]     = useState(loadBestScores);
+  const [lastHintsUsed, setLastHintsUsed] = useState(0);
 
   // Callsign — persisted to localStorage, shown on leaderboard
   const [callsign, setCallsign] = useState(() => localStorage.getItem(CALLSIGN_KEY) || "");
@@ -2366,20 +2440,23 @@ function App() {
     setScreen("quiz");
   };
 
-  const finishGame = (score) => {
-    setFinalScore(score);
+  const finishGame = (score, hintsUsed = 0) => {
+    // Apply hint penalty at end of round (min 0)
+    const finalScore = Math.max(0, score - hintsUsed * HINT_PENALTY);
+    setFinalScore(finalScore);
+    setLastHintsUsed(hintsUsed);
     // Persist best score for category + difficulty + mode.
     // Shape: { cat: { diff: { normal: pts, timed: pts } } }
     const mode = selectedMode;
     const catScores  = bestScores[selectedCategory] || {};
     const diffScores = catScores[selectedDifficulty] || {};
     const prev = diffScores[mode] ?? -1;
-    if (score > prev) {
+    if (finalScore > prev) {
       const updated = {
         ...bestScores,
         [selectedCategory]: {
           ...catScores,
-          [selectedDifficulty]: { ...diffScores, [mode]: score },
+          [selectedDifficulty]: { ...diffScores, [mode]: finalScore },
         },
       };
       setBestScores(updated);
@@ -2459,7 +2536,7 @@ function App() {
         selectedDifficulty={selectedDifficulty}
         onViewLeaderboard={(cat, diff) => goToLeaderboard(cat, diff, selectedMode)}
         mode={selectedMode}
-        hintsUsed={0}
+        hintsUsed={lastHintsUsed}
       />
     );
   } else if (screen === "stats") {
