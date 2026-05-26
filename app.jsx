@@ -2320,6 +2320,59 @@ function App() {
   const [screen, setScreen]         = useState("home");
   const [round, setRound]           = useState(null);
   const [finalScore, setFinalScore] = useState(0);
+
+  // ── Service-worker update detection ────────────────────────────────────────
+  // When a new SW has installed and is waiting, we show an update banner.
+  // The user must explicitly click Refresh — we never auto-reload, especially
+  // not during a quiz round (screen === "quiz").
+  const [swUpdateReady, setSwUpdateReady] = useState(false);
+  const swRegRef = useRef(null);
+
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+
+    // Watch an installing worker through to the "installed" (waiting) state.
+    const trackInstalling = (worker) => {
+      worker.addEventListener("statechange", () => {
+        if (worker.state === "installed" && navigator.serviceWorker.controller) {
+          // A new version is ready but waiting — show the banner.
+          setSwUpdateReady(true);
+        }
+      });
+    };
+
+    navigator.serviceWorker.getRegistration().then((reg) => {
+      if (!reg) return;
+      swRegRef.current = reg;
+
+      // Already waiting when the page loaded (e.g. tab was open during deploy).
+      if (reg.waiting && navigator.serviceWorker.controller) {
+        setSwUpdateReady(true);
+      }
+
+      // New SW found while the tab is open.
+      reg.addEventListener("updatefound", () => {
+        if (reg.installing) trackInstalling(reg.installing);
+      });
+    });
+
+    // When the waiting SW takes control (after skipWaiting), reload to get
+    // the new assets. The controllerchange fires on every page so guard it.
+    let reloading = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
+  }, []);
+
+  // Tell the waiting SW to activate, which triggers controllerchange → reload.
+  const handleSwUpdate = () => {
+    const reg = swRegRef.current;
+    if (reg && reg.waiting) {
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    }
+  };
   const [selectedCategory, setSelectedCategory]     = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);  // 1 = Easy by default
   const [selectedMode, setSelectedMode]             = useState("normal");
@@ -2587,9 +2640,73 @@ function App() {
 
   // The CallsignModal is rendered at the top level so it can overlay any screen
   // (currently the home and end screens both expose an Edit Callsign action).
+  const isPlaying = screen === "quiz";
+
   return (
     <>
       {body}
+
+      {/* ── SW update banner ─────────────────────────────────────────────────
+          Appears whenever a new service worker is waiting.
+          During gameplay the refresh action is suppressed so the round is
+          never interrupted — the pill changes to "AFTER ROUND" instead.     */}
+      {swUpdateReady && (
+        <div
+          className="font-data"
+          style={{
+            position: "fixed",
+            bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9997,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            background: "rgba(7,11,20,0.96)",
+            border: "1px solid rgba(245,158,11,0.3)",
+            borderRadius: 3,
+            padding: "8px 12px 8px 14px",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.6)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span style={{ fontSize: "0.65rem", color: "#94a3b8", letterSpacing: "0.1em" }}>
+            ↑ UPDATE AVAILABLE
+          </span>
+          {isPlaying ? (
+            <span
+              style={{
+                fontSize: "0.6rem",
+                color: "#334155",
+                letterSpacing: "0.1em",
+                border: "1px solid rgba(51,65,85,0.4)",
+                borderRadius: 2,
+                padding: "3px 8px",
+              }}
+            >
+              AFTER ROUND
+            </span>
+          ) : (
+            <button
+              onClick={handleSwUpdate}
+              style={{
+                fontSize: "0.6rem",
+                color: "#070b14",
+                background: "#f59e0b",
+                border: "none",
+                borderRadius: 2,
+                padding: "4px 10px",
+                letterSpacing: "0.1em",
+                cursor: "pointer",
+                fontFamily: "'Share Tech Mono', monospace",
+              }}
+            >
+              REFRESH
+            </button>
+          )}
+        </div>
+      )}
+
       {callsignModalOpen && (
         <CallsignModal
           current={callsign}

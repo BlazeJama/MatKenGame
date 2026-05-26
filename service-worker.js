@@ -1,6 +1,6 @@
 // MatKenGame service worker
 // Bump CACHE_VERSION every time you change the cached files so old caches are evicted.
-const CACHE_VERSION = "matkengame-v46";
+const CACHE_VERSION = "matkengame-v47";
 
 // Hostnames whose responses must NEVER be cached — always go to network.
 // Supabase leaderboard data is live and shared across devices; a cached
@@ -22,12 +22,21 @@ const PRECACHE_URLS = [
   "assets/icons/icon-512.png"
 ];
 
-// Install: precache the core files
+// Install: precache the core files.
+// We do NOT call self.skipWaiting() here — the new SW waits until the app
+// explicitly sends a SKIP_WAITING message so we never interrupt active gameplay.
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE_URLS))
   );
-  self.skipWaiting();
+});
+
+// Message handler — the app posts { type: "SKIP_WAITING" } when the user
+// clicks the update banner and it is safe to activate the new SW.
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 // Activate: clean up any old cache versions
