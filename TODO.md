@@ -172,7 +172,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 ### Streak & Scoring
 - [x] Points-based scoring (100/correct, max 1000) — replaces 0–10 raw counts
 - [x] Supabase schema upgraded with `mode` + `hints_used` columns (`score` constraint widened to 0–1500)
-- [ ] Hint system (button on quiz screen, 2 hints/round, eliminate one wrong answer, −150 per hint at round end)
+- [x] Hint system (button on quiz screen, 2 hints/round, eliminate one wrong answer, −150 per hint at round end)
 - [x] Timed mode (15s/question, +50 speed bonus for fast answers, separate leaderboard track)
 - [ ] Streak counter (reset on wrong answer, displayed on quiz screen) — deferred until after hints + timed
 

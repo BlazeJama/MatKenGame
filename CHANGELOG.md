@@ -13,6 +13,15 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Hint system
+- **◈ USE HINT button** on the quiz screen — sits between the answer options and the NEXT button, visible only before the player answers. Shows remaining hints and the cost upfront ("2 LEFT · −150 PTS EA").
+- **2 hints per round** — each hint eliminates one randomly chosen wrong answer on the current question. Eliminated options are heavily dimmed (opacity 0.3), disabled, and cannot be selected.
+- **Per-question reset** — eliminated IDs reset when the question advances, so each question starts fresh.
+- **−150 pts per hint**, deducted at the end of the round (not per question). Final score cannot go below 0. Best-score tracking uses the post-penalty score.
+- **End screen deduction note** — when hints were used, "−N PTS · N HINT(S) USED" appears in red below the session rating.
+- `hintsUsed` is submitted with the leaderboard score as before (column already existed in the schema).
+- SW bumped to v41.
+
 ### Added — Leaderboard mode filter
 - **MODE filter row** on the player-facing leaderboard screen — three pill buttons: ALL / NORMAL / ⏱ TIMED. Selecting a mode re-fetches the top 10 filtered to that mode. TIMED button uses the red accent colour to match the quiz timer.
 - **⏱ icon on rows** — when the filter is set to ALL, a small ⏱ icon appears next to the timestamp on timed-mode entries so mixed-mode results are distinguishable at a glance.
