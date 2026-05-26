@@ -601,12 +601,14 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
       {/* Draft warning */}
       {usingDraft && (
         <div
-          className="font-data text-xs text-center py-2 px-4 border-b"
+          className="font-data text-xs text-center px-4 border-b"
           style={{
             background: "rgba(120,80,0,0.3)",
             borderColor: "rgba(245,158,11,0.3)",
             color: "#fcd34d",
             letterSpacing: "0.06em",
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 8px)",
+            paddingBottom: 8,
           }}
         >
           ⚠ PREVIEW MODE — LOCAL ADMIN DRAFT ACTIVE
@@ -649,6 +651,9 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
               letterSpacing: "0.14em",
               padding: "5px 11px",
               cursor: "pointer",
+              minHeight: 44,
+              display: "inline-flex",
+              alignItems: "center",
             }}
           >
             OPERATOR&nbsp;
@@ -658,7 +663,10 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
         )}
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-10 max-w-md mx-auto w-full">
+      <main
+        className="flex-1 flex flex-col items-center px-6 pb-10 max-w-md mx-auto w-full"
+        style={{ overflowY: "auto", WebkitOverflowScrolling: "touch" }}
+      >
         {/* Mission intel card */}
         <TacCard className="w-full mb-6" style={{ padding: "24px 28px" }}>
           <div
@@ -735,7 +743,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                     padding: "5px 12px",
                     borderRadius: 2,
                     letterSpacing: "0.1em",
-                    minHeight: 32,
+                    minHeight: 44,
                     border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                     background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
                     color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
@@ -769,7 +777,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                     padding: "5px 12px",
                     borderRadius: 2,
                     letterSpacing: "0.1em",
-                    minHeight: 32,
+                    minHeight: 44,
                     border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                     background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
                     color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
@@ -803,7 +811,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                     padding: "5px 12px",
                     borderRadius: 2,
                     letterSpacing: "0.1em",
-                    minHeight: 32,
+                    minHeight: 44,
                     border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                     background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
                     color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
@@ -833,7 +841,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                 padding: "8px 32px 8px 12px",
                 borderRadius: 2,
                 letterSpacing: "0.1em",
-                minHeight: 38,
+                minHeight: 44,
                 border: `1px solid ${selectedNation !== "all" ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                 background: selectedNation !== "all" ? "rgba(245,158,11,0.08)" : "rgba(15,23,42,0.5)",
                 color: selectedNation !== "all" ? "#f59e0b" : "#64748b",
@@ -885,7 +893,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
                     padding: "8px 8px",
                     borderRadius: 2,
                     letterSpacing: "0.1em",
-                    minHeight: 38,
+                    minHeight: 44,
                     border: `1px solid ${isSelected ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                     background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
                     color: isSelected ? "#f59e0b" : count > 0 ? "#64748b" : "#1e293b",
@@ -976,7 +984,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
               color: "#475569",
               letterSpacing: "0.12em",
               cursor: "pointer",
-              minHeight: 36,
+              minHeight: 44,
             }}
           >
             ◆ PERF LOG
@@ -991,7 +999,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
               color: "#475569",
               letterSpacing: "0.12em",
               cursor: "pointer",
-              minHeight: 36,
+              minHeight: 44,
             }}
           >
             ⊞ LEADERBOARD
@@ -1215,7 +1223,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
               style={{
                 fontSize: "0.66rem",
                 padding: "4px 9px",
-                minHeight: 26,
+                minHeight: 44,
                 background: "rgba(15,23,42,0.6)",
                 border: "1px solid rgba(239,68,68,0.35)",
                 borderRadius: 2,
@@ -1223,6 +1231,8 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
                 letterSpacing: "0.1em",
                 cursor: "pointer",
                 flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
               }}
             >
               ✕ ABORT
@@ -1474,7 +1484,7 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
         </h1>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-10 max-w-md mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center px-6 pb-10 max-w-md mx-auto w-full">
         {/* Score card */}
         <TacCard className="w-full text-center mb-5" style={{ padding: "28px 28px" }}>
           {/* Score fraction — sized for up to "1000/1000" */}
@@ -1866,6 +1876,7 @@ function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
               letterSpacing: "0.1em",
               cursor: "pointer",
               padding: "6px 12px",
+              minHeight: 44,
             }}
           >
             🗑 CLEAR ALL RECORDS
@@ -2053,7 +2064,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, initialMode, on
                 <button key={opt.id} onClick={() => setCategory(opt.id)} className="font-data"
                   style={{
                     fontSize: "0.72rem", padding: "5px 12px", borderRadius: 2,
-                    letterSpacing: "0.1em", minHeight: 30,
+                    letterSpacing: "0.1em", minHeight: 44,
                     border: `1px solid ${sel ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                     background: sel ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
                     color: sel ? "#f59e0b" : "#64748b", cursor: "pointer",
@@ -2074,7 +2085,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, initialMode, on
                 <button key={opt.id} onClick={() => setDifficulty(opt.id)} className="font-data flex-1"
                   style={{
                     fontSize: "0.72rem", padding: "6px 4px", borderRadius: 2,
-                    letterSpacing: "0.08em", minHeight: 30,
+                    letterSpacing: "0.08em", minHeight: 44,
                     border: `1px solid ${sel ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                     background: sel ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
                     color: sel ? "#f59e0b" : "#64748b", cursor: "pointer",
@@ -2099,7 +2110,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, initialMode, on
                 <button key={opt.id} onClick={() => setMode(opt.id)} className="font-data flex-1"
                   style={{
                     fontSize: "0.72rem", padding: "6px 4px", borderRadius: 2,
-                    letterSpacing: "0.08em", minHeight: 30,
+                    letterSpacing: "0.08em", minHeight: 44,
                     border: `1px solid ${sel ? (opt.id === "timed" ? "#f87171" : "#f59e0b") : "rgba(51,65,85,0.5)"}`,
                     background: sel ? (opt.id === "timed" ? "rgba(239,68,68,0.1)" : "rgba(245,158,11,0.12)") : "rgba(15,23,42,0.5)",
                     color: sel ? (opt.id === "timed" ? "#f87171" : "#f59e0b") : "#64748b",
