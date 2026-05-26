@@ -185,8 +185,8 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] OPERATOR display on home screen with tap-to-edit
 - [x] Top 10 instead of top 20 + personal highlight + pinned own entry if outside top 10
 - [ ] Mode filter (NORMAL / TIMED) on leaderboard screen
-- [ ] Admin leaderboard page — view all entries, filter by callsign / cat / diff / mode, delete individual entries
-- [ ] Admin nav bar — VEHICLES / LEADERBOARD tabs sharing a single session
+- [x] Admin leaderboard page — view all entries, filter by callsign / cat / diff / mode, delete individual entries
+- [x] Admin nav bar — VEHICLES / LEADERBOARD tabs sharing a single session
 
 ### Social & Sound
 - [ ] Share score button (iOS/Android share sheet)

@@ -13,6 +13,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Admin leaderboard page
+- **VEHICLES / LEADERBOARD tab bar** in the admin header — both tabs share the same authenticated session. Switching tabs does not log you out or reload the page.
+- **Leaderboard tab** shows all entries (up to 1 000) in a full-width table: rank, callsign, score/total, category badge, difficulty stars, mode badge (⏱ TIMED / NORMAL), submission date.
+- **Filters** — callsign text search, category dropdown, difficulty dropdown, mode dropdown, sort dropdown (score ↓ / score ↑ / newest / oldest). All filters are client-side; results and count update instantly.
+- **Per-row delete** — red Delete button on each row with a confirmation prompt. Delete is optimistic: the row disappears immediately and an error alert appears if the request fails.
+- **SQL required for deletes:** `CREATE POLICY "Public delete" ON public.leaderboard FOR DELETE USING (true);` — a reminder banner is shown in the panel until the user sets this up.
+- Vehicles-tab action buttons (🌐 Alliances, 💾 Save, 🗑 Discard) are hidden when the leaderboard tab is active.
+
 ### Changed — Leaderboard: one best score per player per slot
 - **Database trigger `enforce_best_score`** — a BEFORE INSERT trigger on the `leaderboard` table enforces one entry per `(callsign, category, difficulty, mode)` slot. If the incoming score is lower than or equal to the existing one, the insert is silently discarded. If it is higher, the old row is deleted and the new one takes its place.
 - **EndScreen feedback** — the submission result now distinguishes between two outcomes: `✓ NEW PERSONAL BEST — LEADERBOARD UPDATED` (green) when the row was actually inserted, and `NOT A NEW PERSONAL BEST — SCORE NOT RECORDED` (grey) when the trigger discarded it. Uses `Prefer: return=representation` so the client can inspect the response body.
