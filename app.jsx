@@ -1223,38 +1223,55 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
         }}
       >
         <div className="max-w-md mx-auto w-full">
-          <div className="flex items-center justify-between mb-2" style={{ gap: 8 }}>
-            <button
-              onClick={handleAbort}
-              className="font-data"
-              style={{
-                fontSize: "0.66rem",
-                padding: "4px 9px",
-                minHeight: 44,
-                background: "rgba(15,23,42,0.6)",
-                border: "1px solid rgba(239,68,68,0.35)",
-                borderRadius: 2,
-                color: "#f87171",
-                letterSpacing: "0.1em",
-                cursor: "pointer",
-                flexShrink: 0,
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              ✕ ABORT
-            </button>
-            <span className="font-data text-xs" style={{ color: "#475569", letterSpacing: "0.1em" }}>
-              QUESTION{" "}
-              <span style={{ color: "#f59e0b" }}>{questionIndex + 1}</span>
-              <span style={{ color: "#334155" }}>/{round.length}</span>
-            </span>
-            {/* Score + Hint chip grouped on the right */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span className="font-data text-xs" style={{ color: "#475569", letterSpacing: "0.1em" }}>
-                SCORE{" "}
-                <span style={{ color: "#f59e0b" }}>{score}</span>
+          {/* 3-column grid: ABORT · counter · SCORE+HINT — outer cols equal width so counter is perfectly centred */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", marginBottom: 8, gap: 8 }}>
+
+            {/* Left — ABORT */}
+            <div>
+              <button
+                onClick={handleAbort}
+                className="font-data"
+                style={{
+                  fontSize: "0.66rem",
+                  padding: "0 10px",
+                  height: 36,
+                  background: "rgba(15,23,42,0.6)",
+                  border: "1px solid rgba(239,68,68,0.35)",
+                  borderRadius: 2,
+                  color: "#f87171",
+                  letterSpacing: "0.1em",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                ✕ ABORT
+              </button>
+            </div>
+
+            {/* Centre — question counter */}
+            <div style={{ textAlign: "center", lineHeight: 1 }}>
+              <span
+                className="font-display"
+                style={{ fontSize: "1.45rem", letterSpacing: "0.04em", color: "#f59e0b" }}
+              >
+                {questionIndex + 1}
               </span>
+              <span
+                className="font-display"
+                style={{ fontSize: "1.1rem", letterSpacing: "0.04em", color: "#334155" }}
+              >
+                /{round.length}
+              </span>
+            </div>
+
+            {/* Right — SCORE + HINT */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
+              <div style={{ textAlign: "right", lineHeight: 1 }}>
+                <div className="font-data" style={{ fontSize: "0.55rem", color: "#334155", letterSpacing: "0.12em", marginBottom: 1 }}>SCORE</div>
+                <div className="font-display" style={{ fontSize: "1.45rem", letterSpacing: "0.04em", color: "#f59e0b", lineHeight: 1 }}>{score}</div>
+              </div>
               <button
                 onClick={handleHint}
                 disabled={!canUseHint}
@@ -1262,7 +1279,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
                 style={{
                   fontSize: "0.62rem",
                   padding: "0 10px",
-                  minHeight: 28,
+                  height: 36,
                   letterSpacing: "0.1em",
                   borderRadius: 2,
                   background: canUseHint ? "rgba(245,158,11,0.1)" : "transparent",
@@ -1273,6 +1290,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
                   alignItems: "center",
                   gap: 5,
                   flexShrink: 0,
+                  whiteSpace: "nowrap",
                 }}
               >
                 HINT
@@ -1294,6 +1312,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
                 </span>
               </button>
             </div>
+
           </div>
 
           {/* Round progress bar */}
