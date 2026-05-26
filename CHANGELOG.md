@@ -13,6 +13,13 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Leaderboard mode filter
+- **MODE filter row** on the player-facing leaderboard screen — three pill buttons: ALL / NORMAL / ⏱ TIMED. Selecting a mode re-fetches the top 10 filtered to that mode. TIMED button uses the red accent colour to match the quiz timer.
+- **⏱ icon on rows** — when the filter is set to ALL, a small ⏱ icon appears next to the timestamp on timed-mode entries so mixed-mode results are distinguishable at a glance.
+- **Pre-seeded from end screen** — tapping LEADERBOARD on the debrief screen now pre-selects the mode just played. The home-screen leaderboard button still defaults to ALL.
+- **Pinned own entry** — the player-best fetch and rank count both respect the mode filter, giving accurate standings when outside the top 10 in a specific mode.
+- Service worker bumped to v39.
+
 ### Added — Admin leaderboard page
 - **VEHICLES / LEADERBOARD tab bar** in the admin header — both tabs share the same authenticated session. Switching tabs does not log you out or reload the page.
 - **Leaderboard tab** shows all entries (up to 1 000) in a full-width table: rank, callsign, score/total, category badge, difficulty stars, mode badge (⏱ TIMED / NORMAL), submission date.
