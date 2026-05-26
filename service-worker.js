@@ -1,6 +1,6 @@
 // MatKenGame service worker
 // Bump CACHE_VERSION every time you change the cached files so old caches are evicted.
-const CACHE_VERSION = "matkengame-v49";
+const CACHE_VERSION = "matkengame-v50";
 
 // Hostnames whose responses must NEVER be cached — always go to network.
 // Supabase leaderboard data is live and shared across devices; a cached
@@ -22,12 +22,35 @@ const PRECACHE_URLS = [
   "assets/icons/icon-512.png"
 ];
 
+// Files that should always be fetched fresh when online (network-first).
+// These are the entry points whose contents change every deploy — using a
+// cache-first strategy on them is what caused iOS PWAs to keep serving an
+// older version after an "Update available" refresh.
+const NETWORK_FIRST_PATHS = [
+  "/",
+  "/index.html",
+  "/app.jsx",
+  "/data/vehicles.js",
+  "/admin/",
+  "/admin/index.html",
+  "/admin/admin.jsx",
+];
+
 // Install: precache the core files.
 // We do NOT call self.skipWaiting() here — the new SW waits until the app
 // explicitly sends a SKIP_WAITING message so we never interrupt active gameplay.
+//
+// CRITICAL: every Request is created with { cache: "reload" } so the precache
+// fetches BYPASS the HTTP cache. Without this, the browser's HTTP cache can
+// hand the new SW a stale index.html / app.jsx, which then gets stored under
+// the new cache version — meaning the user has a new SW but still the old
+// site. This is the classic iOS PWA "have to reinstall to see updates" bug.
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE_URLS))
+    caches.open(CACHE_VERSION).then((cache) => {
+      const requests = PRECACHE_URLS.map((url) => new Request(url, { cache: "reload" }));
+      return cache.addAll(requests);
+    })
   );
 });
 
@@ -51,41 +74,69 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: cache-first by default, but always go to network for live API hosts
-// (leaderboard etc.) and never cache or intercept non-GET requests.
+// True if a URL's pathname matches one of NETWORK_FIRST_PATHS, allowing
+// for the GitHub Pages subpath (/MatKenGame/...).
+function isNetworkFirst(url) {
+  return NETWORK_FIRST_PATHS.some((p) => url.pathname === p || url.pathname.endsWith(p));
+}
+
+// Fetch strategy:
+//   - Non-GET → straight to network (we never intercept writes).
+//   - Live API hosts (Supabase) → straight to network.
+//   - Entry-point files (index.html, app.jsx, etc.) → NETWORK-FIRST so a
+//     refresh always picks up the latest deploy when online.
+//   - Everything else → cache-first (CDN libs, images, icons).
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
-  // Let non-GET requests (e.g. Supabase POST inserts) go straight to the network,
-  // untouched. Service workers can intercept them but we don't want to.
   if (req.method !== "GET") return;
 
-  // Live data — bypass cache entirely so every player sees fresh entries.
   const url = new URL(req.url);
   if (NETWORK_ONLY_HOSTS.some((h) => url.hostname.endsWith(h))) {
     event.respondWith(fetch(req));
     return;
   }
 
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
+  // Treat top-level page navigations as network-first too — same reason as
+  // the entry-point files: the user just tapped Refresh, give them the
+  // freshest HTML if we can reach the network.
+  if (req.mode === "navigate" || isNetworkFirst(url)) {
+    event.respondWith(networkFirst(req));
+    return;
+  }
 
-      return fetch(req)
-        .then((response) => {
-          // Cache successful same-origin and CDN responses for next time
-          if (response && response.status === 200 && response.type !== "opaque") {
-            const clone = response.clone();
-            caches.open(CACHE_VERSION).then((cache) => cache.put(req, clone));
-          }
-          return response;
-        })
-        .catch(() => {
-          // Offline fallback: return the cached index.html for navigation requests
-          if (req.mode === "navigate") {
-            return caches.match("index.html");
-          }
-        });
-    })
-  );
+  // Default: cache-first for everything else (libs, fonts, images).
+  event.respondWith(cacheFirst(req));
 });
+
+// Network-first: try the network, fall back to cache. Successful responses
+// update the cache so we always have a working offline copy.
+function networkFirst(req) {
+  return fetch(req)
+    .then((response) => {
+      if (response && response.status === 200 && response.type !== "opaque") {
+        const clone = response.clone();
+        caches.open(CACHE_VERSION).then((cache) => cache.put(req, clone));
+      }
+      return response;
+    })
+    .catch(() => caches.match(req).then((cached) => cached || caches.match("index.html")));
+}
+
+// Cache-first: serve from cache if present, otherwise fetch + cache.
+function cacheFirst(req) {
+  return caches.match(req).then((cached) => {
+    if (cached) return cached;
+    return fetch(req)
+      .then((response) => {
+        if (response && response.status === 200 && response.type !== "opaque") {
+          const clone = response.clone();
+          caches.open(CACHE_VERSION).then((cache) => cache.put(req, clone));
+        }
+        return response;
+      })
+      .catch(() => {
+        if (req.mode === "navigate") return caches.match("index.html");
+      });
+  });
+}
