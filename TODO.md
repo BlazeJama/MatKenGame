@@ -170,16 +170,23 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Timer toggle on home screen
 
 ### Streak & Scoring
-- [ ] Streak counter implemented
-- [ ] Score multiplier for streaks
-- [ ] Streak reset on wrong answer
-- [ ] Streak displayed on quiz screen
+- [x] Points-based scoring (100/correct, max 1000) — replaces 0–10 raw counts
+- [x] Supabase schema upgraded with `mode` + `hints_used` columns (`score` constraint widened to 0–1500)
+- [ ] Hint system (button on quiz screen, 2 hints/round, eliminate one wrong answer, −150 per hint at round end)
+- [ ] Timed mode (15s/question, +50 speed bonus for fast answers, separate leaderboard track)
+- [ ] Streak counter (reset on wrong answer, displayed on quiz screen) — deferred until after hints + timed
 
 ### Leaderboard
 - [x] Backend service set up (Supabase — PostgreSQL + RLS)
 - [x] Score submission after round
 - [x] Leaderboard screen created (category + difficulty filters, top 20, refresh)
 - [x] Callsign entry for leaderboard (localStorage-persisted, CallsignModal)
+- [ ] Welcome Screen on first visit — required callsign entry before home
+- [ ] OPERATOR display on home screen with tap-to-edit
+- [ ] Top 10 instead of top 20 + personal highlight + pinned own entry if outside top 10
+- [ ] Mode filter (NORMAL / TIMED) on leaderboard screen
+- [ ] Admin leaderboard page — view all entries, filter by callsign / cat / diff / mode, delete individual entries
+- [ ] Admin nav bar — VEHICLES / LEADERBOARD tabs sharing a single session
 
 ### Social & Sound
 - [ ] Share score button (iOS/Android share sheet)

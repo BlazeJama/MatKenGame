@@ -13,6 +13,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Phase 3 scoring overhaul (Stage 1: foundation)
+- **Points-based scoring** replaces the old 0–10 raw-count system. Each correct answer is now worth **100 points** (max 1000 in normal mode). Constants live at the top of `app.jsx` (`POINTS_PER_CORRECT`, `HINT_PENALTY`, `QUESTION_TIME_MS`, `SPEED_BONUS_MAX`) ready for hints + timed mode to drop in.
+- **Supabase schema migrated** — dropped and recreated the `leaderboard` table with new columns: `mode` (`'normal'` | `'timed'`), `hints_used` (0–2). Score check constraint expanded to `0–1500` to cover timed-mode max. `total` default is now 1000.
+- **Score thresholds rescaled** — ELITE / FIELD READY / OBJECTIVE COMPLETE / TRAINING REQUIRED / BACK TO BASICS now trigger at 900 / 700 / 500 / 300 / below 300 (was 9 / 7 / 5 / 3).
+- **Best scores migration** — `localStorage` `matken-best-scores` now nests by mode: `{ cat: { diff: { normal: pts, timed: pts } } }`. Old values (0–10 flat or nested) are auto-migrated × 100 on next load. Pre-existing bests are treated as normal-mode.
+- **Score displays rescaled** — End Screen score font reduced from 5.5rem → 4rem to fit "1000/1000". Performance Log columns widened to 72px and font reduced to 1.05rem for 4-digit scores. Leaderboard table drops the denominator from the SCORE cell (just shows raw points) and widens the column to 58px.
+- Service worker bumped to v34.
+
 ### Added — Phase 3: Leaderboard
 - **Global leaderboard** — powered by Supabase (PostgreSQL, RLS-secured). Scores are posted to a `leaderboard` table with callsign, score, total, category, difficulty, and timestamp. Uses the browser-safe publishable key with Row Level Security: all reads are public, inserts are validated server-side (score 0–10, difficulty 1–3, callsign 1–16 chars).
 - **Callsign system** — players pick a 1–16 character callsign (auto-uppercased) stored in `localStorage` under `matken-callsign`. The `CallsignModal` overlay prompts on first submit and can be re-opened at any time from the End Screen.

@@ -11,8 +11,21 @@ const { useState, useEffect } = React;
 // uses your in-progress draft instead of the deployed window.vehicles
 const DRAFT_STORAGE_KEY = "matken-draft-vehicles";
 
-// localStorage key for nested best scores: { "all": { 1: 8, 2: 5, 3: 3 }, "Main Battle Tank": {...}, ... }
+// localStorage key for nested best scores.
+// Current shape: { "all": { 1: { normal: 800, timed: 1280 }, 2: {...} }, "Main Battle Tank": {...}, ... }
+// Migrated from older shapes — see loadBestScores().
 const BEST_SCORES_KEY = "matken-best-scores";
+
+// Points scoring model (Phase 3):
+//   Normal mode  — 100 per correct answer, max 1000.
+//   Hint penalty — 150 deducted per hint used (applied at end of round).
+//   Timed mode   — 100 per correct + up to 50 speed bonus, max 1500.
+const POINTS_PER_CORRECT = 100;
+const HINT_PENALTY       = 150;
+const MAX_HINTS          = 2;
+const QUESTION_TIME_MS   = 15000;  // timed mode
+const SPEED_BONUS_MAX_MS = 5000;   // full bonus if answered within 5s
+const SPEED_BONUS_MAX    = 50;
 
 function loadBestScores() {
   try {
@@ -20,15 +33,29 @@ function loadBestScores() {
     if (!raw) return {};
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return {};
-    // Migrate from the pre-difficulty flat shape { category: number }
-    // to the new nested shape { category: { difficulty: number } }.
-    // Pre-difficulty scores are treated as Easy (★) scores.
+
+    // Migration ladder — old data is brought up to the new shape automatically:
+    //   v1 (flat):       { cat: number(0-10) }
+    //   v2 (nested):     { cat: { diff: number(0-10) } }
+    //   v3 (points):     { cat: { diff: { normal: number(0-1000), timed: ... } } }   ← current
     const migrated = {};
     for (const [cat, val] of Object.entries(parsed)) {
+      migrated[cat] = {};
       if (typeof val === "number") {
-        migrated[cat] = { 1: val };
+        // v1 → v3: treat as Easy normal-mode, convert raw count to points
+        const pts = val <= 10 ? val * POINTS_PER_CORRECT : val;
+        migrated[cat][1] = { normal: pts };
       } else if (val && typeof val === "object") {
-        migrated[cat] = val;
+        for (const [diff, score] of Object.entries(val)) {
+          if (typeof score === "number") {
+            // v2 → v3: convert raw count (0-10) to points (0-1000)
+            const pts = score <= 10 ? score * POINTS_PER_CORRECT : score;
+            migrated[cat][diff] = { normal: pts };
+          } else if (score && typeof score === "object") {
+            // v3 already — keep as-is
+            migrated[cat][diff] = score;
+          }
+        }
       }
     }
     return migrated;
@@ -183,26 +210,28 @@ function buildRound(vehicles, difficulty) {
   });
 }
 
-// Score rating labels (tactical tone)
+// Score rating labels (tactical tone) — thresholds in the new 0–1000 (normal)
+// / 0–1500 (timed) points scale. Tiers map roughly to the old 0–10 boundaries:
+//   900+ = elite, 700+ = strong, 500+ = competent, 300+ = needs work, else back to basics.
 function scoreLabel(score) {
-  if (score >= 9) return "ELITE OPERATOR";
-  if (score >= 7) return "FIELD READY";
-  if (score >= 5) return "OBJECTIVE COMPLETE";
-  if (score >= 3) return "TRAINING REQUIRED";
+  if (score >= 900) return "ELITE OPERATOR";
+  if (score >= 700) return "FIELD READY";
+  if (score >= 500) return "OBJECTIVE COMPLETE";
+  if (score >= 300) return "TRAINING REQUIRED";
   return "BACK TO BASICS";
 }
 
 function scoreSubtext(score) {
-  if (score >= 9) return "Exceptional field intelligence";
-  if (score >= 7) return "Strong recognition capability";
-  if (score >= 5) return "Continue your training";
-  if (score >= 3) return "Review vehicle profiles";
+  if (score >= 900) return "Exceptional field intelligence";
+  if (score >= 700) return "Strong recognition capability";
+  if (score >= 500) return "Continue your training";
+  if (score >= 300) return "Review vehicle profiles";
   return "Intensive training needed";
 }
 
 function scoreLabelColor(score) {
-  if (score >= 7) return "#f59e0b";
-  if (score >= 5) return "#94a3b8";
+  if (score >= 700) return "#f59e0b";
+  if (score >= 500) return "#94a3b8";
   return "#ef4444";
 }
 
@@ -219,8 +248,10 @@ function timeAgo(dateStr) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-// POST one score row to the Supabase leaderboard table
-async function submitScore({ callsign, score, total, category, difficulty }) {
+// POST one score row to the Supabase leaderboard table.
+// New (Phase 3) columns: mode ('normal' | 'timed'), hints_used (0–2).
+// total is the max possible for the mode (1000 normal, 1500 timed).
+async function submitScore({ callsign, score, total, category, difficulty, mode = "normal", hintsUsed = 0 }) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
     method: "POST",
     headers: {
@@ -229,7 +260,10 @@ async function submitScore({ callsign, score, total, category, difficulty }) {
       "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
       "Prefer": "return=minimal",
     },
-    body: JSON.stringify({ callsign, score, total, category, difficulty }),
+    body: JSON.stringify({
+      callsign, score, total, category, difficulty,
+      mode, hints_used: hintsUsed,
+    }),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -489,7 +523,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
             <span className="font-data text-xs" style={{ color: bestScore != null ? "#f59e0b" : "#334155", letterSpacing: "0.08em" }}>
               BEST&nbsp;
               <span style={{ color: bestScore != null ? "#f59e0b" : "#1e293b" }}>
-                {bestScore != null ? `${bestScore}/10` : "—"}
+                {bestScore != null ? `${bestScore}` : "—"}
               </span>
             </span>
           </div>
@@ -796,7 +830,9 @@ function QuizScreen({ round, onComplete, onAbort }) {
   const handleSelect = (vehicleId) => {
     if (hasAnswered) return;
     setSelectedId(vehicleId);
-    if (vehicleId === question.vehicle.id) setScore((s) => s + 1);
+    // Normal mode awards 100 points per correct answer (max 1000 over 10 questions).
+    // Timed mode + hint penalty come in their own follow-up commits.
+    if (vehicleId === question.vehicle.id) setScore((s) => s + POINTS_PER_CORRECT);
   };
 
   const handleNext = () => {
@@ -1058,8 +1094,9 @@ function QuizScreen({ round, onComplete, onAbort }) {
 
 function EndScreen({ score, total, onPlayAgain, onReturnHome,
                     callsign, onEditCallsign,
-                    selectedCategory, selectedDifficulty, onViewLeaderboard }) {
-  const pct = Math.round((score / total) * 100);
+                    selectedCategory, selectedDifficulty, onViewLeaderboard,
+                    mode = "normal", hintsUsed = 0 }) {
+  const pct = Math.min(100, Math.round((score / total) * 100));
   const [submitState, setSubmitState] = useState("idle"); // "idle"|"submitting"|"submitted"|"error"
   const [submitError, setSubmitError]  = useState("");
 
@@ -1067,7 +1104,11 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
     if (!callsign || submitState !== "idle") return;
     setSubmitState("submitting");
     try {
-      await submitScore({ callsign, score, total, category: selectedCategory, difficulty: selectedDifficulty });
+      await submitScore({
+        callsign, score, total,
+        category: selectedCategory, difficulty: selectedDifficulty,
+        mode, hintsUsed,
+      });
       setSubmitState("submitted");
     } catch (err) {
       setSubmitError(err.message || "Submission failed — check your connection");
@@ -1099,13 +1140,13 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-10 max-w-md mx-auto w-full">
         {/* Score card */}
         <TacCard className="w-full text-center mb-5" style={{ padding: "28px 28px" }}>
-          {/* Score fraction */}
+          {/* Score fraction — sized for up to "1000/1000" */}
           <div
             className="font-display"
-            style={{ fontSize: "5.5rem", lineHeight: 1, letterSpacing: "0.04em" }}
+            style={{ fontSize: "4rem", lineHeight: 1, letterSpacing: "0.04em" }}
           >
             <span className="text-white">{score}</span>
-            <span style={{ fontSize: "2.8rem", color: "#334155" }}>/{total}</span>
+            <span style={{ fontSize: "1.6rem", color: "#334155", marginLeft: 2 }}>/{total}</span>
           </div>
 
           {/* Percent bar */}
@@ -1285,7 +1326,9 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
 // ============================================================================
 
 function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
-  const getScore = (catId, diffId) => bestScores?.[catId]?.[diffId] ?? null;
+  // Returns the best normal-mode score (points, 0–1000) for the cat × diff combination,
+  // or null if nothing on record. Timed mode bests can be added as a separate column later.
+  const getScore = (catId, diffId) => bestScores?.[catId]?.[diffId]?.normal ?? null;
 
   const hasAnyScore = CATEGORY_OPTIONS.some((cat) =>
     DIFFICULTY_OPTIONS.some((diff) => getScore(cat.id, diff.id) !== null)
@@ -1350,7 +1393,6 @@ function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
               <span className="font-display" style={{ fontSize: "1.2rem", color: "#f59e0b", verticalAlign: "middle" }}>
                 {overallBest}
               </span>
-              <span style={{ color: "#334155" }}>/10</span>
             </span>
             <div className="flex-1 h-px" style={{ background: "rgba(245,158,11,0.12)" }} />
           </div>
@@ -1362,7 +1404,7 @@ function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
           <div
             className="grid font-data text-xs"
             style={{
-              gridTemplateColumns: "1fr 60px 60px 60px",
+              gridTemplateColumns: "1fr 72px 72px 72px",
               padding: "10px 16px",
               borderBottom: "1px solid rgba(245,158,11,0.1)",
               color: "#334155",
@@ -1387,7 +1429,7 @@ function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
                 key={cat.id}
                 className="grid"
                 style={{
-                  gridTemplateColumns: "1fr 60px 60px 60px",
+                  gridTemplateColumns: "1fr 72px 72px 72px",
                   padding: "12px 16px",
                   borderBottom: isLast ? "none" : "1px solid rgba(30,41,59,0.45)",
                   background: rowHasScore ? "rgba(245,158,11,0.02)" : "transparent",
@@ -1411,8 +1453,9 @@ function StatsScreen({ bestScores, onReturnHome, onClearScores }) {
                       key={di}
                       className="font-display text-center"
                       style={{
-                        fontSize: score !== null ? "1.3rem" : "0.9rem",
+                        fontSize: score !== null ? "1.05rem" : "0.9rem",
                         lineHeight: 1,
+                        letterSpacing: "0.02em",
                         color: score !== null
                           ? isTopScore ? "#fcd34d" : "#f59e0b"
                           : "#1e293b",
@@ -1620,7 +1663,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
             <div
               className="grid font-data text-xs"
               style={{
-                gridTemplateColumns: "32px 1fr 48px 52px 52px",
+                gridTemplateColumns: "28px 1fr 58px 44px 44px",
                 padding: "9px 14px",
                 borderBottom: "1px solid rgba(245,158,11,0.1)",
                 color: "#334155", letterSpacing: "0.08em",
@@ -1640,7 +1683,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
                   key={i}
                   className="grid"
                   style={{
-                    gridTemplateColumns: "32px 1fr 48px 52px 52px",
+                    gridTemplateColumns: "28px 1fr 58px 44px 44px",
                     padding: "10px 14px",
                     borderBottom: i < entries.length - 1 ? "1px solid rgba(30,41,59,0.4)" : "none",
                     background: isTop ? "rgba(245,158,11,0.04)" : "transparent",
@@ -1660,9 +1703,9 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome })
                       {timeAgo(entry.created_at)}
                     </div>
                   </div>
-                  {/* Score */}
-                  <div className="font-display text-center" style={{ fontSize: "1.2rem", color: isTop ? "#f59e0b" : "#64748b" }}>
-                    {entry.score}<span style={{ fontSize: "0.7rem", color: "#334155" }}>/{entry.total}</span>
+                  {/* Score — raw points (0-1000 normal / 0-1500 timed) */}
+                  <div className="font-display text-center" style={{ fontSize: "1.05rem", color: isTop ? "#f59e0b" : "#64748b", letterSpacing: "0.02em" }}>
+                    {entry.score}
                   </div>
                   {/* Category badge */}
                   <div className="text-center font-data" style={{ fontSize: "0.62rem", color: "#475569", letterSpacing: "0.06em" }}>
@@ -1851,13 +1894,19 @@ function App() {
 
   const finishGame = (score) => {
     setFinalScore(score);
-    // Persist best score for the category + difficulty that was just played
-    const catScores = bestScores[selectedCategory] || {};
-    const prev = catScores[selectedDifficulty] ?? -1;
+    // Persist best score for category + difficulty + mode (normal by default).
+    // Shape: { cat: { diff: { normal: pts, timed: pts } } }
+    const mode = "normal";
+    const catScores  = bestScores[selectedCategory] || {};
+    const diffScores = catScores[selectedDifficulty] || {};
+    const prev = diffScores[mode] ?? -1;
     if (score > prev) {
       const updated = {
         ...bestScores,
-        [selectedCategory]: { ...catScores, [selectedDifficulty]: score },
+        [selectedCategory]: {
+          ...catScores,
+          [selectedDifficulty]: { ...diffScores, [mode]: score },
+        },
       };
       setBestScores(updated);
       localStorage.setItem(BEST_SCORES_KEY, JSON.stringify(updated));
@@ -1916,7 +1965,7 @@ function App() {
     <>
       <EndScreen
         score={finalScore}
-        total={round.length}
+        total={1000}  /* normal-mode max; timed mode (future) will pass 1500 */
         onPlayAgain={startGame}
         onReturnHome={returnHome}
         callsign={callsign}
@@ -1924,6 +1973,8 @@ function App() {
         selectedCategory={selectedCategory}
         selectedDifficulty={selectedDifficulty}
         onViewLeaderboard={goToLeaderboard}
+        mode="normal"
+        hintsUsed={0}
       />
       {callsignModalOpen && (
         <CallsignModal
@@ -1964,7 +2015,7 @@ function App() {
       selectedDifficulty={selectedDifficulty}
       onDifficultyChange={setSelectedDifficulty}
       difficultyCounts={difficultyCounts}
-      bestScore={bestScores[selectedCategory]?.[selectedDifficulty]}
+      bestScore={bestScores[selectedCategory]?.[selectedDifficulty]?.normal}
       onViewStats={goToStats}
       onViewLeaderboard={() => goToLeaderboard("all", "all")}
     />
