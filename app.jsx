@@ -277,13 +277,14 @@ async function submitScore({ callsign, score, total, category, difficulty, mode 
   return { newBest: Array.isArray(data) && data.length > 0 };
 }
 
-// GET top-20 scores, optionally filtered by category and/or difficulty
-async function fetchLeaderboard(category, difficulty) {
+// GET top-10 scores, optionally filtered by category, difficulty, and/or mode
+async function fetchLeaderboard(category, difficulty, mode) {
   let url = `${SUPABASE_URL}/rest/v1/leaderboard`
-    + `?select=callsign,score,total,category,difficulty,created_at`
+    + `?select=callsign,score,total,category,difficulty,mode,created_at`
     + `&order=score.desc,created_at.asc&limit=10`;
-  if (category && category !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
+  if (category   && category   !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
   if (difficulty && difficulty !== "all") url += `&difficulty=eq.${difficulty}`;
+  if (mode       && mode       !== "all") url += `&mode=eq.${mode}`;
   const res = await fetch(url, {
     headers: {
       "apikey": SUPABASE_ANON_KEY,
@@ -296,13 +297,14 @@ async function fetchLeaderboard(category, difficulty) {
 
 // GET the calling player's personal best entry for a given filter combination.
 // Returns the single highest-scoring row or null if none found.
-async function fetchPlayerBest(callsign, category, difficulty) {
+async function fetchPlayerBest(callsign, category, difficulty, mode) {
   let url = `${SUPABASE_URL}/rest/v1/leaderboard`
-    + `?select=callsign,score,total,category,difficulty,created_at`
+    + `?select=callsign,score,total,category,difficulty,mode,created_at`
     + `&callsign=eq.${encodeURIComponent(callsign)}`
     + `&order=score.desc&limit=1`;
-  if (category && category !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
+  if (category   && category   !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
   if (difficulty && difficulty !== "all") url += `&difficulty=eq.${difficulty}`;
+  if (mode       && mode       !== "all") url += `&mode=eq.${mode}`;
   const res = await fetch(url, {
     headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
   });
@@ -313,10 +315,11 @@ async function fetchPlayerBest(callsign, category, difficulty) {
 
 // Count entries ranked above `score` in the leaderboard (same filters) via a
 // HEAD request — no row data transferred. Returns rank (count + 1) or null on error.
-async function fetchRankAbove(score, category, difficulty) {
+async function fetchRankAbove(score, category, difficulty, mode) {
   let url = `${SUPABASE_URL}/rest/v1/leaderboard?score=gt.${score}`;
-  if (category && category !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
+  if (category   && category   !== "all") url += `&category=eq.${encodeURIComponent(category)}`;
   if (difficulty && difficulty !== "all") url += `&difficulty=eq.${difficulty}`;
+  if (mode       && mode       !== "all") url += `&mode=eq.${mode}`;
   try {
     const res = await fetch(url, {
       method: "HEAD",
@@ -1902,11 +1905,12 @@ const LB_DIFFICULTY_OPTIONS = [
   ...DIFFICULTY_OPTIONS,
 ];
 
-function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome, callsign }) {
+function LeaderboardScreen({ initialCategory, initialDifficulty, initialMode, onReturnHome, callsign }) {
   const [category,   setCategory]   = useState(initialCategory  || "all");
   const [difficulty, setDifficulty] = useState(
     initialDifficulty !== undefined ? initialDifficulty : "all"
   );
+  const [mode,       setMode]       = useState(initialMode || "all");
   const [entries,    setEntries]    = useState([]);
   const [status,     setStatus]     = useState("loading"); // "loading"|"ok"|"error"
   const [errorMsg,   setErrorMsg]   = useState("");
@@ -1921,7 +1925,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome, c
     setOwnEntry(null);
     setOwnRank(null);
 
-    fetchLeaderboard(category, difficulty)
+    fetchLeaderboard(category, difficulty, mode)
       .then(async (data) => {
         if (cancelled) return;
         setEntries(data);
@@ -1932,10 +1936,10 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome, c
         const isInTop10 = callsign && data.some((e) => e.callsign === callsign);
         if (!isInTop10 && callsign) {
           try {
-            const own = await fetchPlayerBest(callsign, category, difficulty);
+            const own = await fetchPlayerBest(callsign, category, difficulty, mode);
             if (own && !cancelled) {
               setOwnEntry(own);
-              const rank = await fetchRankAbove(own.score, category, difficulty);
+              const rank = await fetchRankAbove(own.score, category, difficulty, mode);
               if (!cancelled) setOwnRank(rank);
             }
           } catch (_) {}
@@ -1945,7 +1949,7 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome, c
         if (!cancelled) { setErrorMsg(err.message || "Network error"); setStatus("error"); }
       });
     return () => { cancelled = true; };
-  }, [category, difficulty, refreshKey]);
+  }, [category, difficulty, mode, refreshKey]);
 
   // Reusable row renderer — used for both the top-10 list and the pinned own entry
   const renderRow = (entry, rank, isOwnPinned = false) => {
@@ -1997,7 +2001,10 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome, c
               </span>
             )}
           </div>
-          <div className="font-data" style={{ fontSize: "0.62rem", color: "#334155", letterSpacing: "0.06em" }}>
+          <div className="font-data" style={{ fontSize: "0.62rem", color: "#334155", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: 5 }}>
+            {entry.mode === "timed" && (
+              <span style={{ color: "#f87171", letterSpacing: "0.06em" }}>⏱</span>
+            )}
             {timeAgo(entry.created_at)}
           </div>
         </div>
@@ -2073,6 +2080,32 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, onReturnHome, c
                     color: sel ? "#f59e0b" : "#64748b", cursor: "pointer",
                   }}
                 >{opt.stars !== "—" ? opt.stars : ""} {opt.label}</button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Mode filter */}
+        <div className="w-full mb-4">
+          <div className="font-data text-xs mb-2" style={{ color: "#334155", letterSpacing: "0.12em" }}>MODE</div>
+          <div className="flex gap-2">
+            {[
+              { id: "all",    label: "ALL"     },
+              { id: "normal", label: "NORMAL"  },
+              { id: "timed",  label: "⏱ TIMED" },
+            ].map((opt) => {
+              const sel = mode === opt.id;
+              return (
+                <button key={opt.id} onClick={() => setMode(opt.id)} className="font-data flex-1"
+                  style={{
+                    fontSize: "0.72rem", padding: "6px 4px", borderRadius: 2,
+                    letterSpacing: "0.08em", minHeight: 30,
+                    border: `1px solid ${sel ? (opt.id === "timed" ? "#f87171" : "#f59e0b") : "rgba(51,65,85,0.5)"}`,
+                    background: sel ? (opt.id === "timed" ? "rgba(239,68,68,0.1)" : "rgba(245,158,11,0.12)") : "rgba(15,23,42,0.5)",
+                    color: sel ? (opt.id === "timed" ? "#f87171" : "#f59e0b") : "#64748b",
+                    cursor: "pointer",
+                  }}
+                >{opt.label}</button>
               );
             })}
           </div>
@@ -2217,6 +2250,7 @@ function App() {
   // Leaderboard filter memory — pre-seeded from the last finished game
   const [lbInitCategory,   setLbInitCategory]   = useState("all");
   const [lbInitDifficulty, setLbInitDifficulty] = useState("all");
+  const [lbInitMode,       setLbInitMode]       = useState("all");
 
   // Prefer a local draft (saved by the admin) over the deployed file.
   const draft    = loadDraftFromStorage();
@@ -2378,9 +2412,10 @@ function App() {
 
   const goToStats = () => setScreen("stats");
 
-  const goToLeaderboard = (cat, diff) => {
-    setLbInitCategory(cat   !== undefined ? cat  : "all");
-    setLbInitDifficulty(diff !== undefined ? diff : "all");
+  const goToLeaderboard = (cat, diff, mode) => {
+    setLbInitCategory(cat    !== undefined ? cat   : "all");
+    setLbInitDifficulty(diff !== undefined ? diff  : "all");
+    setLbInitMode(mode       !== undefined ? mode  : "all");
     setScreen("leaderboard");
   };
 
@@ -2411,7 +2446,7 @@ function App() {
         onEditCallsign={() => setCallsignModalOpen(true)}
         selectedCategory={selectedCategory}
         selectedDifficulty={selectedDifficulty}
-        onViewLeaderboard={goToLeaderboard}
+        onViewLeaderboard={(cat, diff) => goToLeaderboard(cat, diff, selectedMode)}
         mode={selectedMode}
         hintsUsed={0}
       />
@@ -2423,6 +2458,7 @@ function App() {
       <LeaderboardScreen
         initialCategory={lbInitCategory}
         initialDifficulty={lbInitDifficulty}
+        initialMode={lbInitMode}
         onReturnHome={returnHome}
         callsign={callsign}
       />
