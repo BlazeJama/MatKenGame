@@ -181,8 +181,8 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Score submission after round
 - [x] Leaderboard screen created (category + difficulty filters, top 20, refresh)
 - [x] Callsign entry for leaderboard (localStorage-persisted, CallsignModal)
-- [ ] Welcome Screen on first visit — required callsign entry before home
-- [ ] OPERATOR display on home screen with tap-to-edit
+- [x] Welcome Screen on first visit — required callsign entry before home
+- [x] OPERATOR display on home screen with tap-to-edit
 - [ ] Top 10 instead of top 20 + personal highlight + pinned own entry if outside top 10
 - [ ] Mode filter (NORMAL / TIMED) on leaderboard screen
 - [ ] Admin leaderboard page — view all entries, filter by callsign / cat / diff / mode, delete individual entries

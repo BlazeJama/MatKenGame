@@ -13,6 +13,12 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Phase 3 Stage 2: Welcome flow + operator callsign on home
+- **Welcome Screen** — first-visit registration. Shown only when `localStorage` has no callsign. Asks for a 1–16 char callsign (auto-uppercased Bebas Neue input) and lands the player on the home screen on confirm. Once a callsign is saved this screen is never shown again unless localStorage is cleared.
+- **OPERATOR chip on Home Screen** — a small tappable pill under the subtitle shows `OPERATOR <CALLSIGN> ✎`. Tap to open the existing `CallsignModal` and change it. Changing the callsign only affects *future* score submissions — old leaderboard entries keep the previous name.
+- **App router restructured** — moved the screen-pick into a single `body` variable, then renders `body` with the `CallsignModal` overlaid at top level. The modal now works on home, end, or any future screen that exposes an edit action.
+- Service worker bumped to v35.
+
 ### Changed — Phase 3 scoring overhaul (Stage 1: foundation)
 - **Points-based scoring** replaces the old 0–10 raw-count system. Each correct answer is now worth **100 points** (max 1000 in normal mode). Constants live at the top of `app.jsx` (`POINTS_PER_CORRECT`, `HINT_PENALTY`, `QUESTION_TIME_MS`, `SPEED_BONUS_MAX`) ready for hints + timed mode to drop in.
 - **Supabase schema migrated** — dropped and recreated the `leaderboard` table with new columns: `mode` (`'normal'` | `'timed'`), `hints_used` (0–2). Score check constraint expanded to `0–1500` to cover timed-mode max. `total` default is now 1000.
