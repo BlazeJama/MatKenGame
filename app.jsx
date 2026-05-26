@@ -1223,34 +1223,33 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
         }}
       >
         <div className="max-w-md mx-auto w-full">
-          {/* 3-column grid: ABORT · counter · SCORE+HINT — outer cols equal width so counter is perfectly centred */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", marginBottom: 8, gap: 8 }}>
+          {/* 4-item row: ABORT · 1/10 · SCORE · HINT — space-between gives identical gaps */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
 
-            {/* Left — ABORT */}
-            <div>
-              <button
-                onClick={handleAbort}
-                className="font-data"
-                style={{
-                  fontSize: "0.66rem",
-                  padding: "0 10px",
-                  height: 36,
-                  background: "rgba(15,23,42,0.6)",
-                  border: "1px solid rgba(239,68,68,0.35)",
-                  borderRadius: 2,
-                  color: "#f87171",
-                  letterSpacing: "0.1em",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                ✕ ABORT
-              </button>
-            </div>
+            {/* ABORT */}
+            <button
+              onClick={handleAbort}
+              className="font-data"
+              style={{
+                fontSize: "0.66rem",
+                padding: "0 10px",
+                height: 36,
+                background: "rgba(15,23,42,0.6)",
+                border: "1px solid rgba(239,68,68,0.35)",
+                borderRadius: 2,
+                color: "#f87171",
+                letterSpacing: "0.1em",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              ✕ ABORT
+            </button>
 
-            {/* Centre — question counter */}
+            {/* Question counter */}
             <div style={{ textAlign: "center", lineHeight: 1 }}>
               <span
                 className="font-display"
@@ -1266,52 +1265,52 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
               </span>
             </div>
 
-            {/* Right — SCORE + HINT */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
-              <div style={{ textAlign: "right", lineHeight: 1 }}>
-                <div className="font-data" style={{ fontSize: "0.55rem", color: "#334155", letterSpacing: "0.12em", marginBottom: 1 }}>SCORE</div>
-                <div className="font-display" style={{ fontSize: "1.45rem", letterSpacing: "0.04em", color: "#f59e0b", lineHeight: 1 }}>{score}</div>
-              </div>
-              <button
-                onClick={handleHint}
-                disabled={!canUseHint}
-                className="font-data"
+            {/* Score */}
+            <div style={{ textAlign: "center", lineHeight: 1 }}>
+              <div className="font-data" style={{ fontSize: "0.55rem", color: "#334155", letterSpacing: "0.12em", marginBottom: 1 }}>SCORE</div>
+              <div className="font-display" style={{ fontSize: "1.45rem", letterSpacing: "0.04em", color: "#f59e0b", lineHeight: 1 }}>{score}</div>
+            </div>
+
+            {/* HINT */}
+            <button
+              onClick={handleHint}
+              disabled={!canUseHint}
+              className="font-data"
+              style={{
+                fontSize: "0.62rem",
+                padding: "0 10px",
+                height: 36,
+                letterSpacing: "0.1em",
+                borderRadius: 2,
+                background: canUseHint ? "rgba(245,158,11,0.1)" : "transparent",
+                border: `1px solid ${canUseHint ? "rgba(245,158,11,0.3)" : "rgba(30,41,59,0.35)"}`,
+                color: canUseHint ? "#f59e0b" : "#1e293b",
+                cursor: canUseHint ? "pointer" : "not-allowed",
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+                flexShrink: 0,
+                whiteSpace: "nowrap",
+              }}
+            >
+              HINT
+              <span
                 style={{
-                  fontSize: "0.62rem",
-                  padding: "0 10px",
-                  height: 36,
-                  letterSpacing: "0.1em",
-                  borderRadius: 2,
-                  background: canUseHint ? "rgba(245,158,11,0.1)" : "transparent",
-                  border: `1px solid ${canUseHint ? "rgba(245,158,11,0.3)" : "rgba(30,41,59,0.35)"}`,
-                  color: canUseHint ? "#f59e0b" : "#1e293b",
-                  cursor: canUseHint ? "pointer" : "not-allowed",
-                  display: "flex",
+                  display: "inline-flex",
                   alignItems: "center",
-                  gap: 5,
-                  flexShrink: 0,
-                  whiteSpace: "nowrap",
+                  justifyContent: "center",
+                  width: 16,
+                  height: 16,
+                  borderRadius: "50%",
+                  background: canUseHint ? "rgba(245,158,11,0.2)" : "rgba(30,41,59,0.4)",
+                  fontSize: "0.6rem",
+                  lineHeight: 1,
+                  color: canUseHint ? "#f59e0b" : "#1e293b",
                 }}
               >
-                HINT
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 16,
-                    height: 16,
-                    borderRadius: "50%",
-                    background: canUseHint ? "rgba(245,158,11,0.2)" : "rgba(30,41,59,0.4)",
-                    fontSize: "0.6rem",
-                    lineHeight: 1,
-                    color: canUseHint ? "#f59e0b" : "#1e293b",
-                  }}
-                >
-                  {MAX_HINTS - hintsUsed}
-                </span>
-              </button>
-            </div>
+                {MAX_HINTS - hintsUsed}
+              </span>
+            </button>
 
           </div>
 

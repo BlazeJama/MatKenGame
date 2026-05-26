@@ -1,6 +1,6 @@
 // MatKenGame service worker
 // Bump CACHE_VERSION every time you change the cached files so old caches are evicted.
-const CACHE_VERSION = "matkengame-v47";
+const CACHE_VERSION = "matkengame-v48";
 
 // Hostnames whose responses must NEVER be cached — always go to network.
 // Supabase leaderboard data is live and shared across devices; a cached
