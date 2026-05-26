@@ -938,7 +938,7 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
             cursor: canPlay ? "pointer" : "not-allowed",
           }}
         >
-          {canPlay ? "▶  BEGIN TRAINING" : "NO VEHICLES LOADED"}
+          {canPlay ? "BEGIN TRAINING" : "NO VEHICLES LOADED"}
         </button>
 
         {/* Secondary nav row — Performance log + Leaderboard + Operator chip */}
@@ -1266,10 +1266,7 @@ function QuizScreen({ round, onComplete, onAbort, mode = "normal" }) {
             </div>
 
             {/* Score */}
-            <div style={{ textAlign: "center", lineHeight: 1 }}>
-              <div className="font-data" style={{ fontSize: "0.55rem", color: "#334155", letterSpacing: "0.12em", marginBottom: 1 }}>SCORE</div>
-              <div className="font-display" style={{ fontSize: "1.45rem", letterSpacing: "0.04em", color: "#f59e0b", lineHeight: 1 }}>{score}</div>
-            </div>
+            <div className="font-display" style={{ fontSize: "1.45rem", letterSpacing: "0.04em", color: "#f59e0b", lineHeight: 1 }}>{score}</div>
 
             {/* HINT */}
             <button
@@ -1597,96 +1594,10 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
           </div>
         </TacCard>
 
-        {/* Leaderboard submission card */}
-        <TacCard className="w-full mb-5" style={{ padding: "18px 20px" }}>
-          <div className="font-data text-xs mb-3" style={{ color: "#334155", letterSpacing: "0.12em" }}>
-            LEADERBOARD SUBMISSION
-          </div>
-
-          {/* No callsign yet — show a prominent prompt */}
-          {!callsign && (
-            <button
-              onClick={onEditCallsign}
-              className="w-full font-display tracking-widest mb-2"
-              style={{
-                fontSize: "1.25rem",
-                minHeight: 52,
-                borderRadius: 2,
-                background: "#f59e0b",
-                color: "#070b14",
-                border: "none",
-                letterSpacing: "0.14em",
-                cursor: "pointer",
-              }}
-            >
-              ✎  SET CALLSIGN
-            </button>
-          )}
-
-          {/* Callsign set — show name + change button + submit */}
-          {callsign && (
-            <>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="font-data text-xs mb-1" style={{ color: "#334155", letterSpacing: "0.08em" }}>CALLSIGN</div>
-                  <div className="font-display" style={{ fontSize: "1.5rem", color: "#f59e0b", letterSpacing: "0.06em" }}>
-                    {callsign}
-                  </div>
-                </div>
-                <button
-                  onClick={onEditCallsign}
-                  className="font-data text-xs"
-                  style={{
-                    background: "rgba(15,23,42,0.8)", border: "1px solid rgba(51,65,85,0.5)",
-                    borderRadius: 2, color: "#475569", letterSpacing: "0.1em",
-                    cursor: "pointer", padding: "6px 12px",
-                  }}
-                >
-                  CHANGE
-                </button>
-              </div>
-
-              {submitState === "submitted" ? (
-                <div className="w-full font-data text-xs text-center py-3" style={{ letterSpacing: "0.1em" }}>
-                  {wasNewBest ? (
-                    <span style={{ color: "#4ade80" }}>✓ NEW PERSONAL BEST — LEADERBOARD UPDATED</span>
-                  ) : (
-                    <span style={{ color: "#475569" }}>NOT A NEW PERSONAL BEST — SCORE NOT RECORDED</span>
-                  )}
-                </div>
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={submitState === "submitting"}
-                  className="w-full font-display tracking-widest"
-                  style={{
-                    fontSize: "1.1rem",
-                    minHeight: 44,
-                    borderRadius: 2,
-                    background: submitState === "idle" ? "rgba(245,158,11,0.15)" : "rgba(15,23,42,0.5)",
-                    color: submitState === "idle" ? "#f59e0b" : "#334155",
-                    border: `1px solid ${submitState === "idle" ? "rgba(245,158,11,0.4)" : "rgba(51,65,85,0.3)"}`,
-                    letterSpacing: "0.14em",
-                    cursor: submitState === "idle" ? "pointer" : "not-allowed",
-                  }}
-                >
-                  {submitState === "submitting" ? "TRANSMITTING..." : "SUBMIT SCORE"}
-                </button>
-              )}
-            </>
-          )}
-
-          {submitState === "error" && (
-            <div className="font-data text-xs mt-2 text-center" style={{ color: "#f87171", letterSpacing: "0.06em" }}>
-              {submitError}
-            </div>
-          )}
-        </TacCard>
-
-        {/* Redeploy button (primary — same category again) */}
+        {/* Play again — primary action */}
         <button
           onClick={onPlayAgain}
-          className="w-full font-display tracking-widest tac-primary"
+          className="w-full font-display tracking-widest tac-primary mb-3"
           style={{
             fontSize: "1.45rem",
             minHeight: "58px",
@@ -1696,11 +1607,46 @@ function EndScreen({ score, total, onPlayAgain, onReturnHome,
             border: "none",
             letterSpacing: "0.14em",
             cursor: "pointer",
-            marginBottom: 10,
           }}
         >
-          ↺  REDEPLOY
+          PLAY AGAIN
         </button>
+
+        {/* Submit score — same size, ghost amber style */}
+        {callsign && submitState !== "submitted" && (
+          <button
+            onClick={handleSubmit}
+            disabled={submitState === "submitting"}
+            className="w-full font-display tracking-widest mb-3"
+            style={{
+              fontSize: "1.45rem",
+              minHeight: "58px",
+              borderRadius: 2,
+              background: submitState === "idle" ? "rgba(245,158,11,0.08)" : "rgba(15,23,42,0.5)",
+              color: submitState === "idle" ? "#f59e0b" : "#334155",
+              border: `1px solid ${submitState === "idle" ? "rgba(245,158,11,0.35)" : "rgba(51,65,85,0.3)"}`,
+              letterSpacing: "0.14em",
+              cursor: submitState === "idle" ? "pointer" : "not-allowed",
+            }}
+          >
+            {submitState === "submitting" ? "TRANSMITTING..." : "SUBMIT SCORE"}
+          </button>
+        )}
+
+        {/* Submission result */}
+        {submitState === "submitted" && (
+          <div className="w-full font-data text-xs text-center mb-3 py-3" style={{ letterSpacing: "0.1em" }}>
+            {wasNewBest
+              ? <span style={{ color: "#4ade80" }}>✓ NEW PERSONAL BEST — LEADERBOARD UPDATED</span>
+              : <span style={{ color: "#475569" }}>NOT A NEW PERSONAL BEST — SCORE NOT RECORDED</span>
+            }
+          </div>
+        )}
+        {submitState === "error" && (
+          <div className="font-data text-xs text-center mb-3" style={{ color: "#f87171", letterSpacing: "0.06em" }}>
+            {submitError}
+          </div>
+        )}
 
         {/* View leaderboard + change category */}
         <div className="w-full flex gap-2 mb-2">
