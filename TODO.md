@@ -136,7 +136,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Modal preview shows the exact file content before exporting _(PR 5)_
 - [x] Alliance config editor (🌐 Alliances) — assign countries to NATO / Warsaw Pact / Other; saved to localStorage + baked into vehicles.js on export
 - [x] Alliance config persisted in vehicles.js export as `window.pactConfig` — works on all devices after commit
-- [ ] Image upload — drag-and-drop / click-to-browse _(deferred — admin uses URL paste; full GitHub-API upload is a future enhancement)_
+- [x] Image upload — drag-and-drop / click-to-browse — drops convert to data URLs (live preview), Export modal bundles them as named downloads to drop into assets/images/
 - [x] Add vehicle form (name, country, category, era, fun fact) _(duplicate of PR 3 item above — already done)_
 - [x] Image upload — drag and drop or click to browse _(deferred — see item above)_
 - [x] Per-image star difficulty selector (1, 2, 3 stars) _(duplicate of PR 3 item above — already done)_

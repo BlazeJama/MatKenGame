@@ -19,10 +19,11 @@
 //   funFacts  — array of zero or more sentences. After the player answers,
 //               one is picked at random and shown. Empty array = no fact shown.
 //
-// Image-URL rules:
-//   - Must be HTTPS Wikimedia Commons URLs
-//   - Each image needs the full URL (right-click on Commons → "Copy image address")
-//   - URLs look like: https://upload.wikimedia.org/wikipedia/commons/.../filename.jpg
+// Image storage:
+//   - Each image.url is a local path under assets/images/
+//   - Naming convention: {vehicleId}-{nnn}.{ext}  (e.g. m1abrams-001.jpg)
+//   - Images are added via the Admin page (drag-and-drop), which generates
+//     the correct filename and exports both the .js file and the image files.
 //
 // Loading model:
 //   This file is loaded as a regular <script> in index.html *before* app.jsx,

@@ -11,7 +11,7 @@
 // via window.vehicles (loaded by ../data/vehicles.js before this file).
 // =============================================================================
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 // ---- Configuration ----------------------------------------------------------
 // Change this password to something only you know before deploying!
@@ -161,13 +161,8 @@ function readFunFacts(vehicle) {
 function validateForm(form) {
   const errors = [];
   if (!form.name.trim()) errors.push("Name is required");
-
-  // Any URL the user has typed must be HTTPS — blank rows are dropped on save
-  const badProtocol = form.images
-    .filter((img) => img.url.trim())
-    .find((img) => !/^https:\/\//i.test(img.url.trim()));
-  if (badProtocol) errors.push("Image URLs must start with https://");
-
+  // Images are now uploaded via drag-and-drop, so URL-protocol validation is
+  // no longer needed — image.url is either a local path or a data URL.
   return errors;
 }
 
@@ -569,10 +564,151 @@ function StarSelector({ value, onChange }) {
 }
 
 // =============================================================================
-// Image row — URL input + star selector + remove button
+// Image helpers — data URLs, target paths, pending-download bundling
+// =============================================================================
+//
+// Image storage model:
+//   - Committed images:  image.url = "assets/images/<id>-<nnn>.<ext>"
+//   - Pending uploads:   image.url = "data:image/<type>;base64,<...>"
+//
+// Both render natively in <img src>, so the game/preview needs no special-case
+// handling. On Export, pending data URLs are swapped for the target path they
+// WILL have once the user drops the downloaded file into assets/images/.
+
+function isDataUrl(s) {
+  return typeof s === "string" && s.startsWith("data:");
+}
+
+// Map a data-URL MIME type to a file extension
+function dataUrlExt(dataUrl) {
+  const m = /^data:([^;]+)/.exec(dataUrl);
+  const mime = m ? m[1] : "";
+  return ({
+    "image/jpeg": "jpg",
+    "image/jpg":  "jpg",
+    "image/png":  "png",
+    "image/webp": "webp",
+    "image/gif":  "gif",
+    "image/svg+xml": "svg",
+  })[mime] || "jpg";
+}
+
+// Read a File as a data URL via FileReader
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload  = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(file);
+  });
+}
+
+// Find the next available slot number for a vehicle's images. Looks at all
+// existing committed URLs (e.g. "assets/images/m1abrams-003.jpg") and returns
+// max+1, padded later by the caller. Pending images already assigned slots
+// should be passed in via `extraSlotsTaken` to avoid collisions.
+function nextImageSlotNumber(vehicleId, committedUrls, extraSlotsTaken = []) {
+  const esc = vehicleId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re  = new RegExp("(?:^|/)" + esc + "-(\\d{3})\\.");
+  let max = 0;
+  for (const url of committedUrls) {
+    const m = url && url.match(re);
+    if (m) max = Math.max(max, parseInt(m[1], 10));
+  }
+  for (const n of extraSlotsTaken) max = Math.max(max, n);
+  return max + 1;
+}
+
+// Walk every vehicle's images and produce the list of pending downloads
+// (one per data-URL image). Each entry carries everything the export modal
+// needs to render a download button and rewrite the URL in vehicles.js.
+function collectPendingDownloads(vehicles) {
+  const out = [];
+  for (const v of vehicles) {
+    if (!Array.isArray(v.images) || !v.id) continue;
+    const committed = v.images.map((i) => i.url).filter((u) => !isDataUrl(u));
+    const takenSlots = [];
+    v.images.forEach((img, i) => {
+      if (!isDataUrl(img.url)) return;
+      const ext      = dataUrlExt(img.url);
+      const slotNum  = nextImageSlotNumber(v.id, committed, takenSlots);
+      takenSlots.push(slotNum);
+      const numStr   = String(slotNum).padStart(3, "0");
+      const filename = `${v.id}-${numStr}.${ext}`;
+      out.push({
+        vehicleId:   v.id,
+        vehicleName: v.name || v.id,
+        imageIndex:  i,
+        dataUrl:     img.url,
+        filename,
+        path:        `assets/images/${filename}`,
+      });
+    });
+  }
+  return out;
+}
+
+// Convert vehicles for export: every data-URL `image.url` is replaced by the
+// target path it will have once the user drops the file into assets/images/.
+function vehiclesWithPathsForExport(vehicles, pendingDownloads) {
+  const pathByKey = new Map();
+  for (const p of pendingDownloads) {
+    pathByKey.set(`${p.vehicleId}::${p.imageIndex}`, p.path);
+  }
+  return vehicles.map((v) => ({
+    ...v,
+    images: (v.images || []).map((img, i) => ({
+      ...img,
+      url: pathByKey.get(`${v.id}::${i}`) || img.url,
+    })),
+  }));
+}
+
+// Trigger the browser to download a data URL as a real file
+function downloadDataUrl(dataUrl, filename) {
+  const a = document.createElement("a");
+  a.href = dataUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// =============================================================================
+// Image row — drag-and-drop tile + star selector + remove button
 // =============================================================================
 
-function ImageRow({ image, index, isSelected, onToggleSelect, onChange, onRemove }) {
+function ImageRow({ image, vehicleId, index, isSelected, onToggleSelect, onChange, onRemove }) {
+  const fileRef = useRef(null);
+  const [dragOver, setDragOver] = useState(false);
+  const isEmpty   = !image.url;
+  const isPending = isDataUrl(image.url);
+
+  const acceptFile = async (file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    const dataUrl = await readFileAsDataUrl(file);
+    onChange(index, { ...image, url: dataUrl });
+  };
+
+  const onPick = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) acceptFile(f);
+    e.target.value = ""; // allow re-picking the same file
+  };
+
+  const onDragOver = (e) => { e.preventDefault(); setDragOver(true); };
+  const onDragLeave = ()   => setDragOver(false);
+  const onDrop = (e) => {
+    e.preventDefault(); e.stopPropagation(); setDragOver(false);
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) acceptFile(f);
+  };
+
+  // Filename label shown next to the thumbnail
+  const filenameLabel = isPending
+    ? `${vehicleId || "(set name first)"}-NNN.${dataUrlExt(image.url)} · will be saved on export`
+    : (image.url || "").replace(/^assets\/images\//, "");
+
   return (
     <div className={`flex items-center gap-2 rounded-lg p-1 -mx-1 transition ${isSelected ? "bg-red-50" : ""}`}>
       <input
@@ -582,13 +718,62 @@ function ImageRow({ image, index, isSelected, onToggleSelect, onChange, onRemove
         title="Select for bulk delete"
         className="w-4 h-4 rounded border-gray-300 accent-red-600 cursor-pointer shrink-0"
       />
+
+      {isEmpty ? (
+        <button
+          type="button"
+          onClick={() => fileRef.current && fileRef.current.click()}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+          className={`flex-1 min-w-0 h-14 border-2 border-dashed rounded-lg flex items-center justify-center text-xs transition ${
+            dragOver
+              ? "border-navy bg-blue-50 text-navy"
+              : "border-gray-300 text-gray-500 hover:border-navy hover:text-navy"
+          }`}
+        >
+          {dragOver ? "Drop to upload" : "Drag image here or click to browse"}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => fileRef.current && fileRef.current.click()}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+          title="Click or drop to replace"
+          className={`flex-1 min-w-0 flex items-center gap-3 px-2 py-1 border rounded-lg cursor-pointer transition text-left ${
+            dragOver
+              ? "border-navy bg-blue-50"
+              : isPending
+                ? "border-amber-300 bg-amber-50 hover:border-amber-500"
+                : "border-gray-200 hover:border-navy"
+          }`}
+        >
+          <img
+            src={image.url}
+            alt=""
+            className="w-12 h-12 object-cover rounded shrink-0 bg-gray-100"
+          />
+          <div className="text-xs flex-1 min-w-0">
+            {isPending && (
+              <div className="text-amber-700 font-semibold mb-0.5">● Pending upload</div>
+            )}
+            <div className="text-gray-600 truncate" title={filenameLabel}>
+              {filenameLabel}
+            </div>
+          </div>
+        </button>
+      )}
+
       <input
-        type="url"
-        value={image.url}
-        onChange={(e) => onChange(index, { ...image, url: e.target.value })}
-        placeholder="https://upload.wikimedia.org/…"
-        className="flex-1 min-w-0 px-3 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        onChange={onPick}
+        className="hidden"
       />
+
       <StarSelector
         value={image.stars}
         onChange={(stars) => onChange(index, { ...image, stars })}
@@ -721,6 +906,121 @@ function EmptyDetailsPanel() {
 }
 
 // =============================================================================
+// Images section — header, batch dropzone, image rows
+// =============================================================================
+//
+// Wraps the entire images list in a drop target so the user can drag one or
+// many image files anywhere in the section to add them all at once. Also
+// handles the per-image multi-select / delete UI.
+
+function ImagesSection({
+  images, vehicleId, selectedIndices,
+  onAddFiles, onAddRow,
+  onToggleSelect, onChangeImage, onRemoveImage, onDeleteSelected,
+}) {
+  const dropRef = useRef(null);
+  const [dragOver, setDragOver] = useState(false);
+  // Track nested drag enter/leave with a counter so leaving a child element
+  // doesn't prematurely clear the drag-over highlight
+  const dragDepth = useRef(0);
+
+  const onDragEnter = (e) => {
+    if (!e.dataTransfer || !Array.from(e.dataTransfer.types || []).includes("Files")) return;
+    e.preventDefault();
+    dragDepth.current++;
+    setDragOver(true);
+  };
+  const onDragOver = (e) => {
+    if (!e.dataTransfer || !Array.from(e.dataTransfer.types || []).includes("Files")) return;
+    e.preventDefault();
+  };
+  const onDragLeave = () => {
+    dragDepth.current = Math.max(0, dragDepth.current - 1);
+    if (dragDepth.current === 0) setDragOver(false);
+  };
+  const onDrop = (e) => {
+    if (!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
+    e.preventDefault(); e.stopPropagation();
+    dragDepth.current = 0; setDragOver(false);
+    onAddFiles(e.dataTransfer.files);
+  };
+
+  return (
+    <div
+      ref={dropRef}
+      onDragEnter={onDragEnter}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      className={`rounded-xl transition ${dragOver ? "ring-2 ring-navy ring-offset-2 bg-blue-50/40" : ""}`}
+    >
+      <div className="flex items-baseline justify-between mb-2 gap-2">
+        <label className="block text-xs font-medium text-gray-700">
+          Images (optional — vehicles with zero images are skipped by the game)
+        </label>
+        <div className="flex items-center gap-2 shrink-0">
+          {selectedIndices.size > 0 && (
+            <button
+              type="button"
+              onClick={onDeleteSelected}
+              className="text-xs px-2 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700"
+            >
+              Delete {selectedIndices.size} selected
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onAddRow}
+            className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50"
+          >
+            + Add image
+          </button>
+        </div>
+      </div>
+
+      {images.length === 0 ? (
+        <div
+          className={`border-2 border-dashed rounded-lg px-4 py-6 text-center text-xs transition ${
+            dragOver
+              ? "border-navy bg-blue-50 text-navy"
+              : "border-gray-300 text-gray-500"
+          }`}
+        >
+          {dragOver
+            ? "Drop to upload — one tile per file"
+            : (
+              <>
+                <div className="font-medium text-gray-700 mb-1">No images yet.</div>
+                <div>Drag one or more image files here, or click <span className="font-medium">+ Add image</span> above to add an empty slot.</div>
+                <div className="text-gray-400 mt-1">Vehicles without images are kept as drafts and skipped by the game until at least one is added.</div>
+              </>
+            )
+          }
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {images.map((img, i) => (
+            <ImageRow
+              key={i}
+              image={img}
+              vehicleId={vehicleId}
+              index={i}
+              isSelected={selectedIndices.has(i)}
+              onToggleSelect={onToggleSelect}
+              onChange={onChangeImage}
+              onRemove={onRemoveImage}
+            />
+          ))}
+          <p className="text-[11px] text-gray-400 mt-1">
+            Tip: drag more image files into this section to append them.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
 // Vehicle form — add new or edit existing
 // =============================================================================
 
@@ -770,6 +1070,21 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
     setForm((prev) => ({
       ...prev,
       images: [...prev.images, { url: "", stars: 1 }]
+    }));
+  };
+
+  // Drop one or more image files anywhere on the Images section to append them
+  // all at once as new pending uploads. Non-image files are ignored.
+  const addFilesAsImages = async (files) => {
+    const list = Array.from(files).filter((f) => f && f.type.startsWith("image/"));
+    if (list.length === 0) return;
+    const dataUrls = await Promise.all(list.map(readFileAsDataUrl));
+    setForm((prev) => ({
+      ...prev,
+      images: [
+        ...prev.images,
+        ...dataUrls.map((url) => ({ url, stars: 1 })),
+      ],
     }));
   };
 
@@ -982,46 +1297,17 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
 
         {/* Image rows */}
         <div>
-          <div className="flex items-baseline justify-between mb-2 gap-2">
-            <label className="block text-xs font-medium text-gray-700">
-              Images (optional — vehicles with zero images are skipped by the game)
-            </label>
-            <div className="flex items-center gap-2 shrink-0">
-              {selectedImageIndices.size > 0 && (
-                <button
-                  type="button"
-                  onClick={deleteSelectedImages}
-                  className="text-xs px-2 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700"
-                >
-                  Delete {selectedImageIndices.size} selected
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={addImageRow}
-                className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50"
-              >
-                + Add image
-              </button>
-            </div>
-          </div>
-          {form.images.length === 0 ? (
-            <p className="text-xs text-gray-400 italic">No images yet. The vehicle will be saved as a draft and won't appear in rounds until you add one.</p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {form.images.map((img, i) => (
-                <ImageRow
-                  key={i}
-                  image={img}
-                  index={i}
-                  isSelected={selectedImageIndices.has(i)}
-                  onToggleSelect={toggleImageSelect}
-                  onChange={updateImage}
-                  onRemove={removeImageRow}
-                />
-              ))}
-            </div>
-          )}
+          <ImagesSection
+            images={form.images}
+            vehicleId={previewId}
+            selectedIndices={selectedImageIndices}
+            onAddFiles={addFilesAsImages}
+            onAddRow={addImageRow}
+            onToggleSelect={toggleImageSelect}
+            onChangeImage={updateImage}
+            onRemoveImage={removeImageRow}
+            onDeleteSelected={deleteSelectedImages}
+          />
         </div>
 
         {/* Validation errors */}
@@ -1079,10 +1365,11 @@ const EXPORTED_HEADER = `// MatKenGame — Vehicle Database
 //   funFacts  — array of zero or more sentences. After the player answers,
 //               one is picked at random and shown. Empty array = no fact shown.
 //
-// Image-URL rules:
-//   - Must be HTTPS Wikimedia Commons URLs
-//   - Each image needs the full URL (right-click on Commons → "Copy image address")
-//   - URLs look like: https://upload.wikimedia.org/wikipedia/commons/.../filename.jpg
+// Image storage:
+//   - Each image.url is a local path under assets/images/
+//   - Naming convention: {vehicleId}-{nnn}.{ext}  (e.g. m1abrams-001.jpg)
+//   - Images are added via the Admin page (drag-and-drop), which generates
+//     the correct filename and exports both the .js file and the image files.
 //
 // Loading model:
 //   This file is loaded as a regular <script> in index.html *before* app.jsx,
@@ -1176,10 +1463,19 @@ function downloadAsFile(content, filename) {
 // =============================================================================
 
 function ExportModal({ vehicles, pactConfig, onClose }) {
-  // useMemo so re-renders don't regenerate the file content unnecessarily
+  // Compute pending downloads first, then build vehicles.js content with the
+  // target paths swapped in for every data-URL image.
+  const pendingDownloads = React.useMemo(
+    () => collectPendingDownloads(vehicles),
+    [vehicles]
+  );
+  const exportVehicles = React.useMemo(
+    () => vehiclesWithPathsForExport(vehicles, pendingDownloads),
+    [vehicles, pendingDownloads]
+  );
   const fileContent = React.useMemo(
-    () => generateVehiclesJs(vehicles, pactConfig),
-    [vehicles, pactConfig]
+    () => generateVehiclesJs(exportVehicles, pactConfig),
+    [exportVehicles, pactConfig]
   );
   const [copied, setCopied] = useState(false);
 
@@ -1204,6 +1500,15 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
     downloadAsFile(fileContent, "vehicles.js");
   };
 
+  // Download every pending image at once. Browsers may throttle multi-download
+  // triggers, so we space them ~150ms apart.
+  const handleDownloadAllImages = async () => {
+    for (const p of pendingDownloads) {
+      downloadDataUrl(p.dataUrl, p.filename);
+      await new Promise((r) => setTimeout(r, 150));
+    }
+  };
+
   const playableCount = vehicles.filter((v) => v.images && v.images.length > 0).length;
   const draftCount = vehicles.length - playableCount;
 
@@ -1221,7 +1526,9 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
           <div>
             <h2 className="font-semibold text-navy">Save changes to game</h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              {vehicles.length} vehicle{vehicles.length === 1 ? "" : "s"} · {playableCount} playable{draftCount > 0 ? ` · ${draftCount} draft${draftCount === 1 ? "" : "s"}` : ""}
+              {vehicles.length} vehicle{vehicles.length === 1 ? "" : "s"} · {playableCount} playable
+              {draftCount > 0 ? ` · ${draftCount} draft${draftCount === 1 ? "" : "s"}` : ""}
+              {pendingDownloads.length > 0 ? ` · ${pendingDownloads.length} new image${pendingDownloads.length === 1 ? "" : "s"}` : ""}
             </p>
           </div>
           <button
@@ -1233,7 +1540,7 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
           </button>
         </div>
 
-        {/* Instructions — three numbered steps + a fallback for browser-only publishing */}
+        {/* Instructions — numbered steps; image step is hidden when there's nothing pending */}
         <div className="px-6 py-4 text-sm text-blue-900 bg-blue-50 border-b border-blue-100 space-y-2">
           <p className="font-semibold text-blue-950">How to publish these changes:</p>
           <ol className="space-y-1.5 list-decimal list-inside marker:text-blue-700">
@@ -1243,6 +1550,11 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
             <li>
               Move the downloaded file into the project's <code className="bg-white px-1 rounded border border-blue-200">data/</code> folder, replacing the existing <code className="bg-white px-1 rounded border border-blue-200">data/vehicles.js</code>.
             </li>
+            {pendingDownloads.length > 0 && (
+              <li>
+                Click <strong>📷 Download {pendingDownloads.length} new image{pendingDownloads.length === 1 ? "" : "s"}</strong> below, then drop the file{pendingDownloads.length === 1 ? "" : "s"} into the project's <code className="bg-white px-1 rounded border border-blue-200">assets/images/</code> folder.
+              </li>
+            )}
             <li>
               Double-click <code className="bg-white px-1 rounded border border-blue-200">update-game.bat</code> in the project root. It commits and pushes for you — the game updates in about 30 seconds.
             </li>
@@ -1260,6 +1572,44 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
             — paste the contents from the preview below, then "Commit changes" on the GitHub page.
           </p>
         </div>
+
+        {/* Pending image downloads — only shown when there are new images to commit */}
+        {pendingDownloads.length > 0 && (
+          <div className="px-6 py-4 bg-amber-50 border-b border-amber-100">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-semibold text-amber-900">
+                {pendingDownloads.length} new image{pendingDownloads.length === 1 ? "" : "s"} to commit
+              </p>
+              <button
+                onClick={handleDownloadAllImages}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-600 text-white hover:bg-amber-700"
+                title="Triggers one download per image, spaced 150ms apart"
+              >
+                📷 Download all {pendingDownloads.length}
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+              {pendingDownloads.map((p) => (
+                <button
+                  key={`${p.vehicleId}-${p.imageIndex}`}
+                  onClick={() => downloadDataUrl(p.dataUrl, p.filename)}
+                  className="flex items-center gap-2 px-2 py-1.5 bg-white border border-amber-200 rounded-lg hover:border-amber-500 text-left transition"
+                  title={`Save as ${p.path}`}
+                >
+                  <img src={p.dataUrl} alt="" className="w-8 h-8 object-cover rounded bg-gray-100 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-mono text-gray-700 truncate">{p.filename}</div>
+                    <div className="text-[10px] text-gray-500 truncate">{p.vehicleName}</div>
+                  </div>
+                  <span className="text-amber-700 text-xs shrink-0">↓</span>
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-amber-800 mt-2">
+              Each file is named to match the path in <code className="bg-white px-1 rounded border border-amber-200">vehicles.js</code> — drop them all into <code className="bg-white px-1 rounded border border-amber-200">assets/images/</code> as-is.
+            </p>
+          </div>
+        )}
 
         {/* Preview textarea */}
         <textarea
