@@ -1,6 +1,6 @@
 // MatKenGame service worker
 // Bump CACHE_VERSION every time you change the cached files so old caches are evicted.
-const CACHE_VERSION = "matkengame-v53";
+const CACHE_VERSION = "matkengame-v54";
 
 // Hostnames whose responses must NEVER be cached — always go to network.
 // Supabase leaderboard data is live and shared across devices; a cached
@@ -9,6 +9,15 @@ const NETWORK_ONLY_HOSTS = ["supabase.co", "supabase.in"];
 
 // Files to precache on install. These are the core local files only —
 // CDN resources (React, Tailwind, Babel) are cached opportunistically on first fetch.
+//
+// NOTE: vehicle images in assets/images/ are intentionally NOT in this list.
+// There are 146 of them (~35 MB) and a slow mobile install would either be
+// painfully slow or fail outright. Instead, the cacheFirst strategy below
+// caches each image the first time it is fetched during gameplay, so:
+//   - first session online  → every image viewed is now offline-ready
+//   - subsequent sessions   → all viewed images work offline
+// Future enhancement: a "Cache all images for offline" button that prefetches
+// the full set so even un-viewed vehicles work without a network.
 const PRECACHE_URLS = [
   "./",
   "index.html",

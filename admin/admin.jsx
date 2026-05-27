@@ -598,9 +598,34 @@ function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const r = new FileReader();
     r.onload  = () => resolve(r.result);
-    r.onerror = () => reject(r.error);
+    r.onerror = () => reject(r.error || new Error("FileReader failed"));
     r.readAsDataURL(file);
   });
+}
+
+// Reject files this big — data URLs are ~33% larger than the binary, the
+// admin draft persists to localStorage (5–10 MB cap on most browsers), and
+// a single oversized drop would silently blow the quota.
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;  // 10 MB
+
+// Filter a list of File objects down to images under MAX_IMAGE_BYTES,
+// alerting the user once with a summary if anything was rejected.
+function filterAcceptableImageFiles(files) {
+  const list = Array.from(files || []);
+  const accepted  = [];
+  const tooBig    = [];
+  const notImage  = [];
+  for (const f of list) {
+    if (!f) continue;
+    if (!f.type.startsWith("image/")) { notImage.push(f.name || "(unnamed)"); continue; }
+    if (f.size > MAX_IMAGE_BYTES)     { tooBig.push(f.name || "(unnamed)");   continue; }
+    accepted.push(f);
+  }
+  const msgs = [];
+  if (notImage.length) msgs.push(`Skipped — not images:\n  ${notImage.join("\n  ")}`);
+  if (tooBig.length)   msgs.push(`Skipped — over 10 MB:\n  ${tooBig.join("\n  ")}`);
+  if (msgs.length) alert(msgs.join("\n\n"));
+  return accepted;
 }
 
 // Find the next available slot number for a vehicle's images. Looks at all
@@ -622,20 +647,35 @@ function nextImageSlotNumber(vehicleId, committedUrls, extraSlotsTaken = []) {
 // Walk every vehicle's images and produce the list of pending downloads
 // (one per data-URL image). Each entry carries everything the export modal
 // needs to render a download button and rewrite the URL in vehicles.js.
+//
+// Returns { downloads, orphans }:
+//   downloads — array of resolvable pending images
+//   orphans   — pending data-URL images that could NOT be assigned a target
+//               path because the vehicle has no id (no name set yet).
+//               Surfaced to the user as a warning so the file isn't silently
+//               dropped from the export bundle.
 function collectPendingDownloads(vehicles) {
-  const out = [];
+  const downloads = [];
+  const orphans   = [];
   for (const v of vehicles) {
-    if (!Array.isArray(v.images) || !v.id) continue;
-    const committed = v.images.map((i) => i.url).filter((u) => !isDataUrl(u));
+    if (!Array.isArray(v.images)) continue;
+    const committed  = v.images.map((i) => i.url).filter((u) => !isDataUrl(u));
     const takenSlots = [];
     v.images.forEach((img, i) => {
       if (!isDataUrl(img.url)) return;
+      if (!v.id) {
+        // Without an id we can't generate a filename. Tracked separately so
+        // the export modal can warn instead of silently producing a ZIP
+        // whose vehicles.js references files that aren't in the bundle.
+        orphans.push({ vehicleName: v.name || "(unnamed)", imageIndex: i });
+        return;
+      }
       const ext      = dataUrlExt(img.url);
       const slotNum  = nextImageSlotNumber(v.id, committed, takenSlots);
       takenSlots.push(slotNum);
       const numStr   = String(slotNum).padStart(3, "0");
       const filename = `${v.id}-${numStr}.${ext}`;
-      out.push({
+      downloads.push({
         vehicleId:   v.id,
         vehicleName: v.name || v.id,
         imageIndex:  i,
@@ -645,7 +685,7 @@ function collectPendingDownloads(vehicles) {
       });
     });
   }
-  return out;
+  return { downloads, orphans };
 }
 
 // Convert vehicles for export: every data-URL `image.url` is replaced by the
@@ -732,9 +772,14 @@ function ImageRow({ image, vehicleId, index, isSelected, onToggleSelect, onChang
   const isPending = isDataUrl(image.url);
 
   const acceptFile = async (file) => {
-    if (!file || !file.type.startsWith("image/")) return;
-    const dataUrl = await readFileAsDataUrl(file);
-    onChange(index, { ...image, url: dataUrl });
+    const [accepted] = filterAcceptableImageFiles(file ? [file] : []);
+    if (!accepted) return;
+    try {
+      const dataUrl = await readFileAsDataUrl(accepted);
+      onChange(index, { ...image, url: dataUrl });
+    } catch (e) {
+      alert(`Could not read "${accepted.name || "the file"}": ${e.message || e}`);
+    }
   };
 
   const onPick = (e) => {
@@ -1121,16 +1166,24 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
   };
 
   // Drop one or more image files anywhere on the Images section to append them
-  // all at once as new pending uploads. Non-image files are ignored.
+  // all at once as new pending uploads. Non-image files and oversized files
+  // (>10 MB) are filtered with a user-visible summary alert. Individual
+  // FileReader failures don't block the whole batch.
   const addFilesAsImages = async (files) => {
-    const list = Array.from(files).filter((f) => f && f.type.startsWith("image/"));
+    const list = filterAcceptableImageFiles(files);
     if (list.length === 0) return;
-    const dataUrls = await Promise.all(list.map(readFileAsDataUrl));
+    const results = await Promise.allSettled(list.map(readFileAsDataUrl));
+    const successes = results
+      .filter((r) => r.status === "fulfilled")
+      .map((r) => r.value);
+    const failures = results.filter((r) => r.status === "rejected").length;
+    if (failures > 0) alert(`Could not read ${failures} of ${list.length} file(s).`);
+    if (successes.length === 0) return;
     setForm((prev) => ({
       ...prev,
       images: [
         ...prev.images,
-        ...dataUrls.map((url) => ({ url, stars: 1 })),
+        ...successes.map((url) => ({ url, stars: 1 })),
       ],
     }));
   };
@@ -1492,7 +1545,9 @@ function generateVehiclesJs(vehicles, pactConfig = {}) {
   );
 }
 
-// Trigger a browser download of `content` as `filename`
+// Trigger a browser download of `content` as `filename`.
+// Defers revokeObjectURL by 1s so slower browsers (older Safari) have time to
+// kick off the download before the URL is released.
 function downloadAsFile(content, filename) {
   const blob = new Blob([content], { type: "text/javascript;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -1502,7 +1557,7 @@ function downloadAsFile(content, filename) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // =============================================================================
@@ -1512,7 +1567,7 @@ function downloadAsFile(content, filename) {
 function ExportModal({ vehicles, pactConfig, onClose }) {
   // Compute pending downloads first, then build vehicles.js content with the
   // target paths swapped in for every data-URL image.
-  const pendingDownloads = React.useMemo(
+  const { downloads: pendingDownloads, orphans: orphanImages } = React.useMemo(
     () => collectPendingDownloads(vehicles),
     [vehicles]
   );
@@ -1636,6 +1691,19 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
             — paste the contents from the preview below, then "Commit changes" on the GitHub page.
           </p>
         </div>
+
+        {/* Orphan warning — pending images on vehicles that have no id yet */}
+        {orphanImages.length > 0 && (
+          <div className="px-6 py-3 bg-red-50 border-b border-red-200 text-sm text-red-900">
+            <p className="font-semibold mb-1">
+              ⚠ {orphanImages.length} pending image{orphanImages.length === 1 ? " is" : "s are"} attached to vehicles with no name
+            </p>
+            <p className="text-xs">
+              These won't be included in the bundle. Set a Name on each vehicle so an id can be generated, then re-open Export. Affected:{" "}
+              {orphanImages.map((o) => o.vehicleName).join(", ")}.
+            </p>
+          </div>
+        )}
 
         {/* Pending image downloads — only shown when there are new images to commit */}
         {hasPending && (

@@ -13,6 +13,32 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Local image hosting (true offline play)
+- All 146 vehicle images downloaded from Wikimedia Commons into `assets/images/` with the naming convention `{vehicleId}-{nnn}.{ext}`. Re-runnable: `node scripts/download-images.mjs`.
+- `data/vehicles.js` rewritten so every URL is a same-origin local path. The previous Wikimedia URLs were cross-origin, which forced the service worker to return opaque responses and explicitly skip caching them — so offline play was previously impossible.
+- 2 broken Google-thumbnail URLs on the Boxer entry are unchanged (they never worked online either).
+- Download script handles 429/503 with exponential backoff (2s → 30s cap), 700ms per-request pacing, redirect following, and tmp-rename-on-success so partial files don't pollute the assets folder.
+- SW bumped to v51 then v52 to roll out the new vehicles.js + assets.
+
+### Added — Admin drag-and-drop image upload
+- `ImageRow` is now a drag-and-drop / click-to-browse tile (no URL input). Existing committed images show a thumbnail + filename; freshly dropped images show as amber "● Pending upload" tiles labelled with the future filename.
+- New `ImagesSection` component wraps the whole image list in a multi-file dropzone — drop several images at once to append them in one motion. Drag-depth counter prevents flicker on nested elements.
+- Data model: committed images store `image.url = "assets/images/<id>-<nnn>.<ext>"`; pending uploads store `image.url = "data:image/...;base64,..."`. Both render natively in `<img>`, so game preview needs no special-case code.
+- New helpers in admin.jsx: `isDataUrl`, `dataUrlExt`, `readFileAsDataUrl`, `nextImageSlotNumber`, `collectPendingDownloads`, `vehiclesWithPathsForExport`.
+- Drop validation: non-image files are ignored. Files over 10MB are rejected with an alert (oversized data URLs would blow past the localStorage quota and silently drop the draft).
+- FileReader errors are surfaced as user-visible alerts instead of being swallowed.
+- Export modal Pending-Images panel: per-image and bulk download buttons, each renaming the file to its target filename. If a pending image is on a vehicle that has no id yet (no `name` set), the export warns and skips it so the user can fix it.
+- Admin form: dropped the `https://` validation check (URLs are now local paths or data URLs).
+- TODO checkbox updated (`drag-and-drop image upload` now complete).
+- SW bumped to v52.
+
+### Added — Admin export: auto-rename + ZIP bundle
+- Replaced data-URL anchor downloads with **Blob-URL** downloads so the `download="..."` attribute is honored reliably (Safari and sometimes Chrome ignored it for data URLs, dropping files with the original drag-and-drop name).
+- New **📦 Download update bundle** button (JSZip via CDN) — a single `matken-update.zip` containing `/data/vehicles.js` + `/assets/images/<files>`, structured to match the repo. Extract at the project root, run `update-game.bat`, done.
+- The ZIP option becomes the primary footer button when there are pending images; the per-file download path remains as a fallback.
+- All Blob-URL revokes use `setTimeout(... 1000)` so older Safari has time to start the download before the URL is released.
+- SW bumped to v53.
+
 ### Added — Hint system
 - **◈ USE HINT button** on the quiz screen — sits between the answer options and the NEXT button, visible only before the player answers. Shows remaining hints and the cost upfront ("2 LEFT · −150 PTS EA").
 - **2 hints per round** — each hint eliminates one randomly chosen wrong answer on the current question. Eliminated options are heavily dimmed (opacity 0.3), disabled, and cannot be selected.
