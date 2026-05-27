@@ -664,14 +664,61 @@ function vehiclesWithPathsForExport(vehicles, pendingDownloads) {
   }));
 }
 
-// Trigger the browser to download a data URL as a real file
+// Convert a data URL into a Blob. Browsers honor the `download` filename
+// attribute much more reliably for blob: URLs than for data: URLs — without
+// this conversion, Safari (and sometimes Chrome) drops the .jpg suffix or
+// saves the file with the original drag-and-drop name.
+function dataUrlToBlob(dataUrl) {
+  const comma = dataUrl.indexOf(",");
+  const meta  = dataUrl.slice(5, comma); // strip "data:"
+  const isB64 = meta.includes(";base64");
+  const mime  = meta.split(";")[0] || "application/octet-stream";
+  const payload = dataUrl.slice(comma + 1);
+  const binary  = isB64 ? atob(payload) : decodeURIComponent(payload);
+  const bytes   = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+// Trigger the browser to download a data URL as a real file with the exact
+// filename we specify. Uses a blob URL so the `download` attribute is honored.
 function downloadDataUrl(dataUrl, filename) {
-  const a = document.createElement("a");
-  a.href = dataUrl;
+  const blob = dataUrlToBlob(dataUrl);
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// Build a single ZIP containing vehicles.js + every pending image, structured
+// to mirror the repo so the user can extract it into the project root and have
+// every file land in the right place.
+//   /data/vehicles.js
+//   /assets/images/<id>-<nnn>.<ext>
+async function downloadUpdateBundle(fileContent, pendingDownloads, filename = "matken-update.zip") {
+  if (typeof JSZip === "undefined") {
+    alert("ZIP library failed to load. Use the individual downloads instead.");
+    return;
+  }
+  const zip = new JSZip();
+  zip.file("data/vehicles.js", fileContent);
+  const imagesDir = zip.folder("assets").folder("images");
+  for (const p of pendingDownloads) {
+    imagesDir.file(p.filename, dataUrlToBlob(p.dataUrl));
+  }
+  const blob = await zip.generateAsync({ type: "blob" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // =============================================================================
@@ -1509,6 +1556,14 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
     }
   };
 
+  // One-click bundle: vehicles.js + every pending image, zipped with the repo
+  // folder layout. Extract at the project root and every file lands in place.
+  const handleDownloadBundle = () => {
+    downloadUpdateBundle(fileContent, pendingDownloads);
+  };
+
+  const hasPending = pendingDownloads.length > 0;
+
   const playableCount = vehicles.filter((v) => v.images && v.images.length > 0).length;
   const draftCount = vehicles.length - playableCount;
 
@@ -1540,25 +1595,34 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
           </button>
         </div>
 
-        {/* Instructions — numbered steps; image step is hidden when there's nothing pending */}
+        {/* Instructions — adapt depending on whether there are new images */}
         <div className="px-6 py-4 text-sm text-blue-900 bg-blue-50 border-b border-blue-100 space-y-2">
           <p className="font-semibold text-blue-950">How to publish these changes:</p>
-          <ol className="space-y-1.5 list-decimal list-inside marker:text-blue-700">
-            <li>
-              Click <strong>💾 Download vehicles.js</strong> below.
-            </li>
-            <li>
-              Move the downloaded file into the project's <code className="bg-white px-1 rounded border border-blue-200">data/</code> folder, replacing the existing <code className="bg-white px-1 rounded border border-blue-200">data/vehicles.js</code>.
-            </li>
-            {pendingDownloads.length > 0 && (
+          {hasPending ? (
+            <ol className="space-y-1.5 list-decimal list-inside marker:text-blue-700">
               <li>
-                Click <strong>📷 Download {pendingDownloads.length} new image{pendingDownloads.length === 1 ? "" : "s"}</strong> below, then drop the file{pendingDownloads.length === 1 ? "" : "s"} into the project's <code className="bg-white px-1 rounded border border-blue-200">assets/images/</code> folder.
+                Click <strong>📦 Download update bundle</strong> below — a single ZIP containing the new <code className="bg-white px-1 rounded border border-blue-200">vehicles.js</code> and all {pendingDownloads.length} new image{pendingDownloads.length === 1 ? "" : "s"} named for you.
               </li>
-            )}
-            <li>
-              Double-click <code className="bg-white px-1 rounded border border-blue-200">update-game.bat</code> in the project root. It commits and pushes for you — the game updates in about 30 seconds.
-            </li>
-          </ol>
+              <li>
+                Extract the ZIP into the project root, overwriting when prompted. The folder structure inside the ZIP matches the repo exactly.
+              </li>
+              <li>
+                Double-click <code className="bg-white px-1 rounded border border-blue-200">update-game.bat</code> in the project root. It commits and pushes for you — the game updates in about 30 seconds.
+              </li>
+            </ol>
+          ) : (
+            <ol className="space-y-1.5 list-decimal list-inside marker:text-blue-700">
+              <li>
+                Click <strong>💾 Download vehicles.js</strong> below.
+              </li>
+              <li>
+                Move the downloaded file into the project's <code className="bg-white px-1 rounded border border-blue-200">data/</code> folder, replacing the existing <code className="bg-white px-1 rounded border border-blue-200">data/vehicles.js</code>.
+              </li>
+              <li>
+                Double-click <code className="bg-white px-1 rounded border border-blue-200">update-game.bat</code> in the project root. It commits and pushes for you — the game updates in about 30 seconds.
+              </li>
+            </ol>
+          )}
           <p className="text-xs text-blue-800 pt-1 border-t border-blue-200/70 mt-2">
             No git on your machine?{" "}
             <a
@@ -1574,7 +1638,7 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
         </div>
 
         {/* Pending image downloads — only shown when there are new images to commit */}
-        {pendingDownloads.length > 0 && (
+        {hasPending && (
           <div className="px-6 py-4 bg-amber-50 border-b border-amber-100">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-semibold text-amber-900">
@@ -1582,10 +1646,10 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
               </p>
               <button
                 onClick={handleDownloadAllImages}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-600 text-white hover:bg-amber-700"
-                title="Triggers one download per image, spaced 150ms apart"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-amber-400 text-amber-800 bg-white hover:bg-amber-100"
+                title="Triggers one download per image — useful if you only want to grab a subset"
               >
-                📷 Download all {pendingDownloads.length}
+                Download {pendingDownloads.length} as separate files
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
@@ -1606,7 +1670,7 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
               ))}
             </div>
             <p className="text-[11px] text-amber-800 mt-2">
-              Each file is named to match the path in <code className="bg-white px-1 rounded border border-amber-200">vehicles.js</code> — drop them all into <code className="bg-white px-1 rounded border border-amber-200">assets/images/</code> as-is.
+              Each file is renamed for you to match the path in <code className="bg-white px-1 rounded border border-amber-200">vehicles.js</code>. The simplest way is the <strong>Download update bundle</strong> button below — one ZIP with everything pre-organised.
             </p>
           </div>
         )}
@@ -1640,11 +1704,24 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
           </button>
           <button
             onClick={handleDownload}
-            title="Save vehicles.js to your Downloads folder (Step 1)"
-            className="px-4 py-2 text-sm rounded-lg bg-navy text-white font-medium hover:bg-navy/90"
+            title={hasPending ? "Download just vehicles.js (you'll need to grab the images separately)" : "Save vehicles.js to your Downloads folder"}
+            className={`px-4 py-2 text-sm rounded-lg font-medium transition ${
+              hasPending
+                ? "border border-gray-300 hover:bg-gray-50"
+                : "bg-navy text-white hover:bg-navy/90"
+            }`}
           >
-            💾 Download vehicles.js
+            💾 vehicles.js only
           </button>
+          {hasPending && (
+            <button
+              onClick={handleDownloadBundle}
+              title={`Single ZIP containing vehicles.js + ${pendingDownloads.length} renamed image${pendingDownloads.length === 1 ? "" : "s"}. Extract into the project root.`}
+              className="px-4 py-2 text-sm rounded-lg bg-navy text-white font-medium hover:bg-navy/90"
+            >
+              📦 Download update bundle ({pendingDownloads.length + 1} files)
+            </button>
+          )}
         </div>
       </div>
     </div>
