@@ -72,7 +72,9 @@ window.vehicles = [
     images: [
       { url: "assets/images/challenger2-001.jpg", stars: 1 },
       { url: "assets/images/challenger2-002.jpg", stars: 2 },
-      { url: "assets/images/challenger2-003.jpg", stars: 3 }
+      { url: "assets/images/challenger2-003.jpg", stars: 3 },
+      { url: "assets/images/challenger2-004.jpg", stars: 3 },
+      { url: "assets/images/challenger2-005.jpg", stars: 3 }
     ],
     funFacts: [
       "Until 2023, no Challenger 2 had ever been destroyed by enemy fire in combat."
@@ -87,7 +89,9 @@ window.vehicles = [
     images: [
       { url: "assets/images/leclerc-001.jpg", stars: 1 },
       { url: "assets/images/leclerc-002.jpg", stars: 2 },
-      { url: "assets/images/leclerc-003.jpg", stars: 3 }
+      { url: "assets/images/leclerc-003.jpg", stars: 3 },
+      { url: "assets/images/leclerc-004.jpg", stars: 3 },
+      { url: "assets/images/leclerc-005.jpg", stars: 3 }
     ],
     funFacts: [
       "The Leclerc was the first Western main battle tank to feature a fully automated loading system, allowing it to operate with a 3-man crew instead of 4."
