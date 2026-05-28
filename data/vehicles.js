@@ -363,11 +363,16 @@ window.vehicles = [
     name: "M2 Bradley",
     country: "United States",
     category: "IFV",
-    era: "Cold War",
+    era: "Modern",
     images: [
       { url: "assets/images/m2bradley-001.jpg", stars: 1 },
       { url: "assets/images/m2bradley-002.jpg", stars: 2 },
-      { url: "assets/images/m2bradley-003.jpg", stars: 3 }
+      { url: "assets/images/m2bradley-003.jpg", stars: 3 },
+      { url: "assets/images/m2bradley-004.jpg", stars: 3 },
+      { url: "assets/images/m2bradley-005.webp", stars: 1 },
+      { url: "assets/images/m2bradley-006.jpg", stars: 2 },
+      { url: "assets/images/m2bradley-007.webp", stars: 1 },
+      { url: "assets/images/m2bradley-008.jpg", stars: 1 }
     ],
     funFacts: [
       "The Bradley is unusual in that it can both transport soldiers AND fight alongside them — its 25mm chain gun and TOW missiles make it capable of destroying enemy tanks.",
@@ -378,13 +383,19 @@ window.vehicles = [
   {
     id: "bmp2",
     name: "BMP-2",
-    country: "Russia",
+    country: "Soviet Union",
     category: "IFV",
     era: "Cold War",
     images: [
       { url: "assets/images/bmp2-001.jpg", stars: 1 },
       { url: "assets/images/bmp2-002.jpg", stars: 2 },
-      { url: "assets/images/bmp2-003.jpg", stars: 3 }
+      { url: "assets/images/bmp2-003.jpg", stars: 3 },
+      { url: "assets/images/bmp2-004.jpg", stars: 3 },
+      { url: "assets/images/bmp2-005.jpg", stars: 1 },
+      { url: "assets/images/bmp2-006.webp", stars: 3 },
+      { url: "assets/images/bmp2-007.jpg", stars: 2 },
+      { url: "assets/images/bmp2-008.jpg", stars: 1 },
+      { url: "assets/images/bmp2-009.jpg", stars: 1 }
     ],
     funFacts: [
       "The BMP-2's 30mm autocannon can engage both ground targets and low-flying helicopters, making it one of the most versatile IFVs ever built.",
@@ -401,7 +412,13 @@ window.vehicles = [
     images: [
       { url: "assets/images/bmp3-001.jpg", stars: 1 },
       { url: "assets/images/bmp3-002.jpg", stars: 2 },
-      { url: "assets/images/bmp3-003.jpg", stars: 3 }
+      { url: "assets/images/bmp3-003.jpg", stars: 3 },
+      { url: "assets/images/bmp3-004.jpg", stars: 1 },
+      { url: "assets/images/bmp3-005.webp", stars: 3 },
+      { url: "assets/images/bmp3-006.jpg", stars: 3 },
+      { url: "assets/images/bmp3-007.jpg", stars: 2 },
+      { url: "assets/images/bmp3-008.webp", stars: 1 },
+      { url: "assets/images/bmp3-009.jpg", stars: 2 }
     ],
     funFacts: [
       "The BMP-3 is the only infantry fighting vehicle in the world armed with a 100mm gun, a 30mm autocannon, and three 7.62mm machine guns — all at the same time.",
@@ -418,7 +435,15 @@ window.vehicles = [
     images: [
       { url: "assets/images/warrior-001.jpg", stars: 1 },
       { url: "assets/images/warrior-002.jpg", stars: 2 },
-      { url: "assets/images/warrior-003.jpg", stars: 3 }
+      { url: "assets/images/warrior-003.jpg", stars: 3 },
+      { url: "assets/images/warrior-004.jpg", stars: 3 },
+      { url: "assets/images/warrior-005.jpg", stars: 1 },
+      { url: "assets/images/warrior-006.jpg", stars: 3 },
+      { url: "assets/images/warrior-007.webp", stars: 1 },
+      { url: "assets/images/warrior-008.jpg", stars: 2 },
+      { url: "assets/images/warrior-009.jpg", stars: 1 },
+      { url: "assets/images/warrior-010.webp", stars: 1 },
+      { url: "assets/images/warrior-011.jpg", stars: 3 }
     ],
     funFacts: [
       "The Warrior's armour was specifically designed to protect against 14.5mm heavy machine gun fire on all sides — much tougher than contemporary Soviet IFVs.",
@@ -435,7 +460,13 @@ window.vehicles = [
     images: [
       { url: "assets/images/cv90-001.jpg", stars: 1 },
       { url: "assets/images/cv90-002.jpg", stars: 2 },
-      { url: "assets/images/cv90-003.jpg", stars: 3 }
+      { url: "assets/images/cv90-003.jpg", stars: 3 },
+      { url: "assets/images/cv90-004.jpg", stars: 1 },
+      { url: "assets/images/cv90-005.webp", stars: 2 },
+      { url: "assets/images/cv90-006.webp", stars: 3 },
+      { url: "assets/images/cv90-007.png", stars: 2 },
+      { url: "assets/images/cv90-008.jpg", stars: 1 },
+      { url: "assets/images/cv90-009.jpg", stars: 3 }
     ],
     funFacts: [
       "The CV90 was designed to start its engine reliably at -40°C and operate in the deep snow of Nordic terrain, conditions that would stop most other IFVs.",
@@ -448,11 +479,16 @@ window.vehicles = [
     name: "Marder",
     country: "Germany",
     category: "IFV",
-    era: "Cold War",
+    era: "Modern",
     images: [
       { url: "assets/images/marder-001.jpg", stars: 1 },
       { url: "assets/images/marder-002.jpg", stars: 2 },
-      { url: "assets/images/marder-003.jpg", stars: 3 }
+      { url: "assets/images/marder-003.jpg", stars: 3 },
+      { url: "assets/images/marder-004.jpg", stars: 1 },
+      { url: "assets/images/marder-005.jpg", stars: 3 },
+      { url: "assets/images/marder-006.jpg", stars: 3 },
+      { url: "assets/images/marder-007.jpg", stars: 1 },
+      { url: "assets/images/marder-008.webp", stars: 2 }
     ],
     funFacts: [
       "The Marder was one of the first true infantry fighting vehicles — designed not just to carry troops but to fight alongside them with its own heavy weapons.",
@@ -469,7 +505,14 @@ window.vehicles = [
     images: [
       { url: "assets/images/bmp1-001.jpg", stars: 1 },
       { url: "assets/images/bmp1-002.jpg", stars: 2 },
-      { url: "assets/images/bmp1-003.jpg", stars: 3 }
+      { url: "assets/images/bmp1-003.jpg", stars: 3 },
+      { url: "assets/images/bmp1-004.jpg", stars: 1 },
+      { url: "assets/images/bmp1-005.jpg", stars: 1 },
+      { url: "assets/images/bmp1-006.jpg", stars: 3 },
+      { url: "assets/images/bmp1-007.webp", stars: 1 },
+      { url: "assets/images/bmp1-008.jpg", stars: 3 },
+      { url: "assets/images/bmp1-009.jpg", stars: 2 },
+      { url: "assets/images/bmp1-010.jpg", stars: 2 }
     ],
     funFacts: [
       "Introduced in 1966, the BMP-1 was the world's first true infantry fighting vehicle — combining troop transport, armour, and direct fire support in one platform.",
@@ -486,7 +529,11 @@ window.vehicles = [
     images: [
       { url: "assets/images/puma-001.jpg", stars: 1 },
       { url: "assets/images/puma-002.jpg", stars: 2 },
-      { url: "assets/images/puma-003.jpg", stars: 3 }
+      { url: "assets/images/puma-003.jpg", stars: 3 },
+      { url: "assets/images/puma-004.jpg", stars: 1 },
+      { url: "assets/images/puma-005.webp", stars: 3 },
+      { url: "assets/images/puma-006.webp", stars: 2 },
+      { url: "assets/images/puma-007.jpg", stars: 1 }
     ],
     funFacts: [
       "The Puma is one of the most heavily protected IFVs ever built — its modular armour can be upgraded in the field from 'Combat Light' (38 tonnes, air-transportable) to 'Combat' (43 tonnes, maximum protection).",
@@ -503,7 +550,12 @@ window.vehicles = [
     images: [
       { url: "assets/images/k21-001.jpg", stars: 1 },
       { url: "assets/images/k21-002.jpg", stars: 2 },
-      { url: "assets/images/k21-003.jpg", stars: 3 }
+      { url: "assets/images/k21-003.jpg", stars: 3 },
+      { url: "assets/images/k21-004.webp", stars: 1 },
+      { url: "assets/images/k21-005.jpg", stars: 1 },
+      { url: "assets/images/k21-006.jpg", stars: 3 },
+      { url: "assets/images/k21-007.jpg", stars: 2 },
+      { url: "assets/images/k21-008.jpg", stars: 3 }
     ],
     funFacts: [
       "South Korea's K21 uses inflatable pontoons that deploy from the hull on demand, giving it enough buoyancy to swim across rivers without preparation.",
@@ -867,6 +919,193 @@ window.vehicles = [
       "Its three engines give it enormous performance reserves — a Merlin can complete its mission safely even after losing an engine entirely.",
       "The Royal Navy uses Merlins for anti-submarine warfare, dipping their sonar into the ocean to hunt submarines hundreds of kilometres from their host ship."
     ]
+  },
+  {
+    id: "kf51panther",
+    name: "KF51 Panther",
+    country: "Germany",
+    category: "Main Battle Tank",
+    era: "Modern",
+    images: [
+      { url: "assets/images/kf51panther-001.webp", stars: 1 },
+      { url: "assets/images/kf51panther-002.jpg", stars: 2 },
+      { url: "assets/images/kf51panther-003.jpg", stars: 3 },
+      { url: "assets/images/kf51panther-004.jpg", stars: 2 },
+      { url: "assets/images/kf51panther-005.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "leopard2arc30",
+    name: "Leopard 2A-RC 3.0",
+    country: "Germany",
+    category: "Main Battle Tank",
+    era: "Modern",
+    images: [
+      { url: "assets/images/leopard2arc30-001.jpg", stars: 2 },
+      { url: "assets/images/leopard2arc30-002.jpg", stars: 1 },
+      { url: "assets/images/leopard2arc30-003.webp", stars: 3 },
+      { url: "assets/images/leopard2arc30-004.webp", stars: 3 },
+      { url: "assets/images/leopard2arc30-005.webp", stars: 1 },
+      { url: "assets/images/leopard2arc30-006.jpg", stars: 2 },
+      { url: "assets/images/leopard2arc30-007.jpg", stars: 2 },
+      { url: "assets/images/leopard2arc30-008.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "altayt1",
+    name: "Altay T1",
+    country: "Turkey",
+    category: "Main Battle Tank",
+    era: "Modern",
+    images: [
+      { url: "assets/images/altayt1-001.jpg", stars: 3 },
+      { url: "assets/images/altayt1-002.jpg", stars: 2 },
+      { url: "assets/images/altayt1-003.jpg", stars: 1 },
+      { url: "assets/images/altayt1-004.jpg", stars: 3 },
+      { url: "assets/images/altayt1-005.jpg", stars: 2 },
+      { url: "assets/images/altayt1-006.jpg", stars: 1 },
+      { url: "assets/images/altayt1-007.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "c1ariete",
+    name: "C1 Ariete",
+    country: "Italy",
+    category: "Main Battle Tank",
+    era: "Modern",
+    images: [
+      { url: "assets/images/c1ariete-001.jpg", stars: 1 },
+      { url: "assets/images/c1ariete-002.jpg", stars: 2 },
+      { url: "assets/images/c1ariete-003.jpg", stars: 3 },
+      { url: "assets/images/c1ariete-004.jpg", stars: 3 },
+      { url: "assets/images/c1ariete-005.webp", stars: 2 },
+      { url: "assets/images/c1ariete-006.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "kf41lynx",
+    name: "KF41 Lynx",
+    country: "Germany",
+    category: "IFV",
+    era: "Modern",
+    images: [
+      { url: "assets/images/kf41lynx-001.png", stars: 1 },
+      { url: "assets/images/kf41lynx-002.png", stars: 2 },
+      { url: "assets/images/kf41lynx-003.jpg", stars: 1 },
+      { url: "assets/images/kf41lynx-004.jpg", stars: 1 },
+      { url: "assets/images/kf41lynx-005.jpg", stars: 1 },
+      { url: "assets/images/kf41lynx-006.jpg", stars: 1 },
+      { url: "assets/images/kf41lynx-007.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "borsuk",
+    name: "Borsuk",
+    country: "Poland",
+    category: "IFV",
+    era: "Modern",
+    images: [
+      { url: "assets/images/borsuk-001.jpg", stars: 1 },
+      { url: "assets/images/borsuk-002.jpg", stars: 2 },
+      { url: "assets/images/borsuk-003.jpg", stars: 1 },
+      { url: "assets/images/borsuk-004.jpg", stars: 1 },
+      { url: "assets/images/borsuk-005.jpg", stars: 2 },
+      { url: "assets/images/borsuk-006.webp", stars: 2 },
+      { url: "assets/images/borsuk-007.jpg", stars: 3 },
+      { url: "assets/images/borsuk-008.jpg", stars: 3 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "tulpar",
+    name: "Tulpar",
+    country: "Turkey",
+    category: "IFV",
+    era: "Modern",
+    images: [
+      { url: "assets/images/tulpar-001.jpg", stars: 1 },
+      { url: "assets/images/tulpar-002.jpg", stars: 3 },
+      { url: "assets/images/tulpar-003.jpg", stars: 1 },
+      { url: "assets/images/tulpar-004.webp", stars: 2 },
+      { url: "assets/images/tulpar-005.jpg", stars: 2 },
+      { url: "assets/images/tulpar-006.png", stars: 3 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "ascod",
+    name: "ASCOD",
+    country: "Austria",
+    category: "IFV",
+    era: "Modern",
+    images: [
+      { url: "assets/images/ascod-001.jpg", stars: 1 },
+      { url: "assets/images/ascod-002.jpg", stars: 3 },
+      { url: "assets/images/ascod-003.jpg", stars: 1 },
+      { url: "assets/images/ascod-004.jpg", stars: 3 },
+      { url: "assets/images/ascod-005.jpg", stars: 2 },
+      { url: "assets/images/ascod-006.webp", stars: 2 },
+      { url: "assets/images/ascod-007.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "piranhav",
+    name: "Piranha V",
+    country: "Switzerland",
+    category: "IFV",
+    era: "Modern",
+    images: [
+      { url: "assets/images/piranhav-001.jpg", stars: 1 },
+      { url: "assets/images/piranhav-002.jpg", stars: 3 },
+      { url: "assets/images/piranhav-003.jpg", stars: 3 },
+      { url: "assets/images/piranhav-004.jpg", stars: 1 },
+      { url: "assets/images/piranhav-005.jpg", stars: 1 },
+      { url: "assets/images/piranhav-006.webp", stars: 2 },
+      { url: "assets/images/piranhav-007.jpg", stars: 2 },
+      { url: "assets/images/piranhav-008.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "vbci",
+    name: "VBCI",
+    country: "France",
+    category: "IFV",
+    era: "Modern",
+    images: [
+      { url: "assets/images/vbci-001.jpg", stars: 1 },
+      { url: "assets/images/vbci-002.jpg", stars: 2 },
+      { url: "assets/images/vbci-003.jpg", stars: 1 },
+      { url: "assets/images/vbci-004.jpg", stars: 1 },
+      { url: "assets/images/vbci-005.jpg", stars: 1 },
+      { url: "assets/images/vbci-006.webp", stars: 1 },
+      { url: "assets/images/vbci-007.jpg", stars: 1 },
+      { url: "assets/images/vbci-008.jpg", stars: 1 }
+    ],
+    funFacts: []
+  },
+  {
+    id: "vbmfreccia",
+    name: "VBM Freccia",
+    country: "Italy",
+    category: "IFV",
+    era: "Modern",
+    images: [
+      { url: "assets/images/vbmfreccia-001.jpg", stars: 1 },
+      { url: "assets/images/vbmfreccia-002.jpg", stars: 1 },
+      { url: "assets/images/vbmfreccia-003.jpg", stars: 2 },
+      { url: "assets/images/vbmfreccia-004.jpg", stars: 2 },
+      { url: "assets/images/vbmfreccia-005.jpg", stars: 1 },
+      { url: "assets/images/vbmfreccia-006.jpg", stars: 3 },
+      { url: "assets/images/vbmfreccia-007.jpg", stars: 3 }
+    ],
+    funFacts: []
   }
 ];
 
