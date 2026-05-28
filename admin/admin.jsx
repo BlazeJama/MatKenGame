@@ -579,6 +579,18 @@ function isDataUrl(s) {
   return typeof s === "string" && s.startsWith("data:");
 }
 
+// Admin lives at /admin/ — one level below the repo root.
+// Relative image paths like "assets/images/foo.jpg" need a "../" prefix so
+// they resolve to the correct location. Data URLs and full https:// URLs are
+// left untouched.
+function adminImgSrc(url) {
+  if (!url) return url;
+  if (isDataUrl(url)) return url;
+  if (/^https?:\/\//i.test(url)) return url;
+  // Relative path — prepend one directory up
+  return url.startsWith("../") ? url : "../" + url;
+}
+
 // Map a data-URL MIME type to a file extension
 function dataUrlExt(dataUrl) {
   const m = /^data:([^;]+)/.exec(dataUrl);
@@ -843,7 +855,7 @@ function ImageRow({ image, vehicleId, index, isSelected, onToggleSelect, onChang
           }`}
         >
           <img
-            src={image.url}
+            src={adminImgSrc(image.url)}
             alt=""
             className="w-12 h-12 object-cover rounded shrink-0 bg-gray-100"
           />
@@ -964,7 +976,7 @@ function VehicleDetails({ vehicle, onEdit, onClose }) {
           {vehicle.images.map((img, i) => (
             <div key={i} className="flex flex-col items-center">
               <img
-                src={img.url}
+                src={adminImgSrc(img.url)}
                 alt={`${vehicle.name} ${STAR_LABEL[img.stars]}`}
                 className="w-full h-20 object-cover rounded-lg bg-gray-100 border border-gray-200"
               />
