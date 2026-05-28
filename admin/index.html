@@ -33,10 +33,54 @@
 <body class="bg-gray-50 text-gray-900">
   <div id="root"></div>
 
-  <!-- Shared vehicle data — same file as the main game, loaded with a parent path -->
-  <script src="../data/vehicles.js"></script>
+  <!-- Shared vehicle data — same file as the main game, loaded with a parent path.
+       Cache-bust query bumped any time vehicles.js or admin.jsx changes so
+       a hard refresh isn't required. -->
+  <script src="../data/vehicles.js?v=55"></script>
 
   <!-- Admin app entry — Babel transpiles on load -->
-  <script type="text/babel" data-presets="react" src="admin.jsx"></script>
+  <script type="text/babel" data-presets="react" src="admin.jsx?v=55"></script>
+
+  <!-- Service worker registration — the main game's SW (registered with root
+       scope) intercepts /admin/ requests too, so this ensures the network-first
+       strategy for admin.jsx kicks in even when the user has only ever opened
+       the admin page (and not the main game first). When a new admin build is
+       deployed, the SW detects it and the page auto-reloads. -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("../service-worker.js").then((reg) => {
+          // Force the SW to check for updates whenever the admin tab is opened,
+          // since admin is a low-traffic page that might otherwise miss updates.
+          reg.update().catch(() => {});
+
+          // If a new version installs while the admin tab is open, auto-reload.
+          // The admin has no mid-task state that survives a reload anyway
+          // (drafts persist to localStorage), so this is safe.
+          let reloading = false;
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (reloading) return;
+            reloading = true;
+            window.location.reload();
+          });
+
+          const trackInstalling = (worker) => {
+            worker.addEventListener("statechange", () => {
+              if (worker.state === "installed" && navigator.serviceWorker.controller) {
+                // New SW ready — activate immediately on admin
+                worker.postMessage({ type: "SKIP_WAITING" });
+              }
+            });
+          };
+          if (reg.waiting && navigator.serviceWorker.controller) {
+            reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          }
+          reg.addEventListener("updatefound", () => {
+            if (reg.installing) trackInstalling(reg.installing);
+          });
+        }).catch((err) => console.warn("Admin SW registration failed:", err));
+      });
+    }
+  </script>
 </body>
 </html>
