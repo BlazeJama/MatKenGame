@@ -1625,8 +1625,13 @@ function ExportModal({ vehicles, pactConfig, onClose }) {
 
   // One-click bundle: vehicles.js + every pending image, zipped with the repo
   // folder layout. Extract at the project root and every file lands in place.
-  const handleDownloadBundle = () => {
-    downloadUpdateBundle(fileContent, pendingDownloads);
+  // After the ZIP is triggered we also update the localStorage draft to swap
+  // every data-URL out for the committed path it will have once the ZIP is
+  // extracted and pushed — so the next time the admin opens the images show
+  // as committed thumbnails instead of "pending upload".
+  const handleDownloadBundle = async () => {
+    await downloadUpdateBundle(fileContent, pendingDownloads);
+    saveDraftToStorage(exportVehicles);
   };
 
   const hasPending = pendingDownloads.length > 0;
