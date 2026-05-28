@@ -132,7 +132,8 @@ window.vehicles = [
     images: [
       { url: "assets/images/centurion-001.jpg", stars: 1 },
       { url: "assets/images/centurion-002.jpg", stars: 2 },
-      { url: "assets/images/centurion-003.jpg", stars: 3 }
+      { url: "assets/images/centurion-003.jpg", stars: 3 },
+      { url: "assets/images/centurion-004.jpg", stars: 1 }
     ],
     funFacts: [
       "The Centurion is considered one of the most successful tank designs ever made, serving for over 50 years in 17 countries."
@@ -871,4 +872,5 @@ window.vehicleCount = window.vehicles.length;
 // Alliance configuration — maps countries to military alliances.
 // Managed via Admin → 🌐 Alliances. Empty = built-in defaults apply.
 window.pactConfig = {
+
 };
