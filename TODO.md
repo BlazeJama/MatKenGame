@@ -58,10 +58,10 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Verify deployed app works (no broken links, images load, PWA installs)
 
 ### Phase 5: Documentation & Merge
-- [ ] Update CLAUDE.md with new build/dev instructions
+- [x] Update CLAUDE.md with new build/dev instructions
 - [ ] Update README.md if needed
-- [ ] Update TODO.md with migration completion
-- [ ] Update CHANGELOG.md with migration summary
+- [x] Update TODO.md with migration completion
+- [x] Update CHANGELOG.md with migration summary
 - [ ] ⚠️ **Request explicit approval to merge `vite-migration` → `main`**
 - [ ] Merge to main (if approved)
 - [ ] Verify GitHub Pages deployment after merge
