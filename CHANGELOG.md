@@ -13,6 +13,18 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Vite migration (branch: vite-migration)
+- Replaced CDN-based React/Tailwind/Babel setup with Vite + npm packages (`react`, `react-dom`, `tailwindcss`, `@vitejs/plugin-react`)
+- `src/App.jsx` — proper ES module imports; removed CDN globals and bottom-of-file `ReactDOM.createRoot` call
+- `src/main.jsx` + `src/index.css` — Vite entry point; Tailwind via PostCSS
+- `data/vehicles.js` — converted `window.vehicles`/`window.pactConfig` globals to ES module exports
+- `index.html` — stripped all CDN scripts; Vite injects the bundled JS/CSS automatically
+- `public/` — static assets (images, icons, manifest, service-worker) moved here for Vite build inclusion
+- `public/admin/` — admin page moved here so Vite's transform pipeline doesn't break Babel's CDN loading; `admin.jsx` renamed `admin.babel` to prevent Vite from processing it
+- `vite.config.js` — `base: '/MatKenGame/'`, custom middleware serves `public/admin/index.html` raw at `/admin/`
+- `manifest.json` — updated `start_url`, `scope`, and icon paths to absolute `/MatKenGame/` URLs (required because Vite moves the manifest to `assets/` with a content hash)
+- `.github/workflows/deploy.yml` — GitHub Actions workflow: `npm ci` → `npm run build` → deploy `dist/` to GitHub Pages
+
 ### Added — Admin stale-cache recovery (v58)
 - New "🔄 Force refresh" button in the admin header. One click unregisters the service worker, clears all Cache Storage entries, and hard-reloads — replacing the previous 5-step DevTools dance. The localStorage draft is preserved (Save first if you want belt-and-braces safety).
 - Silent auto-recovery on load: admin.jsx now compares its baked-in `ADMIN_VERSION` against the `?v=` query the HTML used to load it. On mismatch (i.e. the SW handed us inconsistent HTML/JS), caches are cleared and the page reloads automatically.
