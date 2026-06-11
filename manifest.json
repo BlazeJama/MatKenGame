@@ -2,21 +2,21 @@
   "name": "MatKenGame",
   "short_name": "MatKenGame",
   "description": "A quiz game that teaches you to recognise military vehicles from around the world.",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/MatKenGame/",
+  "scope": "/MatKenGame/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#1a2744",
   "icons": [
     {
-      "src": "assets/icons/icon-192.png",
+      "src": "/MatKenGame/assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "assets/icons/icon-512.png",
+      "src": "/MatKenGame/assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

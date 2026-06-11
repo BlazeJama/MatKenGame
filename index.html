@@ -90,36 +90,10 @@
     }
   </style>
 
-  <!-- Tailwind CSS (Play CDN — fine for MVP, no build step) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    // Extend Tailwind with our navy primary
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            navy: "#1a2744"
-          }
-        }
-      }
-    };
-  </script>
-
-  <!-- React 18 (development build for now — switch to .production.min.js before launch) -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- Babel Standalone — transpiles JSX in the browser -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="module" src="/src/main.jsx"></script>
 </head>
 <body class="text-slate-100">
   <div id="root"></div>
-
-  <!-- Vehicle data — must load BEFORE app.jsx; exposes window.vehicles -->
-  <script src="data/vehicles.js"></script>
-
-  <!-- App entry point — Babel transpiles this on load -->
-  <script type="text/babel" data-presets="react" src="app.jsx"></script>
 
   <!-- Service worker registration -->
   <script>
