@@ -13,6 +13,11 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Admin stale-cache recovery (v58)
+- New "🔄 Force refresh" button in the admin header. One click unregisters the service worker, clears all Cache Storage entries, and hard-reloads — replacing the previous 5-step DevTools dance. The localStorage draft is preserved (Save first if you want belt-and-braces safety).
+- Silent auto-recovery on load: admin.jsx now compares its baked-in `ADMIN_VERSION` against the `?v=` query the HTML used to load it. On mismatch (i.e. the SW handed us inconsistent HTML/JS), caches are cleared and the page reloads automatically.
+- SW bumped to v58.
+
 ### Added — Local image hosting (true offline play)
 - All 146 vehicle images downloaded from Wikimedia Commons into `assets/images/` with the naming convention `{vehicleId}-{nnn}.{ext}`. Re-runnable: `node scripts/download-images.mjs`.
 - `data/vehicles.js` rewritten so every URL is a same-origin local path. The previous Wikimedia URLs were cross-origin, which forced the service worker to return opaque responses and explicitly skip caching them — so offline play was previously impossible.

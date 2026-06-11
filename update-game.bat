@@ -18,6 +18,7 @@ echo ============================================
 echo.
 
 REM Sanity check: are we actually inside a git repo?
+echo [1/6] Checking git repo...
 git rev-parse --is-inside-work-tree >nul 2>&1
 if errorlevel 1 (
   echo ERROR: this folder is not a git repository.
@@ -28,9 +29,20 @@ if errorlevel 1 (
 )
 
 REM Stage vehicles.js and ALL new/changed images
+echo [2/6] Staging data\vehicles.js and assets\images\...
 git add data/vehicles.js assets/images/
+if errorlevel 1 (
+  echo.
+  echo ERROR: git add failed. A file may be locked by another program
+  echo (antivirus, file explorer preview, image viewer). Close anything
+  echo that might be touching assets\images\ and try again.
+  echo.
+  pause
+  exit /b 1
+)
 
 REM Check if there is actually anything staged to commit
+echo [3/6] Checking for staged changes...
 git diff --cached --quiet
 if not errorlevel 1 (
   echo No changes detected in data\vehicles.js or assets\images\.
@@ -45,7 +57,7 @@ if not errorlevel 1 (
 )
 
 REM Show a summary of what will be committed
-echo The following files will be committed:
+echo [4/6] Files staged for commit:
 git diff --cached --stat
 echo.
 
@@ -57,17 +69,18 @@ if defined ldt (
   set "datestamp=admin update"
 )
 
-echo Committing changes...
+echo [5/6] Committing changes...
 git commit -m "Update vehicles + images via admin (%datestamp%)"
 if errorlevel 1 (
   echo.
-  echo Commit failed. Check the messages above for details.
+  echo ERROR: commit failed. Check the messages above for details.
+  echo Files remain staged so you can fix the issue and re-run this script.
   pause
   exit /b 1
 )
 
 echo.
-echo Pushing to GitHub...
+echo [6/6] Pushing to GitHub...
 git push
 if errorlevel 1 (
   echo.

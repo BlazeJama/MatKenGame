@@ -19,10 +19,63 @@ const { useState, useEffect, useRef } = React;
 // is a casual gate, not real security. Real security would require a backend.
 const ADMIN_PASSWORD = "matken";
 
+// Bump this in lockstep with the ?v= query in admin/index.html and the
+// CACHE_VERSION in service-worker.js. If admin.jsx loads with a mismatch
+// against the HTML's ?v= (because a stale SW served an old JS or HTML),
+// the auto-detect below silently clears caches and reloads.
+const ADMIN_VERSION = 58;
+
 // Storage keys
 const SESSION_AUTH_KEY   = "matken-admin-auth";
 const DRAFT_STORAGE_KEY  = "matken-draft-vehicles";
 const PACT_CONFIG_KEY    = "matken-pact-config";
+
+// ---- Stale cache recovery ---------------------------------------------------
+// Wipe service worker registrations + Cache Storage, then hard-reload.
+// The localStorage draft is preserved by default — losing unsaved work would
+// be worse than another stale-cache cycle. Pass clearDraft:true to nuke it too.
+async function forceFreshLoad({ clearDraft = false } = {}) {
+  try {
+    if ("serviceWorker" in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
+    }
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k).catch(() => false)));
+    }
+    if (clearDraft) {
+      try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch (_) {}
+    }
+  } catch (e) {
+    console.warn("forceFreshLoad cleanup error:", e);
+  }
+  // Bypass the HTTP cache as well — some browsers honour the forced-reload flag.
+  window.location.reload();
+}
+
+// Auto-detect HTML/JS version mismatch on load. The HTML loads this file as
+// `admin.jsx?v=NN`; if ADMIN_VERSION baked into the JS doesn't match NN from
+// the script tag, the SW handed us a mismatched pair. Silently recover.
+(function autoRecoverIfStale() {
+  try {
+    const scripts = document.getElementsByTagName("script");
+    for (const s of scripts) {
+      const src = s.getAttribute("src") || "";
+      const m = src.match(/admin\.jsx\?v=(\d+)/);
+      if (!m) continue;
+      const htmlVersion = parseInt(m[1], 10);
+      if (htmlVersion !== ADMIN_VERSION) {
+        console.warn(
+          `[admin] Version mismatch: HTML expects v${htmlVersion}, JS is v${ADMIN_VERSION}. ` +
+          `Clearing caches and reloading.`
+        );
+        forceFreshLoad();
+      }
+      break;
+    }
+  } catch (_) {}
+})();
 
 // ---- localStorage helpers for the working draft -----------------------------
 // The admin edits a draft that persists across refreshes via localStorage.
@@ -2451,6 +2504,18 @@ function AdminShell({ onLogout }) {
             </>
           )}
           <a href="../" className="text-white/80 hover:text-white underline">View game</a>
+          <button
+            onClick={() => {
+              const msg = isDirty
+                ? "Force refresh?\n\nThis unregisters the service worker and clears all caches, then hard-reloads.\n\nYour local draft will be PRESERVED. Click Save first if you want belt-and-braces safety."
+                : "Force refresh?\n\nThis unregisters the service worker and clears all caches, then hard-reloads. Use it if the admin looks stuck on an old version.";
+              if (confirm(msg)) forceFreshLoad();
+            }}
+            title="Clear service worker + caches and hard-reload (preserves your draft)"
+            className="text-white/80 hover:text-white underline"
+          >
+            🔄 Force refresh
+          </button>
           <button onClick={onLogout} className="text-white/80 hover:text-white underline">
             Sign out
           </button>
