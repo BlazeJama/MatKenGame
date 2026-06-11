@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MatKenGame — Admin</title>
+
+  <!-- No PWA / manifest on admin — this page is not installable -->
+  <meta name="theme-color" content="#1a2744" />
+  <meta name="robots" content="noindex" />
+
+  <!-- Tailwind CSS (Play CDN — same as the main app, no build step) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { navy: "#1a2744" }
+        }
+      }
+    };
+  </script>
+
+  <!-- React 18 + Babel Standalone, same setup as the main app -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- JSZip — used by the Export modal to bundle vehicles.js + new images
+       into a single ZIP that mirrors the repo's folder structure. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div id="root"></div>
+
+  <!-- Shared vehicle data — imported as ES module and exposed on window
+       so that the CDN-based admin.jsx (Babel/non-module) can read it. -->
+  <script type="module">
+    import { vehicles, pactConfig } from '../data/vehicles.js';
+    window.vehicles = vehicles;
+    window.pactConfig = pactConfig;
+  </script>
+
+  <!-- Admin app entry — Babel transpiles on load.
+       Uses .babel extension so Vite's dev server doesn't transform it. -->
+  <script type="text/babel" data-presets="react" src="admin.babel?v=58"></script>
+
+  <!-- Service worker registration — the main game's SW (registered with root
+       scope) intercepts /admin/ requests too, so this ensures the network-first
+       strategy for admin.jsx kicks in even when the user has only ever opened
+       the admin page (and not the main game first). When a new admin build is
+       deployed, the SW detects it and the page auto-reloads. -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("../service-worker.js").then((reg) => {
+          // Force the SW to check for updates whenever the admin tab is opened,
+          // since admin is a low-traffic page that might otherwise miss updates.
+          reg.update().catch(() => {});
+
+          // If a new version installs while the admin tab is open, auto-reload.
+          // The admin has no mid-task state that survives a reload anyway
+          // (drafts persist to localStorage), so this is safe.
+          let reloading = false;
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (reloading) return;
+            reloading = true;
+            window.location.reload();
+          });
+
+          const trackInstalling = (worker) => {
+            worker.addEventListener("statechange", () => {
+              if (worker.state === "installed" && navigator.serviceWorker.controller) {
+                // New SW ready — activate immediately on admin
+                worker.postMessage({ type: "SKIP_WAITING" });
+              }
+            });
+          };
+          if (reg.waiting && navigator.serviceWorker.controller) {
+            reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          }
+          reg.addEventListener("updatefound", () => {
+            if (reg.installing) trackInstalling(reg.installing);
+          });
+        }).catch((err) => console.warn("Admin SW registration failed:", err));
+      });
+    }
+  </script>
+</body>
+</html>

@@ -23,6 +23,51 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ---
 
+## 🔧 Vite Migration
+
+> Converting from CDN-based React to a build-tool setup for easier feature development and maintenance.
+> **⚠️ Merge back to main requires explicit approval before proceeding.**
+
+### Phase 1: Setup
+- [x] Create git branch `vite-migration`
+- [x] Initialize Vite with React template
+- [x] Install dependencies (`npm install`)
+- [x] Clean up unnecessary Vite template files
+
+### Phase 2: Code Migration
+- [x] Move app.jsx to src/ folder structure
+- [x] Move data/vehicles.js to src/
+- [x] Update all import paths for new structure
+- [x] Move assets (images, icons) to public folder
+- [x] Update manifest.json and service-worker.js for Vite paths
+- [x] Remove CDN React/Tailwind links; add npm packages instead
+- [x] Update index.html for Vite entry point
+
+### Phase 3: Local Testing
+- [x] Run `npm run dev` and verify dev server works
+- [x] Test quiz gameplay (play a round, verify scores)
+- [x] Test admin page functionality
+- [ ] Test PWA (offline mode, installability) _(deferred — no change to SW logic)_
+- [x] Test all UI screens and interactions
+- [x] Verify responsive design on mobile
+
+### Phase 4: Build & Deployment
+- [x] Run `npm run build` and verify dist/ folder is created
+- [x] Set up GitHub Actions workflow for auto-build and deploy
+- [ ] Test live deployment on GitHub Pages _(requires merge to main + Pages config)_
+- [ ] Verify deployed app works (no broken links, images load, PWA installs)
+
+### Phase 5: Documentation & Merge
+- [x] Update CLAUDE.md with new build/dev instructions
+- [ ] Update README.md if needed
+- [x] Update TODO.md with migration completion
+- [x] Update CHANGELOG.md with migration summary
+- [ ] ⚠️ **Request explicit approval to merge `vite-migration` → `main`**
+- [ ] Merge to main (if approved)
+- [ ] Verify GitHub Pages deployment after merge
+
+---
+
 ## 🥇 MVP — Core Quiz Game
 
 ### UI Screens

@@ -37,18 +37,24 @@ See game-design-document.md for the full feature plan across all phases.
 
 | Layer | Choice | Notes |
 |---|---|---|
-| UI | React 18 | Loaded via CDN — no build step |
-| Styling | Tailwind CSS | Loaded via CDN |
-| Icons | No icon library in MVP | Keep it simple |
+| UI | React 18 | Via npm + Vite (no CDN) |
+| Styling | Tailwind CSS 3 | Via npm + PostCSS (no CDN) |
+| Icons | No icon library | Keep it simple |
 | Language | JavaScript (ES6+) | No TypeScript for now |
-| Hosting | GitHub Pages | Main branch, root folder |
+| Build tool | Vite 8 | `npm run dev` / `npm run build` |
+| Hosting | GitHub Pages | Built `dist/` via GitHub Actions |
 | PWA | manifest.json + service-worker.js | Required for installability |
-| Images | Wikimedia Commons URLs | HTTPS, free to use |
+| Images | Local `public/assets/images/` | Same-origin for offline caching |
 | Backend | None | Everything runs in the browser |
 
-**Important:** No build tools, no npm, no webpack, no bundler.
-Everything runs directly in the browser via CDN links.
-This keeps the setup simple and GitHub Pages compatible.
+**Dev workflow:**
+```bash
+npm run dev        # Start Vite dev server at http://localhost:5173/MatKenGame/
+npm run build      # Build production output to dist/
+```
+Changes pushed to `main` trigger the GitHub Actions workflow which builds and deploys automatically.
+
+**Admin page:** available at `/MatKenGame/admin/` in dev and production. Files live in `public/admin/` — they are served raw (not processed by Vite) so the CDN+Babel setup still works.
 
 ---
 
@@ -56,16 +62,27 @@ This keeps the setup simple and GitHub Pages compatible.
 
 ```
 MatKenGame/
-├── index.html              ← Entry point — loads React + Tailwind via CDN
-├── app.jsx                 ← Main React app (all components in one file for MVP)
-├── admin.html              ← Admin page — password protected, desktop only
+├── index.html              ← HTML entry point (Vite injects bundled JS/CSS)
+├── src/
+│   ├── main.jsx            ← Vite entry point — mounts React app
+│   ├── App.jsx             ← Main React app (all components)
+│   └── index.css           ← Tailwind base imports
 ├── data/
-│   └── vehicles.js         ← ALL vehicle data lives here and only here
-├── assets/
-│   ├── images/             ← All vehicle images — auto-named by admin page
-│   └── icons/              ← PWA icons (192px and 512px)
-├── manifest.json           ← PWA manifest
-├── service-worker.js       ← Offline caching
+│   └── vehicles.js         ← ALL vehicle data — ES module exports
+├── public/
+│   ├── assets/
+│   │   ├── images/         ← Vehicle images (same-origin)
+│   │   └── icons/          ← PWA icons (192px and 512px)
+│   ├── admin/
+│   │   ├── index.html      ← Admin page HTML (CDN-based, served raw)
+│   │   └── admin.babel     ← Admin React app (Babel-transpiled, .babel extension prevents Vite transform)
+│   ├── manifest.json       ← PWA manifest
+│   └── service-worker.js   ← Offline caching
+├── vite.config.js          ← Vite config (base, admin middleware)
+├── tailwind.config.js      ← Tailwind config
+├── postcss.config.js       ← PostCSS config
+├── package.json            ← npm deps + scripts
+├── manifest.json           ← Root manifest (Vite processes this for the build)
 ├── CLAUDE.md               ← This file
 ├── CHANGELOG.md            ← Version history
 ├── TODO.md                 ← Feature checklist

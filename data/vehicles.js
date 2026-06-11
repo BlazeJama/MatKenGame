@@ -32,7 +32,7 @@
 //
 // =================================================================
 
-window.vehicles = [
+export const vehicles = [
   {
     id: "m1abrams",
     name: "M1 Abrams",
@@ -1109,11 +1109,8 @@ window.vehicles = [
   }
 ];
 
-// Convenience helper — total count, useful for the home-screen stats card
-window.vehicleCount = window.vehicles.length;
-
 // Alliance configuration — maps countries to military alliances.
 // Managed via Admin → 🌐 Alliances. Empty = built-in defaults apply.
-window.pactConfig = {
+export const pactConfig = {
 
 };
