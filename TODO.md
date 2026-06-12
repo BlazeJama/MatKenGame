@@ -146,6 +146,13 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [ ] Fun fact panel shown after each answer
 - [ ] Fun facts written for all vehicles in database
 
+### Study Data Content
+- [x] Study data populated for all 14 Main Battle Tanks (About, Specs, Armament, Protection, What's It?, Variants)
+- [ ] Study data for APCs (10 vehicles)
+- [ ] Study data for IFVs (10 vehicles)
+- [ ] Study data for Artillery (10 vehicles)
+- [ ] Study data for Helicopters (10 vehicles)
+
 ### Progress Tracking
 - [x] Best score saved per category (localStorage)
 - [x] Stats screen created — PERFORMANCE LOG with best score per category × difficulty, overall best callout, "Clear All Records" option

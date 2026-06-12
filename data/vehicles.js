@@ -46,6 +46,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The M1 Abrams is powered by a gas turbine engine — the same type used in helicopters — giving it a distinctive whine when moving."
+    ],
+    about: "The definitive American main battle tank, built to dominate the battlefields of late Cold War and modern conflicts through an optimal balance of advanced composite armor, firepower, and gas-turbine mobility.",
+    specs: {
+      crew: "4 personnel",
+      weight: "54.0 tonnes",
+      length: "9.77 m",
+      width: "3.66 m",
+      height: "2.38 m",
+      engine: "Lycoming AGT-1500 gas turbine",
+      horsepower: "1,500 hp",
+      fuel: "1,900 litres",
+      speed: "72 km/h",
+      range: "498 km",
+      enteredService: "1980, United States"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "105mm M68E1 rifled gun (early models) or 120mm M256 smoothbore cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "12.7mm M2HB heavy machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "2 x 7.62mm M240 machine guns", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Chobham composite armor", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Hull/turret anti-accumulation side skirts", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Halon fire-suppression and NBC system", description: "" }
+    ],
+    whats: {
+      intro: "A broad, low-slung tank with an angular, heavily sloped turret front and an exposed rear engine deck venting intense heat.",
+      cues: [
+        { letter: "E", keyword: "Engine whine", description: "Distinctive engine whine" },
+        { letter: "B", keyword: "Blow-out panels", description: "Massive angular blow-out panel turret" },
+        { letter: "H", keyword: "Hatch placement", description: "Low-profile driver's hatch placement below the gun mantlet" }
+      ]
+    },
+    variants: [
+      { name: "M1A1", year: 1985, label: "Upgraded to 120mm main gun", visibleDifferences: [], internalDifferences: [] },
+      { name: "M1A2 SEPv3", year: 2012, label: "Modern digital architecture and heavily upgraded armor package", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -61,6 +97,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The Leopard 2's 120mm smoothbore gun became the de-facto standard for NATO main battle tanks."
+    ],
+    about: "Widely considered the gold standard of NATO armored warfare, the Leopard 2 combines exceptional German automotive engineering with formidable firepower and export modularity.",
+    specs: {
+      crew: "4 personnel",
+      weight: "65.0 tonnes (up to 69 tonnes on later variants)",
+      length: "10.97 m (including gun)",
+      width: "3.77 m",
+      height: "2.64 m",
+      engine: "MTU MB 873 Ka-501 V12 diesel",
+      horsepower: "1,500 hp",
+      fuel: "1,160 litres",
+      speed: "70 km/h",
+      range: "450 km",
+      enteredService: "1979, Germany"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "120mm Rheinmetall L/44 or L/55 smoothbore cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm anti-aircraft machine gun / Remote Weapon Station", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Advanced third-generation composite matrix armor", description: "" },
+      { section: "ARMOUR", name: "Reinforced anti-mine hull belly armor", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Modular add-on arrowhead turret wedges (A5 onwards)", description: "" }
+    ],
+    whats: {
+      intro: "A boxy, flat-faced hull transitioning to highly distinct wedge-shaped arrowhead turret armor on later variations.",
+      cues: [
+        { letter: "A", keyword: "Arrowhead", description: "Prominent arrowhead turret profile" },
+        { letter: "E", keyword: "Exhaust", description: "Dual circular exhaust ports on the rear hull" },
+        { letter: "S", keyword: "Skirts", description: "Stepped side skirts" }
+      ]
+    },
+    variants: [
+      { name: "Leopard 2A4", year: 1984, label: "Classic boxy configuration turret", visibleDifferences: [], internalDifferences: [] },
+      { name: "Leopard 2A7V", year: 2012, label: "Modernized German Army variant with advanced optronics and programmable ammunition capabilities", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -78,6 +150,42 @@ export const vehicles = [
     ],
     funFacts: [
       "Until 2023, no Challenger 2 had ever been destroyed by enemy fire in combat."
+    ],
+    about: "Designed to prioritize maximum crew survivability, the Challenger 2 is the heavily armored workhorse of the British Army, famous for its combat record and unique rifled main gun.",
+    specs: {
+      crew: "4 personnel",
+      weight: "62.5 tonnes (up to 75.0 tonnes combat-ready with add-on kits)",
+      length: "11.55 m (including gun)",
+      width: "3.52 m",
+      height: "2.49 m",
+      engine: "Perkins CV12-6A V12 diesel",
+      horsepower: "1,200 hp",
+      fuel: "1,592 litres",
+      speed: "59 km/h",
+      range: "550 km (on road)",
+      enteredService: "1998, United Kingdom"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "120mm L30A1 rifled main gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm L94A1 EX-34 coaxial chain gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm L37A2 anti-aircraft machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Second-generation classified Dorchester composite armor", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Explosive Reactive Armor (ERA) / applique side panels", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Hydrogas variable suspension for smoother hull targeting", description: "" }
+    ],
+    whats: {
+      intro: "A massive, heavily armored tank with a continuous slope across its expansive turret front and distinctively tall external fuel drums mounted at the back.",
+      cues: [
+        { letter: "T", keyword: "Thermal sleeve", description: "Signature canvas thermal sleeve blanket wrapped around the rifled barrel" },
+        { letter: "C", keyword: "Cheeks", description: "Sloping turret cheeks" },
+        { letter: "F", keyword: "Fuel drums", description: "Distinctively tall external fuel drums mounted at the back" }
+      ]
+    },
+    variants: [
+      { name: "Challenger 2E", year: 2000, label: "Export variant optimized for hot environments", visibleDifferences: [], internalDifferences: [] },
+      { name: "Challenger 3", year: 2030, label: "Next-generation evolution featuring a NATO smoothbore gun upgrade", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -95,6 +203,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The Leclerc was the first Western main battle tank to feature a fully automated loading system, allowing it to operate with a 3-man crew instead of 4."
+    ],
+    about: "France's high-tech main battle tank, engineered around a light profile and high tactical automation, allowing it to move fast and fire with incredible rapid-succession speed.",
+    specs: {
+      crew: "3 personnel",
+      weight: "57.4 tonnes",
+      length: "9.87 m (including gun)",
+      width: "3.71 m",
+      height: "2.53 m",
+      engine: "SACM V8X-1500 Hyperbar diesel",
+      horsepower: "1,500 hp",
+      fuel: "1,300 litres (550 km range with auxiliary tanks)",
+      speed: "72 km/h",
+      range: "550 km",
+      enteredService: "1992, France"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "120mm GIAT CN120-26 smoothbore cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "12.7mm heavy coaxial machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm anti-aircraft machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Advanced structural modular composite armor", description: "" },
+      { section: "SMOKE", name: "GALIX vehicle combat self-defence smoke/grenade layout", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Automated fast-reaction internal fire containment systems", description: "" }
+    ],
+    whats: {
+      intro: "A compact, boxy Western vehicle with a tightly profile-fit turret shape, distinct rear autoloader housing overhang, and a very short hull front.",
+      cues: [
+        { letter: "M", keyword: "Mantlet", description: "Flush-fitted large rectangular gun mantlet layout" },
+        { letter: "S", keyword: "Sight", description: "Commander's panoramic sight system offset to the right side of the turret roof" },
+        { letter: "C", keyword: "Compact", description: "Very compact overall profile" }
+      ]
+    },
+    variants: [
+      { name: "Leclerc Series 1", year: 1992, label: "Initial baseline production versions", visibleDifferences: [], internalDifferences: [] },
+      { name: "Leclerc XLR", year: 2020, label: "Comprehensive modern digitization and urbanization combat upgrade package", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -110,6 +254,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The T-90 is equipped with the Shtora defensive system, which uses infrared dazzlers to confuse incoming guided anti-tank missiles."
+    ],
+    about: "Combining the low-profile chassis concept of the classic T-72 with the advanced tracking technologies of the T-80, the T-90 forms the core heavy armored presence of modern Russian ground units.",
+    specs: {
+      crew: "3 personnel",
+      weight: "46.5 tonnes",
+      length: "9.63 m",
+      width: "3.78 m",
+      height: "2.22 m",
+      engine: "V-92S2 12-cylinder diesel (V-92S2F on newer models)",
+      horsepower: "1,000 hp (1,130 hp on newer models)",
+      fuel: "1,200 litres",
+      speed: "60 km/h",
+      range: "550 km",
+      enteredService: "1992, Russia"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "125mm 2A46M smoothbore cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "12.7mm Kord heavy machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm PKMT coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Blend composite armor with integrated steel", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Kontakt-5 or Relikt Explosive Reactive Armor (ERA) tiles", description: "" },
+      { section: "SENSORS", name: "Shtora-1 electro-optical countermeasures / Arena active kill systems", description: "" }
+    ],
+    whats: {
+      intro: "A very low-profile, squat vehicle characterized by overlapping angled armor bricks across the entire front of its dome-shaped turret.",
+      cues: [
+        { letter: "E", keyword: "Eyes", description: "Distinctive dual red-glowing 'eyes' (Shtora infrared dazzlers) on either side of the gun barrel" },
+        { letter: "L", keyword: "Low", description: "Low roofline and carousel autoloader architecture inside" },
+        { letter: "B", keyword: "Bricks", description: "Overlapping angled armor bricks across turret front" }
+      ]
+    },
+    variants: [
+      { name: "T-90A", year: 2004, label: "Welded turret upgrade featuring the 1,000 hp engine package", visibleDifferences: [], internalDifferences: [] },
+      { name: "T-90M Proryv-3", year: 2020, label: "Heavily advanced modern overhaul with Relikt ERA, new turret layout, and isolated bushed ammunition", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -125,6 +305,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The T-72 is one of the most widely produced tanks in history, with over 25,000 built across many countries and variants."
+    ],
+    about: "One of the most ubiquitous and produced armored designs of the late 20th century, the Soviet T-72 set the standard for low-slung, autoloader-driven tank doctrine across the globe.",
+    specs: {
+      crew: "3 personnel",
+      weight: "41.5 tonnes (up to 44.5 tonnes on later modifications)",
+      length: "9.53 m (including gun)",
+      width: "3.59 m",
+      height: "2.23 m",
+      engine: "V-46 12-cylinder multi-fuel diesel",
+      horsepower: "780 hp",
+      fuel: "1,000 litres (plus external drum capacity)",
+      speed: "60 km/h",
+      range: "500 km (up to 650 km with external fuel drums)",
+      enteredService: "1973, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "125mm 2A46 smoothbore gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "12.7mm NSVT anti-aircraft heavy machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm PKT coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Early cast steel composite armor arrays", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Built-in radiation liner protection for CBRN scenarios", description: "" },
+      { section: "ARMOUR", name: "Hull-integrated deep trench entrenching blade assembly", description: "" }
+    ],
+    whats: {
+      intro: "A classic Soviet tank design sitting extremely low to the ground with a round, bowl-shaped cast turret.",
+      cues: [
+        { letter: "I", keyword: "Infrared", description: "Single prominent infrared searchlight mounted to the right side of the main gun barrel" },
+        { letter: "W", keyword: "Wheels", description: "Large star-pattern road wheels" },
+        { letter: "T", keyword: "Turret", description: "Round, bowl-shaped cast turret" }
+      ]
+    },
+    variants: [
+      { name: "T-72A", year: 1979, label: "Features thickened cast 'Dolly Parton' armor layout", visibleDifferences: [], internalDifferences: [] },
+      { name: "T-72B3", year: 2010, label: "Modernized upgrade equipped with Relikt ERA and digital thermal targeting sights", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -141,6 +357,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The Centurion is considered one of the most successful tank designs ever made, serving for over 50 years in 17 countries."
+    ],
+    about: "Introduced right at the end of World War II, the British Centurion pioneered the concept of a multi-role universal tank, effectively helping birth the modern MBT category.",
+    specs: {
+      crew: "4 personnel",
+      weight: "51.8 tonnes",
+      length: "9.85 m (including gun forward)",
+      width: "3.39 m",
+      height: "3.00 m",
+      engine: "Rolls-Royce Meteor V12 gasoline engine",
+      horsepower: "650 hp",
+      fuel: "450 litres",
+      speed: "35 km/h",
+      range: "190 km",
+      enteredService: "1945, United Kingdom"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "20-pounder (84mm) rifled gun (early) or Royal Ordnance 105mm L7 (later Marks)", description: "" },
+      { section: "SECONDARY WEAPONS", name: ".50 caliber coaxial ranging machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm (.30 cal) Browning coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Heavy rolled homogeneous steel glacis armor plate", description: "" },
+      { section: "ARMOUR", name: "Thick modular side armor bazooka skirts covering running gear", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Resilient Horstmann suspension system", description: "" }
+    ],
+    whats: {
+      intro: "A classic early Cold War profile featuring a lengthy hull clad in heavy side armor panel skirts and a tall, straight-walled turret.",
+      cues: [
+        { letter: "H", keyword: "Horstmann", description: "Horstmann suspension wheel clusters visible under heavy full-length side skirts" },
+        { letter: "U", keyword: "Utility", description: "External utility box layout clinging to turret sides" },
+        { letter: "T", keyword: "Tall", description: "Tall, straight-walled turret" }
+      ]
+    },
+    variants: [
+      { name: "Centurion Mk 3", year: 1950, label: "Features the iconic 20-pounder main gun setup", visibleDifferences: [], internalDifferences: [] },
+      { name: "Centurion Mk 5/2", year: 1956, label: "Upgraded variant integrating the legendary 105mm L7 rifled gun", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -156,6 +408,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The Tiger I's 88mm gun could destroy almost any Allied tank at ranges where Allied guns could not penetrate its armour."
+    ],
+    about: "Germany's legendary heavy armored vehicle, striking psychological terror into Allied armor crews through its unmatched armor plate bulk and long-range high-velocity anti-aircraft gun derived armament.",
+    specs: {
+      crew: "5 personnel",
+      weight: "54.0 tonnes (combat configuration up to 57 tonnes)",
+      length: "8.45 m (including gun)",
+      width: "3.56 m",
+      height: "3.00 m",
+      engine: "Maybach HL230 P45 V12 gasoline engine",
+      horsepower: "700 hp",
+      fuel: "540 litres",
+      speed: "40 km/h",
+      range: "110 km (road condition range)",
+      enteredService: "1942, Germany"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "88mm KwK 36 L/56 heavy cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.92mm MG 34 coaxial machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.92mm MG 34 bow-mounted hull machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "100mm thick flat face homogeneous steel frontal hull plate", description: "" },
+      { section: "ARMOUR", name: "Interleaved and overlapping road wheel array for distributing mass weight", description: "" },
+      { section: "ARMOUR", name: "Zimmerit anti-magnetic paste surface coating (mid-to-late production)", description: "" }
+    ],
+    whats: {
+      intro: "A blocky, heavily vertical tank structure with a horseshoe-shaped turret layout and complex layered road wheels.",
+      cues: [
+        { letter: "F", keyword: "Face", description: "Flat vertical hull armor nose profile" },
+        { letter: "M", keyword: "Muzzle", description: "Prominent muzzle brake fixed onto a long 88mm barrel" },
+        { letter: "W", keyword: "Wheels", description: "Overlapping disk road wheels" }
+      ]
+    },
+    variants: [
+      { name: "Tiger I Early Production", year: 1942, label: "Features tall drum commander cupola and dual rear air pre-cleaners", visibleDifferences: [], internalDifferences: [] },
+      { name: "Tiger I Late Production", year: 1943, label: "Features low-profile cast cupola and steel-rimmed road wheels", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -171,6 +459,42 @@ export const vehicles = [
     ],
     funFacts: [
       "The T-34's sloped armour was revolutionary — it effectively doubled the protection against direct hits without adding weight."
+    ],
+    about: "Widely considered one of the most effective and revolutionary armor layout designs of World War II, the T-34 combined innovative sloped armor protection with rugged mechanical mass productivity.",
+    specs: {
+      crew: "4 personnel (5 on late T-34-85 models)",
+      weight: "26.5 tonnes (up to 32.0 tonnes for late models)",
+      length: "6.68 m (hull length; up to 8.10 m with 85mm gun forward)",
+      width: "3.00 m",
+      height: "2.46 m",
+      engine: "Model V-2-34 V12 diesel engine",
+      horsepower: "500 hp",
+      fuel: "460 litres (plus external side tank cylinders)",
+      speed: "53 km/h",
+      range: "330 km",
+      enteredService: "1940, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "76.2mm F-34 main gun (or 85mm ZiS-S-53 on later variations)", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm DT coaxial machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm DT bow hull machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "45mm highly sloped homogeneous steel hull plates", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "All-terrain Christie spring suspension system", description: "" },
+      { section: "ARMOUR", name: "Wide stamped track design for minimal ground sink pressure", description: "" }
+    ],
+    whats: {
+      intro: "A medium combat tank characterized by starkly sloped front and side hull surfaces, a forward-positioned turret, and massive un-rimmed large road wheels.",
+      cues: [
+        { letter: "A", keyword: "Angled", description: "Angled nose plate with center-mounted driver's hatch" },
+        { letter: "F", keyword: "Fuel", description: "Cylindrical spare fuel tanks clamped on the hull sides" },
+        { letter: "T", keyword: "Track", description: "Wide link tracks" }
+      ]
+    },
+    variants: [
+      { name: "T-34/76", year: 1940, label: "Early war configuration variant carrying the 76.2mm weapon", visibleDifferences: [], internalDifferences: [] },
+      { name: "T-34-85", year: 1943, label: "Late war upgrade featuring an enlarged three-man turret and hard-hitting 85mm gun", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -186,6 +510,42 @@ export const vehicles = [
     ],
     funFacts: [
       "Over 49,000 M4 Sherman tanks were built during World War 2 — more than any other tank used by the Western Allies."
+    ],
+    about: "The legendary backbone of the Western Allied offensive machine, the M4 Sherman succeeded due to unparalleled mechanical reliability, logistical ease, and production scaling.",
+    specs: {
+      crew: "5 personnel",
+      weight: "30.3 tonnes",
+      length: "5.84 m (hull length)",
+      width: "2.62 m",
+      height: "2.74 m",
+      engine: "Continental R975 9-cylinder radial gasoline engine (varies by block model)",
+      horsepower: "400 hp",
+      fuel: "662 litres",
+      speed: "38 km/h",
+      range: "193 km",
+      enteredService: "1942, United Kingdom / United States"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "75mm M3 L/40 gun (later upgraded to 76mm M1 gun or 105mm howitzer)", description: "" },
+      { section: "SECONDARY WEAPONS", name: ".50 caliber Browning M2HB anti-aircraft roof machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "2 x .30-06 caliber Browning M1919A4 machine guns (coaxial and bow-mounted)", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Cast or welded steel armor array with rounded mantlet shield", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Early vertical volute spring suspension bogie layout (VVSS)", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "'Wet' ammunition storage racking to limit internal ammunition fires", description: "" }
+    ],
+    whats: {
+      intro: "A distinctively tall, short-bodied vehicle with an elevated hull ceiling, a rounded cast turret profile, and side-mounted suspension assemblies.",
+      cues: [
+        { letter: "P", keyword: "Profile", description: "High vertical silhouette profile" },
+        { letter: "B", keyword: "Bogie", description: "Three dual-wheel bogie assemblies bolted along each hull flank" },
+        { letter: "T", keyword: "Transmission", description: "Prominent transmission casing bulges protruding at the front bottom" }
+      ]
+    },
+    variants: [
+      { name: "M4A1", year: 1942, label: "Features a completely cast smooth rounded upper armor hull shell construction", visibleDifferences: [], internalDifferences: [] },
+      { name: "M4A3E8 Easy Eight", year: 1945, label: "Late war update integrating a 76mm high-velocity gun and smooth riding wide track HVSS suspension", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -933,7 +1293,45 @@ export const vehicles = [
       { url: "assets/images/kf51panther-004.jpg", stars: 2 },
       { url: "assets/images/kf51panther-005.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [
+      "Features an integrated launch system for HERO 120 loitering munitions, letting the tank attack hidden enemy targets miles away over obstacles."
+    ],
+    about: "Developed by Rheinmetall as a concept for future land combat systems, the KF51 integrates a radical 130mm cannon into a digital hull architecture built for managing companion drone systems.",
+    specs: {
+      crew: "3 to 4 personnel (Autoloader allows 3, with an optional workstation slot for a drone/systems operator)",
+      weight: "59.0 tonnes",
+      length: "10.00 m (including gun)",
+      width: "3.70 m",
+      height: "2.50 m",
+      engine: "MTU MB 873 Ka-501 V12 water-cooled diesel",
+      horsepower: "1,500 hp",
+      fuel: "1,100 litres",
+      speed: "70 km/h",
+      range: "500 km",
+      enteredService: "Not yet in service (Prototype/Concept status)"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "130mm Rheinmetall Rh-130 L/52 smoothbore cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "12.7mm heavy coaxial machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm 'Natter' remote controlled weapon station (RCWS)", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Advanced modular composite array", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "StrikeShield integrated active protection system (APS)", description: "" },
+      { section: "SENSORS", name: "Top-attack protection suite against drones and smart missiles", description: "" }
+    ],
+    whats: {
+      intro: "A sharp-angled, highly futuristic tank featuring an oversized main gun and a faceted turret fitted with visible electronic optronics modules.",
+      cues: [
+        { letter: "G", keyword: "Gun", description: "Massive 130mm gun barrel with an angular geometric shroud" },
+        { letter: "S", keyword: "Station", description: "Built-in weapon station block on the back corner of the turret roof" },
+        { letter: "F", keyword: "Futuristic", description: "Faceted turret with visible electronic optronics modules" }
+      ]
+    },
+    variants: [
+      { name: "KF51 Demonstrator", year: 2022, label: "Manned turret configuration shown at Eurosatory 2022", visibleDifferences: [], internalDifferences: [] },
+      { name: "KF51-U", year: 2025, label: "Unmanned turret variant introduced with an automated CUT module", visibleDifferences: [], internalDifferences: [] }
+    ]
   },
   {
     id: "leopard2arc30",
@@ -951,7 +1349,45 @@ export const vehicles = [
       { url: "assets/images/leopard2arc30-007.jpg", stars: 2 },
       { url: "assets/images/leopard2arc30-008.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [
+      "Because the turret is completely unmanned, its physical silhouette is dramatically lowered, reducing its target presentation area by several feet compared to traditional models."
+    ],
+    about: "Developed by KNDS as a transformative upgrade concept, this design converts existing Leopard 2 hulls to utilize a fully uncrewed turret, containing all personnel within a heavily protected hull cell.",
+    specs: {
+      crew: "3 personnel (Commander, gunner, and driver all seated side-by-side in the hull)",
+      weight: "Less than 60.0 tonnes",
+      length: "7.95 m (hull length)",
+      width: "3.73 m",
+      height: "2.40 m",
+      engine: "MTU 1,500 hp powerpack",
+      horsepower: "1,500 hp",
+      fuel: "1,160 litres",
+      speed: "65 km/h",
+      range: "460 km",
+      enteredService: "Concept/Prototype variant"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "120mm smoothbore autoloader gun (adaptable up to 140mm ASCALON)", description: "" },
+      { section: "SECONDARY WEAPONS", name: "30mm integrated remote weapon station (RCWS) for drone defence", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Modular launcher for Spike long-range anti-tank guided missiles", description: "" }
+    ],
+    protection: [
+      { section: "PROTECTION SYSTEMS", name: "Integrated Israeli Trophy Active Protection System (APS)", description: "" },
+      { section: "ARMOUR", name: "Heavily reinforced front/side Reactive Armor package over the crew cabin", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Isolated structural fuel and explosive containment areas", description: "" }
+    ],
+    whats: {
+      intro: "A classic Leopard 2 hull running gear mated to an extremely flat, narrow, uncrewed turret housing an external main gun.",
+      cues: [
+        { letter: "L", keyword: "Low", description: "Exceptionally low-profile flat turret" },
+        { letter: "C", keyword: "Cannon", description: "Prominent 30mm auto-cannon pod top-mount" },
+        { letter: "W", keyword: "Windows", description: "Absence of traditional optical viewing windows on turret cheeks" }
+      ]
+    },
+    variants: [
+      { name: "Leopard 2A-RC 3.0 120", year: 2023, label: "Standard baseline configuration with 120mm gun module", visibleDifferences: [], internalDifferences: [] },
+      { name: "Leopard 2A-RC 3.0 140", year: 2025, label: "Heavy configuration equipped with a 140mm large-caliber gun module", visibleDifferences: [], internalDifferences: [] }
+    ]
   },
   {
     id: "altayt1",
@@ -968,7 +1404,45 @@ export const vehicles = [
       { url: "assets/images/altayt1-006.jpg", stars: 1 },
       { url: "assets/images/altayt1-007.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [
+      "The initial Altay production batch utilizes a South Korean engine powerpack while Turkey completes domestic testing of its own indigenous 1,500 hp engine program."
+    ],
+    about: "Turkey's modern indigenous main battle tank project, designed to give the Turkish Land Forces an immensely protected platform optimized for diverse tactical theaters.",
+    specs: {
+      crew: "4 personnel",
+      weight: "65.0 tonnes",
+      length: "10.30 m (including gun forward)",
+      width: "3.90 m",
+      height: "2.60 m",
+      engine: "HD Hyundai Infracore DV27K 12-cylinder diesel (T1 variant)",
+      horsepower: "1,500 hp",
+      fuel: "1,200 litres",
+      speed: "65 km/h",
+      range: "450 km",
+      enteredService: "2025, Turkey"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "MKE 120mm 55-caliber smoothbore cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Remote Controlled Weapon Station (RCWS) with 12.7mm machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Advanced Roketsan composite armor matrix package", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Aselsan AKKOR active hard-kill and soft-kill system", description: "" },
+      { section: "SENSORS", name: "Electronic warfare and drone jamming suite", description: "" }
+    ],
+    whats: {
+      intro: "A massive, broad-shouldered Western-style tank with seven prominent road wheels on each side and an imposing angular turret architecture.",
+      cues: [
+        { letter: "S", keyword: "Sensors", description: "Distinctive dual sensor pillars on the turret roof rear corners" },
+        { letter: "L", keyword: "Length", description: "Extra long chassis body profile" },
+        { letter: "D", keyword: "Deep", description: "Deep composite side-skirt panels" }
+      ]
+    },
+    variants: [
+      { name: "Altay T1", year: 2025, label: "Initial production run with South Korean engine assembly", visibleDifferences: [], internalDifferences: [] },
+      { name: "Altay T2", year: 2027, label: "Improved serial build featuring the native Turkish BMC Power BATU engine system", visibleDifferences: [], internalDifferences: [] }
+    ]
   },
   {
     id: "c1ariete",
@@ -984,7 +1458,45 @@ export const vehicles = [
       { url: "assets/images/c1ariete-005.webp", stars: 2 },
       { url: "assets/images/c1ariete-006.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [
+      "The Ariete can have its entire modular engine and transmission package unbolted and completely swapped by a recovery team in under an hour."
+    ],
+    about: "Developed by a consortium of Italian defense firms to replace aging American hardware, the C1 Ariete is an agile and lightweight entry among modern European armor assets.",
+    specs: {
+      crew: "4 personnel",
+      weight: "54.0 tonnes",
+      length: "9.67 m (including gun)",
+      width: "3.61 m",
+      height: "2.50 m",
+      engine: "Fiat-Iveco MTCA V12 turbo-diesel",
+      horsepower: "1,300 hp",
+      fuel: "1,100 litres",
+      speed: "65 km/h",
+      range: "600 km",
+      enteredService: "1995, Italy"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "120mm Oto Melara 44-caliber smoothbore gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm anti-aircraft machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Steel-composite modular laminate armor", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "SPAL liner interior fragments protection", description: "" },
+      { section: "SENSORS", name: "Laser warning receiver system mated to smoke launchers", description: "" }
+    ],
+    whats: {
+      intro: "A compact, classically styled Western main battle tank with an elongated flat turret layout and a very clean hull silhouette.",
+      cues: [
+        { letter: "T", keyword: "Turret", description: "Slanted turret rear section" },
+        { letter: "S", keyword: "Smoke", description: "Side-mounted smoke grenade bundles arranged in groups of four" },
+        { letter: "V", keyword: "Viewport", description: "Centrally aligned driver viewport" }
+      ]
+    },
+    variants: [
+      { name: "C1 Ariete", year: 1995, label: "Standard operational build variant", visibleDifferences: [], internalDifferences: [] },
+      { name: "Ariete AMV", year: 2010, label: "Aggiornamento Mezza Vita - ongoing mid-life modernization featuring a 1,500 hp engine overhaul", visibleDifferences: [], internalDifferences: [] }
+    ]
   },
   {
     id: "kf41lynx",

@@ -13,6 +13,16 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Study Data populated for all 14 Main Battle Tanks
+- Comprehensive vehicle data now populated for all MBTs in the database:
+  - **Overview tab**: About (history/context), Crew, Weight, Length, Width, Height, Engine type, Horsepower, Fuel capacity, Speed, Range, Entered Service year
+  - **Armament tab**: Main gun and secondary weapons with technical specifications
+  - **Protection tab**: Armor composition, protective systems, and sensor descriptions
+  - **What's It? tab**: Visual identification guide with letter-keyed distinctive features (e.g. "E" for Engine, "B" for Blow-out panels, "H" for Hatch placement)
+  - **Variants tab**: Historical production variants with years, labels, and visible/internal differences
+- Tanks covered: M1 Abrams, Leopard 2, Challenger 2, Leclerc, T-90, KF51 Panther, Leopard 2A-RC 3.0, Altay T1, C1 Ariete, T-72, Centurion, Tiger I, T-34, M4 Sherman
+- All data structure follows admin form schema; ready for immediate playback in Vehicle Study screen and admin editing
+
 ### Added — New screen flow: Landing, Learning Hub, Vehicle Study
 - **LandingScreen**: new app entry point replacing the direct Game Setup landing. Shows three TacCards: Training (→ Game Setup), Learning Hub (→ vehicle browser), and Leaderboard. Displays operator callsign, vehicle count, and personal best score.
 - **LearningHomeScreen**: vehicle browser with full-text search (name/country), category filter pills (ALL/MBT/APC/IFV/ARTY/HELO), and a 2-column responsive vehicle grid showing photo, name, country, and category badge.
