@@ -1806,7 +1806,13 @@ export const vehicles = [
       "The CAESAR is mounted on a standard 6×6 truck chassis rather than a tracked hull, making it cheaper to maintain and light enough to be air-transported by C-130.",
       "A CAESAR crew of five can go from driving down a road to firing a round in under 60 seconds, then be moving again within 30 seconds — one of the fastest deploy-fire-move cycles of any howitzer.",
       "CAESAR howitzers were donated to Ukraine in 2022 and praised by Ukrainian crews for their reliability, accuracy, and speed of deployment."
-    ]
+    ],
+    about: "A lightweight, highly mobile self-propelled howitzer mounted on a 6×6 civilian truck chassis, engineered for rapid deployment and fast relocation in contemporary operations.",
+    specs: { crew: "5 personnel (commander, gunner, 2 ammunition handlers, driver)", weight: "18.0 tonnes (complete combat configuration)", length: "10.26 m (overall with gun deployed)", width: "2.55 m", height: "3.35 m (full combat height with barrel extended)", engine: "Renault MIDS 6-cylinder turbocharged diesel", horsepower: "320 hp", fuel: "360 litres", speed: "90 km/h (on paved surfaces)", range: "650 km", enteredService: "1994, France" },
+    armament: [{ section: "MAIN GUN", name: "155mm/52 Calibre howitzer gun mounted inside the reinforced cargo bed turret", description: "" }, { section: "SECONDARY WEAPONS", name: "12.7mm machine gun on flexible roof mounting", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Ballistic steel crew cabin and gun turret protecting against artillery fragmentation and small arms fire", description: "" }, { section: "PROTECTION SYSTEMS", name: "Sprinkler systems for chemical/biological defense contamination control", description: "" }],
+    whats: { intro: "A compact, low-slung truck with a central gun turret occupying most of the cargo bed, painted in camouflage.", cues: [{ letter: "A", keyword: "TURRET", description: "Box-like elevated gun turret dominating the truck cargo section" }, { letter: "B", keyword: "WHEELS", description: "Six large road wheels in a 6×6 civilian truck configuration" }] },
+    variants: [{ name: "CAESAR Gun System", year: 1994, label: "Standard French Army variant with indigenous fire-control systems", visibleDifferences: [], internalDifferences: [] }, { name: "CAESAR NG (Next Generation)", year: 2020, label: "Modern upgrade variant with advanced digital systems and improved targeting capabilities", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "k9thunder",
@@ -1823,7 +1829,13 @@ export const vehicles = [
       "South Korea's K9 Thunder is one of the most exported self-propelled howitzers in the world, in service with nine countries including India, Egypt, Finland, and Norway.",
       "The K9 can fire three rounds in 15 seconds and sustain a rate of six rounds per minute for extended bombardment missions.",
       "India operates the K9 Vajra, a locally produced variant optimised for high-altitude Himalayan operations — the only self-propelled howitzer qualified for use at elevations above 4,000 metres."
-    ]
+    ],
+    about: "South Korea's most successful self-propelled howitzer export, the K9 Thunder is a full-tracked, fully automated platform engineered for rapid sustained firepower in modern mechanized warfare.",
+    specs: { crew: "5 personnel (commander, driver, gunner, 2 ammunition handlers)", weight: "47.0 tonnes", length: "9.40 m (gun pointing forward)", width: "3.23 m", height: "2.27 m (gun barrel horizontal)", engine: "MTU 8V183 turbocharged diesel", horsepower: "1,200 hp", fuel: "1,000 litres", speed: "67 km/h", range: "480 km", enteredService: "1999, South Korea" },
+    armament: [{ section: "MAIN GUN", name: "155mm/52 Calibre self-loading howitzer gun mounted in a fully automated turret", description: "" }, { section: "SECONDARY WEAPONS", name: "12.7mm coaxial machine gun", description: "" }],
+    protection: [{ section: "ARMOUR", name: "All-welded steel armor hull and turret protecting against artillery fragmentation", description: "" }, { section: "PROTECTION SYSTEMS", name: "Automatic fire detection and suppression system integrated throughout the vehicle", description: "" }],
+    whats: { intro: "A squared, heavily armored tracked gun platform with a central enclosed turret and a long, thin gun barrel pointing ahead.", cues: [{ letter: "A", keyword: "TURRET", description: "Blocky rectangular turret superstructure on a low tracked chassis" }, { letter: "B", keyword: "GUN", description: "Long 52-calibre gun barrel protruding from the turret center" }] },
+    variants: [{ name: "K9", year: 1999, label: "The original production version fielded by the South Korean Army", visibleDifferences: [], internalDifferences: [] }, { name: "K9 Vajra", year: 2011, label: "Indian-built variant with specialized high-altitude environmental adaptations", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "as90",
@@ -1840,7 +1852,13 @@ export const vehicles = [
       "The AS-90 can fire a burst of three rounds in under 10 seconds and sustain six rounds per minute for prolonged fire missions.",
       "Its 155mm gun uses a semi-automatic loading system that eliminates the need for a loader — the crew of five operates entirely from within the armoured turret.",
       "AS-90s were donated to Ukraine in 2023, where crews valued their combination of range, mobility, and protection compared to older Soviet-era artillery."
-    ]
+    ],
+    about: "The British Army's primary self-propelled howitzer, the AS-90 is a full-tracked platform featuring an automated turret with minimal crew exposure, optimized for rapid deployment and sustained fire.",
+    specs: { crew: "5 personnel (driver, commander, gunner, 2 ammunition handlers inside turret)", weight: "45.0 tonnes", length: "9.06 m (gun pointing forward)", width: "3.30 m", height: "2.43 m", engine: "Perkins CV12 turbocharged diesel V12", horsepower: "1,260 hp", fuel: "1,500 litres", speed: "56 km/h", range: "300 km (limited by fuel capacity)", enteredService: "1993, United Kingdom" },
+    armament: [{ section: "MAIN GUN", name: "155mm/39 Calibre self-loading howitzer mounted in a rotating armored turret", description: "" }, { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" }],
+    protection: [{ section: "ARMOUR", name: "All-welded steel armor hull and fully enclosed turret protecting crew from fragmentation", description: "" }, { section: "PROTECTION SYSTEMS", name: "Automatic fire suppression sprinkler system for ammunition storage", description: "" }],
+    whats: { intro: "A low-profile tracked gun with a single angular turret and long artillery barrel, painted in camo patterns.", cues: [{ letter: "A", keyword: "TURRET", description: "Large squared turret structure sitting atop a compact tracked hull" }, { letter: "B", keyword: "GUN", description: "Medium-length gun barrel protruding straight forward from the turret" }] },
+    variants: [{ name: "AS-90", year: 1993, label: "The original production variant fielded by the British Army", visibleDifferences: [], internalDifferences: [] }, { name: "AS-90 Mark II", year: 2018, label: "Upgraded variant with enhanced fire-control systems and targeting computers", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "m270mlrs",
@@ -1857,7 +1875,13 @@ export const vehicles = [
       "The M270 can fire 12 rockets in under 40 seconds, blanketing an area the size of six football fields with submunitions.",
       "It uses the same chassis as the Bradley fighting vehicle, allowing the rocket battery to keep pace with armoured units across rough terrain.",
       "Iraqi troops in the 1991 Gulf War nicknamed the M270 'Steel Rain' — its area-saturation attacks were devastating to dug-in positions."
-    ]
+    ],
+    about: "The M270 Multiple Launch Rocket System is a tracked artillery platform capable of rapid area saturation, firing twelve guided missiles in rapid succession to blanket targets with submunitions.",
+    specs: { crew: "3 personnel (driver, section chief, ammunition specialist)", weight: "25.4 tonnes (combat loaded weight)", length: "6.85 m (launcher pod closed)", width: "2.97 m", height: "2.26 m (pod stowed, gun pointing forward)", engine: "Cummins VTA903 turbocharged diesel", horsepower: "500 hp", fuel: "530 litres", speed: "65 km/h", range: "560 km", enteredService: "1983, United States" },
+    armament: [{ section: "MISSILES", name: "12 x MGM-140 ATACMS or other guided tactical missiles in a pod", description: "" }, { section: "MISSILES", name: "Alternative: MLRS guided rocket rounds (up to 12 per pod reload)", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Welded aluminum alloy hull with spall liners protecting the crew compartment", description: "" }, { section: "PROTECTION SYSTEMS", name: "NBC chemical and biological defense filtration systems", description: "" }],
+    whats: { intro: "A tracked vehicle with a large rectangular launcher pod mounted on the rear, capable of rotating and elevating to point towards targets.", cues: [{ letter: "A", keyword: "POD", description: "Large square launcher pod dominating the rear superstructure" }, { letter: "B", keyword: "CHASSIS", description: "Bradley-derived tracked chassis underneath the launcher system" }] },
+    variants: [{ name: "M270 MLRS", year: 1983, label: "Original MLRS variant with dual-arm launcher pod system", visibleDifferences: [], internalDifferences: [] }, { name: "M270A1", year: 2002, label: "Modernized variant with advanced digital fire control and GPS guidance integration", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "2s7pion",
@@ -1874,7 +1898,13 @@ export const vehicles = [
       "The 2S7 Pion's 203mm gun is one of the largest-calibre weapons ever mounted on a tracked chassis — its shells weigh over 100 kg each.",
       "The Pion can fire a special tactical nuclear shell, making it one of the few Soviet artillery systems with strategic capabilities.",
       "With a maximum range of over 47 km using conventional rounds, the 2S7 outranges most NATO artillery — a deliberate Soviet design choice during the Cold War."
-    ]
+    ],
+    about: "The Soviet Union's largest self-propelled howitzer, the 2S7 Pion mounts a massive 203mm gun on a tracked chassis, delivering continent-spanning firepower with strategic capabilities.",
+    specs: { crew: "7 personnel (driver, commander, gunner, loader, 3 ammunition handlers)", weight: "64.0 tonnes (full combat configuration)", length: "11.41 m (gun horizontal)", width: "3.38 m", height: "2.75 m", engine: "V-12 turbocharged diesel", horsepower: "900 hp", fuel: "1,000 litres", speed: "50 km/h", range: "420 km", enteredService: "1975, Soviet Union" },
+    armament: [{ section: "MAIN GUN", name: "203mm gun with a half-automatic hydraulic loader system", description: "" }, { section: "SECONDARY WEAPONS", name: "12.7mm anti-aircraft machine gun on roof mounting", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Welded steel hull and gun turret structure protecting crew from fragmentation", description: "" }, { section: "PROTECTION SYSTEMS", name: "Pressurized crew compartment with NBC defense systems", description: "" }],
+    whats: { intro: "An enormous, heavily armored tracked gun platform with a distinctively massive turret and very long gun barrel, designed for maximum firepower.", cues: [{ letter: "A", keyword: "GUN", description: "Exceptionally thick and long 203mm gun barrel protruding far forward" }, { letter: "B", keyword: "TURRET", description: "Massive rounded turret structure with heavy armor plating" }] },
+    variants: [{ name: "2S7 Pion", year: 1975, label: "The original Soviet production variant with analog fire-control systems", visibleDifferences: [], internalDifferences: [] }, { name: "2S7M Malka", year: 1990, label: "Modernized variant with improved digital targeting and semi-automated systems", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "m777",
@@ -1891,7 +1921,13 @@ export const vehicles = [
       "The M777 is the lightest 155mm howitzer in the world — its titanium construction makes it light enough to be sling-loaded by a CH-47 Chinook.",
       "It entered combat in 2005 and has been used extensively in Afghanistan, Iraq, and Ukraine — donated to Ukrainian forces by both the US and UK.",
       "Despite its low weight, the M777 can fire the GPS-guided Excalibur shell to land within four metres of a target at ranges over 40 km."
-    ]
+    ],
+    about: "A towed 155mm howitzer engineered for extreme lightness through titanium construction, making it unique as the world's lightest 155mm artillery piece while maintaining battlefield effectiveness.",
+    specs: { crew: "6 personnel (chief, gunner, ammunition handlers, assistant gunner, driver)", weight: "4.2 tonnes (remarkably light for a 155mm gun)", length: "9.14 m (in-battery position)", width: "2.77 m", height: "2.30 m", engine: "Not applicable - towed artillery (towed by tactical vehicle)", horsepower: "N/A", fuel: "Requires towing vehicle with 300+ hp", speed: "60+ km/h (when towed by appropriate vehicle)", range: "600 km (extended range with ammunition resupply)", enteredService: "2005, United States" },
+    armament: [{ section: "MAIN GUN", name: "155mm/39 calibre rifled howitzer with semi-automatic breech", description: "" }, { section: "AMMUNITION", name: "Fires standard NATO 155mm shells including Excalibur GPS-guided rounds", description: "" }],
+    protection: [{ section: "PROTECTION", name: "Crew protection limited to helmet and body armor - towed design offers minimal built-in armor", description: "" }, { section: "PROTECTION SYSTEMS", name: "Emergency egress positions and dispersal capabilities", description: "" }],
+    whats: { intro: "A bare, lightweight 155mm gun assembly on a small towed trailer with large elevation wheels, designed for minimal weight and maximum portability.", cues: [{ letter: "A", keyword: "WHEELS", description: "Oversized elevation and traversal hand-crank wheel mechanisms" }, { letter: "B", keyword: "BARREL", description: "Thin, long gun barrel with muzzle brake prominently visible" }] },
+    variants: [{ name: "M777A1", year: 2005, label: "Original production variant with titanium construction and manual aiming systems", visibleDifferences: [], internalDifferences: [] }, { name: "M777A2", year: 2012, label: "Enhanced variant with digital fire-control capability and integrated GPS targeting", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "plz05",
@@ -1908,7 +1944,13 @@ export const vehicles = [
       "The PLZ-05 is China's primary modern self-propelled howitzer, drawing heavily from the design of the Russian 2S19 Msta-S.",
       "Its 155mm gun can fire NATO-standard ammunition as well as Chinese laser-guided shells, giving it broad compatibility on the export market.",
       "The PLZ-05 features a fully automatic loading system, allowing it to sustain eight rounds per minute during prolonged fire missions."
-    ]
+    ],
+    about: "China's primary self-propelled howitzer, the PLZ-05 represents a modern evolution of Soviet design principles, featuring full automation and compatibility with NATO ammunition standards.",
+    specs: { crew: "5 personnel (driver, commander, gunner, 2 ammunition handlers)", weight: "48.0 tonnes", length: "10.54 m (gun pointing forward)", width: "3.43 m", height: "2.90 m", engine: "Diesel turbocharged inline-6", horsepower: "1,200 hp", fuel: "1,000 litres", speed: "61 km/h", range: "500 km", enteredService: "2005, China" },
+    armament: [{ section: "MAIN GUN", name: "155mm/52 Calibre self-loading howitzer mounted in rotating automated turret", description: "" }, { section: "SECONDARY WEAPONS", name: "12.7mm coaxial machine gun", description: "" }],
+    protection: [{ section: "ARMOUR", name: "All-welded steel armor hull and fully enclosed turret structure", description: "" }, { section: "PROTECTION SYSTEMS", name: "Automatic fire detection and suppression system protecting ammunition storage areas", description: "" }],
+    whats: { intro: "A boxy, heavily armored tracked gun platform with a central enclosed turret and long gun barrel, similar in profile to Russian self-propelled howitzers.", cues: [{ letter: "A", keyword: "TURRET", description: "Large rectangular turret structure with distinctive sloped sides" }, { letter: "B", keyword: "GUN", description: "Long 52-calibre gun barrel with muzzle brake visible" }] },
+    variants: [{ name: "PLZ-05", year: 2005, label: "Standard Chinese production variant with NATO ammunition compatibility", visibleDifferences: [], internalDifferences: [] }, { name: "PLZ-05B", year: 2015, label: "Enhanced variant featuring automated fire control and satellite-guided munition capability", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "ah64apache",
@@ -2081,7 +2123,13 @@ export const vehicles = [
       "The Chinook's tandem rotor design means all engine power goes to lifting — with no tail rotor needed, it has one of the best payload-to-weight ratios of any helicopter ever built.",
       "A CH-47 can carry up to 55 soldiers or lift over 12 tonnes of external sling load — including other helicopters and light artillery pieces.",
       "Chinooks have been in continuous production and service since 1962, making them one of the longest-serving military helicopters in history — with no replacement in sight."
-    ]
+    ],
+    about: "A distinctive twin-rotor heavy-lift cargo and troop transport helicopter, the Chinook's tandem rotor design eliminates the need for a tail rotor, providing unmatched payload capacity and operational versatility.",
+    specs: { crew: "3 personnel (pilot, copilot, flight engineer) plus up to 55 troops in cargo configuration", weight: "9,185 kg (empty weight) or 22,680 kg max takeoff weight", length: "15.54 m (fuselage length, not including rotors)", width: "3.78 m", height: "4.09 m (to top of rear rotor mast)", engine: "2 x Lycoming T55-GA-712 turboshaft engines", horsepower: "6,680 hp total (3,340 hp per engine)", fuel: "2,392 litres (internal capacity)", speed: "315 km/h", range: "740 km (without auxiliary fuel)", enteredService: "1962, United States" },
+    armament: [{ section: "WEAPONS", name: "Two 7.62mm machine guns mounted in side-opening doors (optional installation)", description: "" }, { section: "EXTERNAL LOAD", name: "Up to 12 tonnes of external cargo sling-loaded beneath the fuselage", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Titanium and steel airframe structure with ballistic-resistant crew cockpit shielding", description: "" }, { section: "PROTECTION SYSTEMS", name: "Redundant hydraulic flight control systems with manual backup capability", description: "" }],
+    whats: { intro: "A large, bulky transport helicopter with two large rotors mounted on vertical pylons at the front and rear, a distinctive boxy fuselage, and open cargo access doors.", cues: [{ letter: "A", keyword: "ROTORS", description: "Two large rotors prominently visible on vertical extended pylons at each end" }, { letter: "B", keyword: "TAIL", description: "No tail rotor assembly — clean tapered tail boom instead" }] },
+    variants: [{ name: "CH-47A/B", year: 1962, label: "Original production variants with analog control systems and lower horsepower engines", visibleDifferences: [], internalDifferences: [] }, { name: "CH-47F", year: 2007, label: "Modern variant featuring fully-digital avionics, glass cockpits, and significantly upgraded engines", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "ka52alligator",
@@ -2150,7 +2198,13 @@ export const vehicles = [
       "The Tiger was designed using radar-absorbing composite materials to reduce its radar cross-section — making it significantly harder to detect than older metal-airframe helicopters.",
       "Its engine exhausts are shaped and shielded to minimise the infrared signature, making it harder for heat-seeking missiles to lock on.",
       "The Tiger HAD (Hélicoptère d'Appui Destruction) variant used by France and Spain is one of the most agile attack helicopters in the world — its lightweight composite airframe gives it performance comparable to much smaller scout helicopters."
-    ]
+    ],
+    about: "A modern European attack helicopter constructed primarily from composite materials, the Tiger features advanced avionics, a sophisticated fire-control system, and stealth-optimized design for low-visibility operations.",
+    specs: { crew: "2 personnel (Pilot in rear, Gunner in front)", weight: "2,800 kg (empty weight) or 6,000 kg max takeoff weight", length: "17.40 m (including tail rotor)", width: "5.28 m (main rotor span)", height: "5.16 m", engine: "2 x Rolls-Royce/Turbomeca MTMU turboshaft engines", horsepower: "3,230 hp total (1,615 hp per engine)", fuel: "850 litres (internal capacity)", speed: "278 km/h", range: "600 km", enteredService: "2007, France / Germany" },
+    armament: [{ section: "MAIN GUN", name: "30mm GIAT 30M781 automatic cannon mounted on a flexible chin turret", description: "" }, { section: "MISSILES", name: "Up to 8 x Hellfire anti-tank missiles or Stinger air-to-air missiles", description: "" }, { section: "ROCKETS", name: "Hydra 70 70mm rocket launcher pods on outer wing pylons", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Advanced composite airframe with integrated ballistic protection for vital systems", description: "" }, { section: "PROTECTION SYSTEMS", name: "Radar warning receiver and automated countermeasure dispensing systems", description: "" }, { section: "STEALTH", name: "Radar-absorbing materials and shaped airframe design to minimize radar cross-section", description: "" }],
+    whats: { intro: "A sleek, angular attack helicopter with a narrow fuselage, prominent chin-mounted gun pod, short weapon pylons, and modern composite construction.", cues: [{ letter: "A", keyword: "GUN", description: "Distinctive bulbous chin turret containing the 30mm gun" }, { letter: "B", keyword: "LINES", description: "Clean, angular composite lines with minimal protrusions along the fuselage" }] },
+    variants: [{ name: "Tiger HAD", year: 2007, label: "Attack/Support variant with primary anti-tank and fire support mission", visibleDifferences: [], internalDifferences: [] }, { name: "Tiger UHT", year: 2008, label: "Reconnaissance variant fielded by Germany with enhanced sensor packages and limited weapon capacity", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "uh1huey",
@@ -2167,7 +2221,13 @@ export const vehicles = [
       "The UH-1 Huey is one of the most iconic helicopters ever built — its distinctive 'thump-thump' blade slap became synonymous with the Vietnam War.",
       "Over 16,000 UH-1s were built, more than any other military helicopter except the Mi-8.",
       "The Huey is still in active military service with over 30 countries, more than 60 years after its first flight in 1956."
-    ]
+    ],
+    about: "An iconic single-rotor utility and transport helicopter that revolutionized military aviation, the UH-1 Huey's reliability, versatility, and distinctive silhouette became synonymous with the Vietnam War era.",
+    specs: { crew: "2 pilots plus up to 14 troops in transport configuration or 6 armed gunship crew", weight: "2,363 kg (empty weight) or 4,763 kg max takeoff weight", length: "17.40 m (overall length including rotors)", width: "2.44 m (fuselage width)", height: "4.41 m (to top of rotor)", engine: "1 x Lycoming T53-L-13 turboshaft engine", horsepower: "1,400 hp", fuel: "839 litres (internal capacity)", speed: "296 km/h", range: "507 km", enteredService: "1956, United States" },
+    armament: [{ section: "MACHINE GUNS", name: "Two 7.62mm or 12.7mm machine guns mounted in side-opening cabin doors (optional)", description: "" }, { section: "ROCKETS", name: "Rocket launcher pods or grenade dispensers mounted on stubby external pylons", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Thin aluminum alloy airframe with minimal armor protection in early variants", description: "" }, { section: "SYSTEMS", name: "Redundant flight control hydraulic systems with manual reversion capability", description: "" }],
+    whats: { intro: "A compact, single-rotor utility helicopter with a distinctive thin fuselage, prominent exhaust manifolds on the engine area, and open side doors.", cues: [{ letter: "A", keyword: "ROTOR", description: "Single main rotor mast mounted directly on top of fuselage" }, { letter: "B", keyword: "EXHAUST", description: "Visible engine exhaust pipe coils protruding from the engine compartment" }] },
+    variants: [{ name: "UH-1A Huey", year: 1956, label: "Original production variant powered by a single Lycoming T53 engine", visibleDifferences: [], internalDifferences: [] }, { name: "UH-1N Twin Huey", year: 1970, label: "Upgraded variant featuring twin engines and slightly larger fuselage for increased payload", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "mi8hip",
@@ -2184,7 +2244,13 @@ export const vehicles = [
       "The Mi-8 family is the most-produced helicopter in history, with over 17,000 built since 1961 — more than any Western helicopter design.",
       "An Mi-8 can carry 24 fully-equipped soldiers — twice the troop capacity of the Black Hawk — making it one of the most capable medium-lift helicopters ever built.",
       "The Mi-8 has flown in every climate on Earth, from the Arctic Circle to the equator, and has logged more combat hours than perhaps any other helicopter type."
-    ]
+    ],
+    about: "A versatile twin-rotor transport and assault helicopter, the Mi-8 Hip is the most-produced helicopter in history, serving as the primary medium-lift platform for Soviet and Russian forces since the early 1960s.",
+    specs: { crew: "2-3 pilots (pilot, copilot, engineer) plus up to 24 fully-equipped troops", weight: "5,512 kg (empty weight) or 13,000 kg max takeoff weight", length: "18.17 m (fuselage only, excluding rotors)", width: "3.76 m (fuselage width)", height: "5.65 m (to top of rotor)", engine: "2 x Isotov TV2-117A turboshaft engines", horsepower: "4,400 hp total (2,200 hp per engine)", fuel: "3,360 litres (internal capacity)", speed: "250 km/h", range: "600 km", enteredService: "1961, Soviet Union" },
+    armament: [{ section: "MACHINE GUNS", name: "Two 7.62mm PKM machine guns mounted in side-opening cabin doors (optional armed variant)", description: "" }, { section: "ROCKETS", name: "B-8V20 80mm unguided rocket launcher pods mounted on external pylons", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Basic steel and aluminum airframe structure with minimal ballistic protection in standard variants", description: "" }, { section: "SYSTEMS", name: "Dual hydraulic systems providing redundant flight control capability", description: "" }],
+    whats: { intro: "A large, bulky transport helicopter with two main rotors on stacked pylons, a tall flight deck windscreen, and open cargo doors.", cues: [{ letter: "A", keyword: "ROTORS", description: "Two stacked main rotors on a central vertical mast" }, { letter: "B", keyword: "CABIN", description: "Large prominent forward cabin windscreen structure sitting high above the fuselage" }] },
+    variants: [{ name: "Mi-8MT Hip", year: 1979, label: "Upgraded variant with modernized engines and improved avionics", visibleDifferences: [], internalDifferences: [] }, { name: "Mi-17 Hip-H", year: 1981, label: "Export variant with upgraded engines and enhanced performance for export operators", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "nh90",
@@ -2201,7 +2267,13 @@ export const vehicles = [
       "The NH90 is the most extensively customised helicopter ever built — virtually every operator nation gets a slightly different configuration tailored to its requirements.",
       "It was the first helicopter to be designed entirely on computer using CAD/CAM systems — no physical prototypes were built during the initial design phase.",
       "The NH90's fly-by-wire flight control system gives it stability and precision more typical of fighter jets than transport helicopters."
-    ]
+    ],
+    about: "A modern European tactical transport and assault helicopter, the NH90 features advanced composite construction, fly-by-wire controls, and mission-specific modular design enabling rapid configuration changes.",
+    specs: { crew: "2 pilots plus up to 20 troops in transport configuration, or 12-16 in assault/gunship configuration", weight: "4,830 kg (empty weight) or 10,600 kg max takeoff weight", length: "19.60 m (overall fuselage length)", width: "4.48 m (fuselage width at widest point)", height: "5.07 m (to rotor mast top)", engine: "2 x Rolls-Royce/Turbomeca RTM322-01/9 turboshaft engines", horsepower: "3,300 hp total (1,650 hp per engine)", fuel: "1,750 litres (internal capacity)", speed: "324 km/h", range: "800 km", enteredService: "2007, France / Germany / Italy / Netherlands" },
+    armament: [{ section: "DOOR GUNS", name: "Two 7.62mm machine guns on flexible door-mount systems (optional)", description: "" }, { section: "ROCKETS", name: "70mm or 80mm unguided rocket launcher pods on external pylons (in armed variants)", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Advanced composite airframe with integrated blast and fragmentation protection", description: "" }, { section: "SYSTEMS", name: "Fully redundant fly-by-wire digital flight control system with automatic stabilization", description: "" }],
+    whats: { intro: "A modern tactical transport helicopter with a streamlined composite fuselage, prominent forward windscreen, and a single large main rotor.", cues: [{ letter: "A", keyword: "ROTOR", description: "Single large main rotor on a central mast above the fuselage" }, { letter: "B", keyword: "DESIGN", description: "Smooth, angular composite construction with integrated cabin windows" }] },
+    variants: [{ name: "NH90 TTH", year: 2007, label: "Tactical Transport Helicopter variant for troop transport and utility missions", visibleDifferences: [], internalDifferences: [] }, { name: "NH90 NFH", year: 2006, label: "Naval Frigate Helicopter variant with anti-submarine and anti-surface warfare sensors", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "aw101merlin",
@@ -2218,7 +2290,13 @@ export const vehicles = [
       "The AW101 Merlin can operate from ship decks in sea states that would ground most other helicopters — its automated flight control system manages pitch and roll to counter ship motion.",
       "Its three engines give it enormous performance reserves — a Merlin can complete its mission safely even after losing an engine entirely.",
       "The Royal Navy uses Merlins for anti-submarine warfare, dipping their sonar into the ocean to hunt submarines hundreds of kilometres from their host ship."
-    ]
+    ],
+    about: "A three-engine naval transport and anti-submarine helicopter, the AW101 Merlin is optimized for sustained ship-based operations, featuring automatic flight control for deck landings in heavy seas.",
+    specs: { crew: "2 pilots plus up to 30 troops in transport configuration, or 15 in anti-submarine configuration", weight: "7,430 kg (empty weight) or 14,500 kg max takeoff weight", length: "22.85 m (overall fuselage length)", width: "4.60 m (fuselage width)", height: "6.62 m (to rotor mast top)", engine: "3 x General Electric CT7-8A turboshaft engines", horsepower: "4,940 hp total (1,645 hp per engine)", fuel: "2,722 litres (internal capacity)", speed: "290 km/h", range: "1,270 km", enteredService: "1999, United Kingdom" },
+    armament: [{ section: "TORPEDOES", name: "2 x Stingray homing torpedoes or Mk 46 anti-submarine torpedoes (in naval variant)", description: "" }, { section: "SONOBUOYS", name: "Dipping sonar system with active/passive sonobuoy deployment", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Aluminum alloy fuselage structure with corrosion-resistant marine coatings", description: "" }, { section: "SYSTEMS", name: "Triple redundancy in flight control and engine systems for safety over water", description: "" }],
+    whats: { intro: "A large, three-engine naval helicopter with a bulky fuselage, enclosed cabin, and a single large rotor, designed for all-weather ship operations.", cues: [{ letter: "A", keyword: "ENGINES", description: "Three large engine nacelles prominent on the fuselage sides and rear section" }, { letter: "B", keyword: "CABIN", description: "Large integrated cabin structure with side-opening cargo door" }] },
+    variants: [{ name: "HM.1 Anti-Submarine", year: 1999, label: "Anti-submarine warfare variant with dipping sonar and torpedo systems", visibleDifferences: [], internalDifferences: [] }, { name: "HC.3 Transport", year: 2003, label: "Transport and utility variant optimized for troop/cargo movement from ships", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "kf51panther",
@@ -2477,7 +2555,13 @@ export const vehicles = [
       { url: "assets/images/borsuk-007.jpg", stars: 3 },
       { url: "assets/images/borsuk-008.jpg", stars: 3 }
     ],
-    funFacts: []
+    funFacts: [],
+    about: "Poland's newly developed indigenous amphibious tracked infantry fighting vehicle, built to replace obsolete Soviet hardware with high situational awareness and a remote turret.",
+    specs: { crew: "3 personnel (plus 6 passengers)", weight: "25.0 tonnes (standard baseline amphibious configuration)", length: "7.60 m", width: "3.40 m", height: "3.00 m (including remote weapon system)", engine: "MTU 8-cylinder diesel", horsepower: "720 hp", fuel: "600 litres", speed: "65 km/h (8 km/h swimming in water)", range: "550 km", enteredService: "2024, Poland" },
+    armament: [{ section: "MAIN GUN", name: "30mm Bushmaster Mk 44S automatic chain gun in a ZSSW-30 remote turret", description: "" }, { section: "MISSILES", name: "Dual Spike-LR anti-tank guided missile launcher container pod", description: "" }, { section: "SECONDARY WEAPONS", name: "7.62mm UKM-2000C coaxial machine gun", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Add-on modular composite plate panels over a steel frame hull", description: "" }, { section: "PROTECTION SYSTEMS", name: "Fully uncrewed remote turret structure keeping ammo outside the hull", description: "" }, { section: "PROTECTION SYSTEMS", name: "Water-deflecting bow trim flap assembly", description: "" }],
+    whats: { intro: "A high-clearance tracked vehicle with a flat, low-profile uncrewed weapon module sitting on top of a long hull.", cues: [{ letter: "A", keyword: "TURRET", description: "Slender uncrewed remote turret module" }, { letter: "B", keyword: "MISSILES", description: "Prominent external dual missile box bolted on the right side of the gun carriage" }] },
+    variants: [{ name: "Borsuk Amphibious IFV", year: 2024, label: "Standard baseline version designed to swim across European rivers", visibleDifferences: [], internalDifferences: [] }, { name: "Heavy Borsuk", year: 2025, label: "Up-armored non-amphidious version built for partnering with heavy M1 Abrams tank units", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "tulpar",
@@ -2493,7 +2577,13 @@ export const vehicles = [
       { url: "assets/images/tulpar-005.jpg", stars: 2 },
       { url: "assets/images/tulpar-006.png", stars: 3 }
     ],
-    funFacts: []
+    funFacts: [],
+    about: "A heavy multi-purpose tracked armored vehicle platform developed by Otokar in Turkey, designed to support modern main battle tanks in intense operational conditions.",
+    specs: { crew: "3 personnel (plus 9 passengers)", weight: "32.0 tonnes (scalable up to 45.0 tonnes)", length: "7.23 m", width: "3.40 m", height: "2.67 m (to hull top deck)", engine: "Scania inline-6 turbocharged diesel", horsepower: "810 hp", fuel: "700 litres", speed: "70 km/h", range: "600 km", enteredService: "2023, Turkey" },
+    armament: [{ section: "MAIN GUN", name: "30mm automatic cannon inside a Mizrak remote weapon station", description: "" }, { section: "MISSILES", name: "Dual L-UMTAS anti-tank guided missile tubes", description: "" }, { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" }],
+    protection: [{ section: "ARMOUR", name: "All-welded steel core with scalable modular composite add-on plates", description: "" }, { section: "PROTECTION SYSTEMS", name: "Internal comprehensive explosion and spall suppression blankets", description: "" }, { section: "PROTECTION SYSTEMS", name: "Chemical and radiation containment filters", description: "" }],
+    whats: { intro: "A long, tall tracked vehicle featuring smooth angular side skirts and a modern remote weapon housing block.", cues: [{ letter: "A", keyword: "LINES", description: "Clean geometric lines along the hull edge" }, { letter: "B", keyword: "OPTICS", description: "Large panoramic sensor globes mounted on the turret crown" }] },
+    variants: [{ name: "Tulpar IFV", year: 2023, label: "Standard infantry configuration featuring the Mizrak 30mm turret", visibleDifferences: [], internalDifferences: [] }, { name: "Tulpar Light Tank", year: 2025, label: "Upgraded version mounting a heavy 105mm tank cannon turret", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "ascod",
@@ -2510,7 +2600,13 @@ export const vehicles = [
       { url: "assets/images/ascod-006.webp", stars: 2 },
       { url: "assets/images/ascod-007.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [],
+    about: "A collaborative European tracked armored vehicle framework produced by General Dynamics, serving as the primary infantry fighting vehicle for Spain and Austria.",
+    specs: { crew: "3 personnel (plus 7 passengers)", weight: "28.0 tonnes (standard baseline configuration)", length: "6.83 m", width: "3.15 m", height: "2.65 m", engine: "MTU 8V 199 turbocharged diesel", horsepower: "720 hp", fuel: "560 litres", speed: "70 km/h", range: "500 km", enteredService: "2002, Spain / Austria" },
+    armament: [{ section: "MAIN GUN", name: "30mm Mauser MK 30-2 automatic cannon", description: "" }, { section: "SECONDARY WEAPONS", name: "7.62mm MG3 or FN MAG coaxial machine gun", description: "" }, { section: "SMOKE", name: "2 x 6 smoke discharger blocks", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Rolled steel armor skin with modular MEXAS ceramic composite kits", description: "" }, { section: "PROTECTION SYSTEMS", name: "Dual-stage mine defense belly floor configurations", description: "" }, { section: "PROTECTION SYSTEMS", name: "Automatic engine fire wire loop systems", description: "" }],
+    whats: { intro: "A standard-layout tracked Western IFV with an angular two-man turret sitting centered on a crisp wedge hull.", cues: [{ letter: "A", keyword: "SKIRTS", description: "Segmented side track skirts" }, { letter: "B", keyword: "LOCKER", description: "A distinctive squared storage locker box structure wrapping around the rear turret rim" }] },
+    variants: [{ name: "Pizarro", year: 2002, label: "The specialized operational variant developed for the Spanish Army", visibleDifferences: [], internalDifferences: [] }, { name: "Ulan", year: 2002, label: "The specialized operational variant configured for the Austrian Land Forces", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "piranhav",
@@ -2528,7 +2624,13 @@ export const vehicles = [
       { url: "assets/images/piranhav-007.jpg", stars: 2 },
       { url: "assets/images/piranhav-008.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [],
+    about: "The fifth-generation iteration of Mowag's highly successful wheeled vehicle family, introducing heavy armor volumes and internal space optimized for high-payload turrets.",
+    specs: { crew: "3 personnel (plus 8 passengers)", weight: "30.0 tonnes", length: "8.00 m", width: "2.99 m", height: "2.34 m (hull line top)", engine: "Scania DC13 inline-6 turbo diesel", horsepower: "580 hp", fuel: "400 litres", speed: "100 km/h", range: "800 km", enteredService: "2018, Denmark / Spain" },
+    armament: [{ section: "MAIN GUN", name: "30mm Bushmaster automatic chain gun inside a remote turret module", description: "" }, { section: "SECONDARY WEAPONS", name: "Coaxial 7.62mm machine gun", description: "" }, { section: "SMOKE", name: "Roof perimeter smoke distribution canisters", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Integrated modular composite armor shell with high blast resistance", description: "" }, { section: "PROTECTION SYSTEMS", name: "Mine-resistant energy-absorbing seats suspended from the roof frame", description: "" }, { section: "PROTECTION SYSTEMS", name: "Electronic acoustic gunshot location sensor kits", description: "" }],
+    whats: { intro: "An immensely sized 8-wheeled vehicle with a broad geometric front nose and long, continuous slab-like side armor surfaces.", cues: [{ letter: "A", keyword: "WHEELS", description: "Large vertical wheel clearance gaps" }, { letter: "B", keyword: "SEAMS", description: "Crisp angular geometric engine access seams along the front nose deck" }] },
+    variants: [{ name: "Piranha V Infantry Carrier", year: 2018, label: "Equipped with a light 12.7mm remote weapon station module", visibleDifferences: [], internalDifferences: [] }, { name: "Dragón IFV", year: 2020, label: "Highly specialized Spanish variant featuring advanced digital vehicle electronics and a 30mm turret", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "vbci",
@@ -2546,7 +2648,13 @@ export const vehicles = [
       { url: "assets/images/vbci-007.jpg", stars: 1 },
       { url: "assets/images/vbci-008.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [],
+    about: "A tracked infantry fighting vehicle designed and operated by the French Army, representing a balanced platform between mobility and firepower.",
+    specs: { crew: "3 personnel (plus 6 passengers)", weight: "21.5 tonnes", length: "6.33 m", width: "2.98 m", height: "2.58 m", engine: "Baudouin 6M8.2 inline-6 turbodiesel", horsepower: "360 hp", fuel: "400 litres", speed: "65 km/h", range: "450 km", enteredService: "1990, France" },
+    armament: [{ section: "MAIN GUN", name: "25mm M242 Bushmaster automatic chain gun", description: "" }, { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" }, { section: "SMOKE", name: "2 x 4 smoke discharger modules", description: "" }],
+    protection: [{ section: "ARMOUR", name: "All-welded steel armor with side-mounted explosive reactive armor blocks", description: "" }, { section: "PROTECTION SYSTEMS", name: "Mine-resistant floored troop compartment design", description: "" }, { section: "PROTECTION SYSTEMS", name: "Electric smoke generation systems", description: "" }],
+    whats: { intro: "A compact, relatively low-slung tracked vehicle with a two-man turret and dense armor side skirts.", cues: [{ letter: "A", keyword: "PROFILE", description: "Notably compact vertical height compared to other IFVs" }, { letter: "B", keyword: "SKIRTS", description: "Continuous armor skirts running full length along both sides" }] },
+    variants: [{ name: "VBCI Infantry Carrier", year: 1990, label: "The original production model equipped with a 25mm turret", visibleDifferences: [], internalDifferences: [] }, { name: "VBCI Amph", year: 2015, label: "Amphibious-capable variant with improved water-crossing capability systems", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "vbmfreccia",
@@ -2563,7 +2671,13 @@ export const vehicles = [
       { url: "assets/images/vbmfreccia-006.jpg", stars: 3 },
       { url: "assets/images/vbmfreccia-007.jpg", stars: 3 }
     ],
-    funFacts: []
+    funFacts: [],
+    about: "A highly specialized Italian wheeled armored personnel carrier and infantry fighting vehicle, emphasizing extreme modularity for rapid multi-role reconfiguration.",
+    specs: { crew: "2 personnel (plus 8 passengers)", weight: "27.0 tonnes", length: "7.02 m", width: "3.00 m", height: "2.37 m", engine: "Iveco 8-cylinder turbodiesel", horsepower: "480 hp", fuel: "500 litres", speed: "100 km/h", range: "600 km", enteredService: "2006, Italy" },
+    armament: [{ section: "MAIN GUN", name: "25mm or 30mm automatic cannon in an optional turret", description: "" }, { section: "SECONDARY WEAPONS", name: "7.62mm machine gun in pintle roof mount", description: "" }, { section: "SMOKE", name: "Turret roof smoke discharger blocks", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Modular welded steel armor platform with composite reinforcement layers", description: "" }, { section: "PROTECTION SYSTEMS", name: "Integrated spall-lining protection blankets on all inner surfaces", description: "" }, { section: "PROTECTION SYSTEMS", name: "Smoke screen generation perimeter systems", description: "" }],
+    whats: { intro: "A sleek 6-wheeled armored vehicle with a low, streamlined profile and optional turret pod mounting location.", cues: [{ letter: "A", keyword: "WHEELS", description: "Six large wheels in a distinctive 3-2-3 pattern on long wheel base" }, { letter: "B", keyword: "HULL", description: "Smooth, linear hull with minimal angular features and clean silhouette edges" }] },
+    variants: [{ name: "Freccia APC", year: 2006, label: "Armored personnel carrier configuration without turret, pure transport role", visibleDifferences: [], internalDifferences: [] }, { name: "Freccia IFV", year: 2010, label: "Infantry fighting vehicle variant fitted with a 25mm or 30mm remote turret module", visibleDifferences: [], internalDifferences: [] }]
   }
 ];
 
