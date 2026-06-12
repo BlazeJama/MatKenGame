@@ -194,6 +194,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 - [x] Confirmation popup before image deletion _(duplicate of PR 4 item above — already done)_
 - [x] Edit existing vehicle _(duplicate of PR 3 item above — already done)_
 - [x] Delete vehicle with confirmation popup _(duplicate of PR 4 item above — already done)_
+- [x] Study Data fields added to admin form — About textarea, 11 spec inputs (Crew, Weight, Length, Width, Height, Engine, Horsepower, Fuel, Speed, Range, Entered Service), Armament entries (section + name + description + visibility rating), Protection entries (same structure), Whats / identification cues (letter + keyword + description), Variants (name + year + label + visible/internal differences). Export includes all fields conditionally (only if non-empty).
 
 ---
 

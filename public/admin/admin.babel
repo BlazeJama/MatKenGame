@@ -23,7 +23,7 @@ const ADMIN_PASSWORD = "matken";
 // CACHE_VERSION in service-worker.js. If admin.jsx loads with a mismatch
 // against the HTML's ?v= (because a stale SW served an old JS or HTML),
 // the auto-detect below silently clears caches and reloads.
-const ADMIN_VERSION = 58;
+const ADMIN_VERSION = 59;
 
 // Storage keys
 const SESSION_AUTH_KEY   = "matken-admin-auth";
@@ -161,6 +161,25 @@ const ERA_OPTIONS = ["WW2", "Cold War", "Modern"];
 // Star label mapping for the image rows
 const STAR_LABEL = { 1: "Easy", 2: "Medium", 3: "Hard" };
 
+// Study data — section dropdowns for Armament and Protection tabs
+const ARMAMENT_SECTIONS  = ["MAIN GUN", "SECONDARY WEAPONS", "SMOKE"];
+const PROTECTION_SECTIONS = ["ARMOUR", "SENSORS", "PROTECTION SYSTEMS"];
+
+// Ordered spec keys with their display labels (used by the form and the export formatter)
+const SPEC_KEYS = [
+  ["crew",           "Crew"],
+  ["weight",         "Weight"],
+  ["length",         "Length"],
+  ["width",          "Width"],
+  ["height",         "Height"],
+  ["engine",         "Engine"],
+  ["horsepower",     "Horsepower"],
+  ["fuel",           "Fuel"],
+  ["speed",          "Speed"],
+  ["range",          "Range"],
+  ["enteredService", "Entered Service"],
+];
+
 // =============================================================================
 // Helpers — slug generation, default form state, validation
 // =============================================================================
@@ -186,6 +205,8 @@ function uniqueId(baseSlug, vehicles, ignoreId) {
 
 // Initial empty form state — 2 blank image rows, 1 blank fun-fact row, default category/era
 function blankFormState() {
+  const blankSpecs = {};
+  SPEC_KEYS.forEach(([k]) => { blankSpecs[k] = ""; });
   return {
     id: "",            // generated from name when saving a new vehicle
     name: "",
@@ -196,7 +217,14 @@ function blankFormState() {
     images: [
       { url: "", stars: 1 },
       { url: "", stars: 2 }
-    ]
+    ],
+    // Study data fields (Vehicle Study screen)
+    about: "",
+    specs: blankSpecs,
+    armament: [],
+    protection: [],
+    whats: { intro: "", cues: [] },
+    variants: []
   };
 }
 
@@ -1191,15 +1219,41 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
   useEffect(() => {
     if (selectedVehicle) {
       const facts = readFunFacts(selectedVehicle);
+      const sv = selectedVehicle;
+      const svSpecs = sv.specs || {};
+      const loadedSpecs = {};
+      SPEC_KEYS.forEach(([k]) => { loadedSpecs[k] = (svSpecs[k] || "").toString(); });
       setForm({
-        id: selectedVehicle.id,
-        name: selectedVehicle.name,
-        country: selectedVehicle.country,
-        category: selectedVehicle.category,
-        era: selectedVehicle.era,
+        id: sv.id,
+        name: sv.name,
+        country: sv.country,
+        category: sv.category,
+        era: sv.era,
         funFacts: facts.length > 0 ? [...facts] : [""],
         // Deep-copy images so editing doesn't mutate the draft list directly
-        images: selectedVehicle.images.map((img) => ({ ...img }))
+        images: sv.images.map((img) => ({ ...img })),
+        // Study data — with fallbacks for vehicles that predate these fields
+        about: sv.about || "",
+        specs: loadedSpecs,
+        armament: (sv.armament || []).map((e) => ({
+          ...e,
+          visibilityRating: e.visibilityRating != null ? String(e.visibilityRating) : ""
+        })),
+        protection: (sv.protection || []).map((e) => ({
+          ...e,
+          visibilityRating: e.visibilityRating != null ? String(e.visibilityRating) : ""
+        })),
+        whats: {
+          intro: ((sv.whats || {}).intro) || "",
+          cues: ((sv.whats || {}).cues || []).map((c) => ({ ...c }))
+        },
+        variants: (sv.variants || []).map((vt) => ({
+          name: vt.name || "",
+          year: vt.year != null ? String(vt.year) : "",
+          label: vt.label || "",
+          visibleDifferencesText: (vt.visibleDifferences || []).join("\n"),
+          internalDifferencesText: (vt.internalDifferences || []).join("\n")
+        }))
       });
     } else {
       setForm(blankFormState());
@@ -1308,11 +1362,45 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
     }));
   };
 
+  // ── Study data helpers ──────────────────────────────────────────────────────
+  const updateSpec = (key, value) =>
+    setForm((prev) => ({ ...prev, specs: { ...prev.specs, [key]: value } }));
+
+  const addArmamentEntry = () =>
+    setForm((prev) => ({ ...prev, armament: [...prev.armament, { section: ARMAMENT_SECTIONS[0], name: "", description: "", visibilityRating: "" }] }));
+  const removeArmamentEntry = (i) =>
+    setForm((prev) => ({ ...prev, armament: prev.armament.filter((_, idx) => idx !== i) }));
+  const updateArmamentEntry = (i, field, val) =>
+    setForm((prev) => ({ ...prev, armament: prev.armament.map((e, idx) => idx === i ? { ...e, [field]: val } : e) }));
+
+  const addProtectionEntry = () =>
+    setForm((prev) => ({ ...prev, protection: [...prev.protection, { section: PROTECTION_SECTIONS[0], name: "", description: "", visibilityRating: "" }] }));
+  const removeProtectionEntry = (i) =>
+    setForm((prev) => ({ ...prev, protection: prev.protection.filter((_, idx) => idx !== i) }));
+  const updateProtectionEntry = (i, field, val) =>
+    setForm((prev) => ({ ...prev, protection: prev.protection.map((e, idx) => idx === i ? { ...e, [field]: val } : e) }));
+
+  const addWhatsCue = () =>
+    setForm((prev) => ({ ...prev, whats: { ...prev.whats, cues: [...prev.whats.cues, { letter: "", keyword: "", description: "" }] } }));
+  const removeWhatsCue = (i) =>
+    setForm((prev) => ({ ...prev, whats: { ...prev.whats, cues: prev.whats.cues.filter((_, idx) => idx !== i) } }));
+  const updateWhatsCue = (i, field, val) =>
+    setForm((prev) => ({ ...prev, whats: { ...prev.whats, cues: prev.whats.cues.map((c, idx) => idx === i ? { ...c, [field]: val } : c) } }));
+
+  const addVariant = () =>
+    setForm((prev) => ({ ...prev, variants: [...prev.variants, { name: "", year: "", label: "", visibleDifferencesText: "", internalDifferencesText: "" }] }));
+  const removeVariant = (i) =>
+    setForm((prev) => ({ ...prev, variants: prev.variants.filter((_, idx) => idx !== i) }));
+  const updateVariant = (i, field, val) =>
+    setForm((prev) => ({ ...prev, variants: prev.variants.map((vt, idx) => idx === i ? { ...vt, [field]: val } : vt) }));
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValid) return;
 
     // Build the final vehicle object — strip blank rows, trim strings
+    const finalSpecs = {};
+    SPEC_KEYS.forEach(([k]) => { finalSpecs[k] = (form.specs[k] || "").trim(); });
     const finalVehicle = {
       id: previewId,
       name: form.name.trim(),
@@ -1322,7 +1410,41 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
       funFacts: form.funFacts.map((f) => f.trim()).filter((f) => f.length > 0),
       images: form.images
         .filter((img) => img.url.trim())
-        .map((img) => ({ url: img.url.trim(), stars: img.stars }))
+        .map((img) => ({ url: img.url.trim(), stars: img.stars })),
+      // Study data
+      about: form.about.trim(),
+      specs: finalSpecs,
+      armament: form.armament
+        .filter((e) => e.name.trim())
+        .map((e) => {
+          const entry = { section: e.section, name: e.name.trim(), description: (e.description || "").trim() };
+          const r = parseInt(e.visibilityRating, 10);
+          if (r >= 1 && r <= 3) entry.visibilityRating = r;
+          return entry;
+        }),
+      protection: form.protection
+        .filter((e) => e.name.trim())
+        .map((e) => {
+          const entry = { section: e.section, name: e.name.trim(), description: (e.description || "").trim() };
+          const r = parseInt(e.visibilityRating, 10);
+          if (r >= 1 && r <= 3) entry.visibilityRating = r;
+          return entry;
+        }),
+      whats: {
+        intro: form.whats.intro.trim(),
+        cues: form.whats.cues
+          .filter((c) => c.keyword && c.keyword.trim())
+          .map((c) => ({ letter: (c.letter || "").trim().slice(0, 1).toUpperCase(), keyword: c.keyword.trim(), description: (c.description || "").trim() }))
+      },
+      variants: form.variants
+        .filter((vt) => vt.name.trim())
+        .map((vt) => ({
+          name: vt.name.trim(),
+          year: parseInt(vt.year, 10) || null,
+          label: vt.label.trim(),
+          visibleDifferences: (vt.visibleDifferencesText || "").split("\n").map((s) => s.trim()).filter(Boolean),
+          internalDifferences: (vt.internalDifferencesText || "").split("\n").map((s) => s.trim()).filter(Boolean)
+        }))
     };
 
     onSave(finalVehicle, isEditing);
@@ -1475,6 +1597,261 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
           />
         </div>
 
+        {/* ── Study Data ──────────────────────────────────────────────────────── */}
+        <div className="border-t border-gray-200 pt-4">
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-navy">Study Data</h3>
+            <p className="text-xs text-gray-400 mt-0.5">Powers the Vehicle Study screen (Overview · Armament · Protection · What's It? · Variants).</p>
+          </div>
+
+          {/* OVERVIEW — About + Specs */}
+          <div className="mb-6">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Overview</p>
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-gray-700 mb-1">About</label>
+              <textarea
+                value={form.about}
+                onChange={(e) => updateField("about", e.target.value)}
+                placeholder="Short history / service description shown at the top of the Overview tab."
+                rows={3}
+                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none resize-none"
+              />
+            </div>
+            <label className="block text-xs font-medium text-gray-700 mb-2">Specifications</label>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+              {SPEC_KEYS.map(([key, label]) => (
+                <div key={key}>
+                  <label className="block text-xs text-gray-500 mb-0.5">{label}</label>
+                  <input
+                    type="text"
+                    value={form.specs[key] || ""}
+                    onChange={(e) => updateSpec(key, e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ARMAMENT */}
+          <div className="mb-6">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Armament</p>
+              <button type="button" onClick={addArmamentEntry} className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50">+ Add weapon</button>
+            </div>
+            {form.armament.length === 0 ? (
+              <p className="text-xs text-gray-400 italic">No armament entries yet.</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {form.armament.map((entry, i) => (
+                  <div key={i} className="border border-gray-200 rounded-lg p-3 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={entry.section}
+                        onChange={(e) => updateArmamentEntry(i, "section", e.target.value)}
+                        className="flex-1 px-2 py-1.5 text-xs rounded-lg border border-gray-200 bg-white focus:border-navy outline-none"
+                      >
+                        {ARMAMENT_SECTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <input
+                        type="text"
+                        value={entry.visibilityRating}
+                        onChange={(e) => updateArmamentEntry(i, "visibilityRating", e.target.value)}
+                        placeholder="◉ 1–3"
+                        title="Visibility rating 1–3 (leave blank for no badge)"
+                        className="w-16 px-2 py-1.5 text-xs rounded-lg border border-gray-200 focus:border-navy outline-none text-center"
+                      />
+                      <button type="button" onClick={() => removeArmamentEntry(i)} className="px-2 py-1 text-xs rounded-lg border border-gray-200 text-red-600 hover:bg-red-50">✕</button>
+                    </div>
+                    <input
+                      type="text"
+                      value={entry.name}
+                      onChange={(e) => updateArmamentEntry(i, "name", e.target.value)}
+                      placeholder="Weapon name (e.g. M256 120mm smoothbore)"
+                      className="w-full px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+                    />
+                    <textarea
+                      value={entry.description}
+                      onChange={(e) => updateArmamentEntry(i, "description", e.target.value)}
+                      placeholder="Short description."
+                      rows={2}
+                      className="w-full px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none resize-none"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* PROTECTION */}
+          <div className="mb-6">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Protection</p>
+              <button type="button" onClick={addProtectionEntry} className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50">+ Add entry</button>
+            </div>
+            {form.protection.length === 0 ? (
+              <p className="text-xs text-gray-400 italic">No protection entries yet.</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {form.protection.map((entry, i) => (
+                  <div key={i} className="border border-gray-200 rounded-lg p-3 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={entry.section}
+                        onChange={(e) => updateProtectionEntry(i, "section", e.target.value)}
+                        className="flex-1 px-2 py-1.5 text-xs rounded-lg border border-gray-200 bg-white focus:border-navy outline-none"
+                      >
+                        {PROTECTION_SECTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <input
+                        type="text"
+                        value={entry.visibilityRating}
+                        onChange={(e) => updateProtectionEntry(i, "visibilityRating", e.target.value)}
+                        placeholder="◉ 1–3"
+                        title="Visibility rating 1–3 (leave blank for no badge)"
+                        className="w-16 px-2 py-1.5 text-xs rounded-lg border border-gray-200 focus:border-navy outline-none text-center"
+                      />
+                      <button type="button" onClick={() => removeProtectionEntry(i)} className="px-2 py-1 text-xs rounded-lg border border-gray-200 text-red-600 hover:bg-red-50">✕</button>
+                    </div>
+                    <input
+                      type="text"
+                      value={entry.name}
+                      onChange={(e) => updateProtectionEntry(i, "name", e.target.value)}
+                      placeholder="Entry name (e.g. Chobham composite)"
+                      className="w-full px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+                    />
+                    <textarea
+                      value={entry.description}
+                      onChange={(e) => updateProtectionEntry(i, "description", e.target.value)}
+                      placeholder="Short description."
+                      rows={2}
+                      className="w-full px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none resize-none"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* WHATS */}
+          <div className="mb-6">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">What's It? (identification cues)</p>
+              <button type="button" onClick={addWhatsCue} className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50">+ Add cue</button>
+            </div>
+            <div className="mb-2">
+              <label className="block text-xs text-gray-500 mb-0.5">Intro text</label>
+              <input
+                type="text"
+                value={form.whats.intro}
+                onChange={(e) => setForm((prev) => ({ ...prev, whats: { ...prev.whats, intro: e.target.value } }))}
+                placeholder="e.g. Use these visual cues to identify the M1 Abrams at a glance."
+                className="w-full px-3 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+              />
+            </div>
+            {form.whats.cues.length === 0 ? (
+              <p className="text-xs text-gray-400 italic">No cues yet. Add one per letter (W = Wheels, H = Hull, A = Armament, T = Turret, S = Silhouette).</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {form.whats.cues.map((cue, i) => (
+                  <div key={i} className="flex items-start gap-2 border border-gray-200 rounded-lg p-2">
+                    <input
+                      type="text"
+                      value={cue.letter}
+                      onChange={(e) => updateWhatsCue(i, "letter", e.target.value.slice(0, 1).toUpperCase())}
+                      placeholder="W"
+                      maxLength={1}
+                      title="Single letter (e.g. W, H, A, T, S)"
+                      className="w-10 px-2 py-1.5 text-sm font-bold text-center rounded-lg border border-gray-200 focus:border-navy outline-none uppercase shrink-0"
+                    />
+                    <div className="flex-1 flex flex-col gap-1 min-w-0">
+                      <input
+                        type="text"
+                        value={cue.keyword}
+                        onChange={(e) => updateWhatsCue(i, "keyword", e.target.value)}
+                        placeholder="Keyword (e.g. WHEELS / TRACKS)"
+                        className="w-full px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+                      />
+                      <textarea
+                        value={cue.description}
+                        onChange={(e) => updateWhatsCue(i, "description", e.target.value)}
+                        placeholder="Description of this identifying feature."
+                        rows={2}
+                        className="w-full px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none resize-none"
+                      />
+                    </div>
+                    <button type="button" onClick={() => removeWhatsCue(i)} className="mt-0.5 px-2 py-1 text-xs rounded-lg border border-gray-200 text-red-600 hover:bg-red-50 shrink-0">✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* VARIANTS */}
+          <div className="mb-2">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Variants</p>
+              <button type="button" onClick={addVariant} className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50">+ Add variant</button>
+            </div>
+            {form.variants.length === 0 ? (
+              <p className="text-xs text-gray-400 italic">No variants yet (e.g. M1, M1A1, M1A2).</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {form.variants.map((vt, i) => (
+                  <div key={i} className="border border-gray-200 rounded-lg p-3 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={vt.name}
+                        onChange={(e) => updateVariant(i, "name", e.target.value)}
+                        placeholder="Name (e.g. M1A2 SEP v3)"
+                        className="flex-1 px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={vt.year}
+                        onChange={(e) => updateVariant(i, "year", e.target.value)}
+                        placeholder="Year"
+                        className="w-20 px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={vt.label}
+                        onChange={(e) => updateVariant(i, "label", e.target.value)}
+                        placeholder="Label (e.g. Current standard)"
+                        className="flex-1 px-2 py-1.5 text-sm rounded-lg border border-gray-200 focus:border-navy outline-none"
+                      />
+                      <button type="button" onClick={() => removeVariant(i)} className="px-2 py-1 text-xs rounded-lg border border-gray-200 text-red-600 hover:bg-red-50 shrink-0">✕</button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-0.5">◉ Visible differences (one per line)</label>
+                        <textarea
+                          value={vt.visibleDifferencesText}
+                          onChange={(e) => updateVariant(i, "visibleDifferencesText", e.target.value)}
+                          placeholder={"120mm smoothbore — visibly longer barrel\nWider turret cheeks"}
+                          rows={3}
+                          className="w-full px-2 py-1.5 text-xs rounded-lg border border-gray-200 focus:border-navy outline-none resize-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-0.5">⚙ Internal differences (one per line)</label>
+                        <textarea
+                          value={vt.internalDifferencesText}
+                          onChange={(e) => updateVariant(i, "internalDifferencesText", e.target.value)}
+                          placeholder={"NBC overpressure system added\nImproved fire control"}
+                          rows={3}
+                          className="w-full px-2 py-1.5 text-xs rounded-lg border border-gray-200 focus:border-navy outline-none resize-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Validation errors */}
         {errors.length > 0 && (form.name || form.country || form.images.some((img) => img.url) || form.funFacts.some((f) => f)) && (
           <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -1570,15 +1947,118 @@ function formatVehicleEntry(v) {
   // Fun facts array — always emit `funFacts` (the new schema)
   const facts = readFunFacts(v);
   if (facts.length === 0) {
-    lines.push("    funFacts: []");
+    lines.push("    funFacts: [],");
   } else {
     lines.push("    funFacts: [");
     facts.forEach((fact, i) => {
       const comma = i < facts.length - 1 ? "," : "";
       lines.push(`      ${JSON.stringify(fact)}${comma}`);
     });
-    lines.push("    ]");
+    lines.push("    ],");
   }
+
+  // ── Study Data (emitted only when non-empty) ────────────────────────────────
+
+  if (v.about && v.about.trim()) {
+    lines.push(`    about: ${JSON.stringify(v.about.trim())},`);
+  }
+
+  const specs = v.specs || {};
+  const specEntries = SPEC_KEYS.filter(([key]) => specs[key] && specs[key].trim());
+  if (specEntries.length > 0) {
+    lines.push("    specs: {");
+    specEntries.forEach(([key], i) => {
+      const comma = i < specEntries.length - 1 ? "," : "";
+      lines.push(`      ${key}: ${JSON.stringify(specs[key].trim())}${comma}`);
+    });
+    lines.push("    },");
+  }
+
+  const armament = (v.armament || []).filter((e) => e.name && e.name.trim());
+  if (armament.length > 0) {
+    lines.push("    armament: [");
+    armament.forEach((e, i) => {
+      const comma = i < armament.length - 1 ? "," : "";
+      const vr = e.visibilityRating != null && String(e.visibilityRating).trim() !== ""
+        ? `, visibilityRating: ${parseInt(e.visibilityRating, 10)}`
+        : "";
+      const desc = e.description && e.description.trim()
+        ? `, description: ${JSON.stringify(e.description.trim())}`
+        : "";
+      lines.push(`      { section: ${JSON.stringify(e.section)}, name: ${JSON.stringify(e.name.trim())}${desc}${vr} }${comma}`);
+    });
+    lines.push("    ],");
+  }
+
+  const protection = (v.protection || []).filter((e) => e.name && e.name.trim());
+  if (protection.length > 0) {
+    lines.push("    protection: [");
+    protection.forEach((e, i) => {
+      const comma = i < protection.length - 1 ? "," : "";
+      const vr = e.visibilityRating != null && String(e.visibilityRating).trim() !== ""
+        ? `, visibilityRating: ${parseInt(e.visibilityRating, 10)}`
+        : "";
+      const desc = e.description && e.description.trim()
+        ? `, description: ${JSON.stringify(e.description.trim())}`
+        : "";
+      lines.push(`      { section: ${JSON.stringify(e.section)}, name: ${JSON.stringify(e.name.trim())}${desc}${vr} }${comma}`);
+    });
+    lines.push("    ],");
+  }
+
+  const whats = v.whats || {};
+  const whatsCues = (whats.cues || []).filter((c) => c.letter && c.keyword);
+  if ((whats.intro && whats.intro.trim()) || whatsCues.length > 0) {
+    lines.push("    whats: {");
+    if (whats.intro && whats.intro.trim()) {
+      lines.push(`      intro: ${JSON.stringify(whats.intro.trim())},`);
+    }
+    if (whatsCues.length > 0) {
+      lines.push("      cues: [");
+      whatsCues.forEach((c, i) => {
+        const comma = i < whatsCues.length - 1 ? "," : "";
+        const desc = c.description && c.description.trim()
+          ? `, description: ${JSON.stringify(c.description.trim())}`
+          : "";
+        lines.push(`        { letter: ${JSON.stringify(c.letter)}, keyword: ${JSON.stringify(c.keyword.trim())}${desc} }${comma}`);
+      });
+      lines.push("      ]");
+    } else {
+      lines.push("      cues: []");
+    }
+    lines.push("    },");
+  }
+
+  const variants = (v.variants || []).filter((vt) => vt.name && vt.name.trim());
+  if (variants.length > 0) {
+    lines.push("    variants: [");
+    variants.forEach((vt, i) => {
+      const comma = i < variants.length - 1 ? "," : "";
+      const yearStr = vt.year && String(vt.year).trim() ? `, year: ${JSON.stringify(vt.year)}` : "";
+      const labelStr = vt.label && vt.label.trim() ? `, label: ${JSON.stringify(vt.label.trim())}` : "";
+      const visDiffs = Array.isArray(vt.visibleDifferences) ? vt.visibleDifferences.filter(Boolean) : [];
+      const intDiffs = Array.isArray(vt.internalDifferences) ? vt.internalDifferences.filter(Boolean) : [];
+      if (visDiffs.length === 0 && intDiffs.length === 0) {
+        lines.push(`      { name: ${JSON.stringify(vt.name.trim())}${yearStr}${labelStr} }${comma}`);
+      } else {
+        lines.push(`      { name: ${JSON.stringify(vt.name.trim())}${yearStr}${labelStr},`);
+        if (visDiffs.length > 0) {
+          const vd = visDiffs.map((d) => JSON.stringify(d)).join(", ");
+          lines.push(`        visibleDifferences: [${vd}],`);
+        }
+        if (intDiffs.length > 0) {
+          const id = intDiffs.map((d) => JSON.stringify(d)).join(", ");
+          lines.push(`        internalDifferences: [${id}]`);
+        }
+        lines.push(`      }${comma}`);
+      }
+    });
+    lines.push("    ],");
+  }
+
+  // Remove trailing comma from last field (lines[-2] is the last data line)
+  const lastDataIdx = lines.length - 1;
+  lines[lastDataIdx] = lines[lastDataIdx].replace(/,$/, "");
 
   lines.push("  }");
   return lines.join("\n");

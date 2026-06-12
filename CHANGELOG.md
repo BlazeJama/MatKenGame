@@ -33,6 +33,16 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 - `manifest.json` — updated `start_url`, `scope`, and icon paths to absolute `/MatKenGame/` URLs (required because Vite moves the manifest to `assets/` with a content hash)
 - `.github/workflows/deploy.yml` — GitHub Actions workflow: `npm ci` → `npm run build` → deploy `dist/` to GitHub Pages
 
+### Added — Admin Study Data fields (v59)
+- Added a "Study Data" section to the admin vehicle edit form, powering the 5-tab Vehicle Study screen.
+- **Overview tab**: About textarea (vehicle history paragraph) + 11 spec inputs: Crew, Weight, Length, Width, Height, Engine, Horsepower, Fuel, Speed, Range, Entered Service.
+- **Armament tab**: dynamic list of weapon entries. Each entry has a Section dropdown (MAIN GUN / SECONDARY WEAPONS / SMOKE), Name, Description, and optional Visibility Rating (1–3, the ◉ badge shown in-game).
+- **Protection tab**: dynamic list with Section dropdown (ARMOUR / SENSORS / PROTECTION SYSTEMS), Name, Description, and optional Visibility Rating.
+- **What's It? tab**: Intro text input + dynamic cue list. Each cue has a single Letter (W/H/A/T/S), Keyword, and Description.
+- **Variants tab**: dynamic list with Name, Year, Label, and two textarea inputs for Visible Differences (◉) and Internal Differences (⚙) — one item per line.
+- Export (`formatVehicleEntry`) updated to serialise all new fields. All study data is emitted conditionally — fields are omitted entirely if empty, keeping `vehicles.js` clean for the 50+ vehicles without study data yet.
+- Admin version bumped to v59.
+
 ### Added — Admin stale-cache recovery (v58)
 - New "🔄 Force refresh" button in the admin header. One click unregisters the service worker, clears all Cache Storage entries, and hard-reloads — replacing the previous 5-step DevTools dance. The localStorage draft is preserved (Save first if you want belt-and-braces safety).
 - Silent auto-recovery on load: admin.jsx now compares its baked-in `ADMIN_VERSION` against the `?v=` query the HTML used to load it. On mismatch (i.e. the SW handed us inconsistent HTML/JS), caches are cleared and the page reloads automatically.
