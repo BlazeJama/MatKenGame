@@ -141,7 +141,7 @@ function loadDraftFromStorage() {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
   } catch (e) {
     console.warn("Failed to read draft from localStorage:", e);
