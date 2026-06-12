@@ -2453,7 +2453,13 @@ export const vehicles = [
       { url: "assets/images/kf41lynx-006.jpg", stars: 1 },
       { url: "assets/images/kf41lynx-007.jpg", stars: 1 }
     ],
-    funFacts: []
+    funFacts: [],
+    about: "A modern, highly modular tracked combat vehicle system developed by Rheinmetall, showcasing extreme internal volume and advanced electronic defense networks.",
+    specs: { crew: "3 personnel (plus 8 passengers)", weight: "44.0 tonnes", length: "7.73 m", width: "3.60 m", height: "3.30 m", engine: "Liebherr inline-6 turbocharged diesel", horsepower: "1,140 hp", fuel: "900 litres", speed: "70 km/h", range: "500 km", enteredService: "2023, Hungary" },
+    armament: [{ section: "MAIN GUN", name: "30mm or 35mm WOTAN automatic chain gun inside a Lance 2.0 turret", description: "" }, { section: "MISSILES", name: "Spike-LR anti-tank guided missile launcher module", description: "" }, { section: "SECONDARY WEAPONS", name: "7.62mm three-barrel RMG coaxial machine gun", description: "" }],
+    protection: [{ section: "ARMOUR", name: "Advanced ballistic steel hull layered with internal spall fabrics", description: "" }, { section: "PROTECTION SYSTEMS", name: "StrikeShield Active Protection System (APS) hard-kill blocks", description: "" }, { section: "PROTECTION SYSTEMS", name: "Heavy smoke countermeasure grids", description: "" }],
+    whats: { intro: "An immense, highly imposing tracked vehicle with a massive angular Lance turret sporting sharp geometric lines.", cues: [{ letter: "A", keyword: "TURRET", description: "Angular wedge-shaped turret armor cheeks" }, { letter: "B", keyword: "SHROUD", description: "Distinctive grooved geometric barrel shroud layout with high rear deck lines" }] },
+    variants: [{ name: "KF31 Lynx", year: 2020, label: "Slightly smaller iteration variant carrying a lower weight envelope", visibleDifferences: [], internalDifferences: [] }, { name: "KF41 Lynx IFV", year: 2023, label: "Standard primary heavy production model adopted by Hungary", visibleDifferences: [], internalDifferences: [] }]
   },
   {
     id: "borsuk",

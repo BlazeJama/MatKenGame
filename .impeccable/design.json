@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-21T00:00:00Z",
+  "title": "Design System: MatKenGame",
+  "extensions": {
+    "colorMeta": {
+      "bg-abyss":      { "role": "neutral",   "displayName": "Abyss",         "canonical": "oklch(8% 0.015 250)",  "tonalRamp": ["#070b14","#0d1526","#1a2744","#1e3a5c","#2d5080","#4a72a8","#7699c5","#c0d4e8"] },
+      "navy-command":  { "role": "neutral",   "displayName": "Command Navy",  "canonical": "oklch(20% 0.04 250)",  "tonalRamp": ["#0a0f1e","#1a2744","#243a63","#304d80","#4165a0","#5c80bf","#88a4d5","#c5d4ec"] },
+      "header-dark":   { "role": "neutral",   "displayName": "Header Dark",   "canonical": "oklch(13% 0.03 250)",  "tonalRamp": ["#070b14","#0d1526","#152035","#1e3050","#2c4570","#4462a0","#6e8fc5","#c0d4e8"] },
+      "amber-intel":   { "role": "primary",   "displayName": "Amber Intel",   "canonical": "oklch(76% 0.18 75)",   "tonalRamp": ["#78350f","#92400e","#b45309","#d97706","#f59e0b","#fbbf24","#fcd34d","#fef3c7"] },
+      "state-correct": { "role": "tertiary",  "displayName": "Correct Green", "canonical": "oklch(66% 0.20 145)",  "tonalRamp": ["#052e16","#14532d","#166534","#15803d","#16a34a","#22c55e","#4ade80","#bbf7d0"] },
+      "state-wrong":   { "role": "secondary", "displayName": "Wrong Red",     "canonical": "oklch(58% 0.22 25)",   "tonalRamp": ["#450a0a","#7f1d1d","#991b1b","#b91c1c","#dc2626","#ef4444","#f87171","#fecaca"] },
+      "text-primary":  { "role": "neutral",   "displayName": "Text Primary",  "canonical": "oklch(93% 0.01 250)",  "tonalRamp": ["#334155","#475569","#64748b","#94a3b8","#cbd5e1","#e2e8f0","#f1f5f9","#f8fafc"] },
+      "text-secondary":{ "role": "neutral",   "displayName": "Text Secondary","canonical": "oklch(70% 0.03 250)",  "tonalRamp": ["#1e293b","#334155","#475569","#64748b","#94a3b8","#cbd5e1","#e2e8f0","#f8fafc"] },
+      "text-muted":    { "role": "neutral",   "displayName": "Text Muted",    "canonical": "oklch(53% 0.04 250)",  "tonalRamp": ["#0f172a","#1e293b","#334155","#475569","#64748b","#94a3b8","#cbd5e1","#e2e8f0"] },
+      "text-ghost":    { "role": "neutral",   "displayName": "Text Ghost",    "canonical": "oklch(30% 0.03 250)",  "tonalRamp": ["#070b14","#0f172a","#1e293b","#334155","#475569","#64748b","#94a3b8","#e2e8f0"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Bebas Neue Display", "purpose": "Screen titles, primary CTA buttons. Uppercase-only. Never used for body text or supporting labels." },
+      "body":    { "displayName": "Rajdhani Body",      "purpose": "All UI text, answer labels, body copy, secondary buttons. The working voice of the system." },
+      "label":   { "displayName": "Share Tech Mono",    "purpose": "Scores, counters, question indexes, status glyphs, metadata. Data-voice only — never for paragraph text." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-standard",  "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for color and opacity state transitions." },
+      { "name": "ease-out-quart", "value": "cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "Entry animations (fadeSlideUp, fadeIn). Fast settle, no bounce." },
+      { "name": "progress-fill",  "value": "width 0.4s cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "Progress bar width transition on question advance." }
+    ],
+    "breakpoints": [
+      { "name": "content-max", "value": "448px", "purpose": "max-width of the quiz content column on wider screens." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Action Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Full-width CTA for the primary action on each screen (Begin Training, Next Target, Redeploy). Amber on near-black, Bebas Neue, all-caps.",
+      "html": "<button class=\"ds-btn-primary\">▶  BEGIN TRAINING</button>",
+      "css": ".ds-btn-primary { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 56px; padding: 0 24px; background: #f59e0b; color: #070b14; font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.14em; border: none; border-radius: 2px; cursor: pointer; transition: filter 0.15s cubic-bezier(0.4,0,0.2,1), transform 0.1s cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { filter: brightness(1.08); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: 2px solid #f59e0b; outline-offset: 3px; } .ds-btn-primary:disabled { background: rgba(30,41,59,0.7); color: #334155; cursor: not-allowed; transform: none; filter: none; }"
+    },
+    {
+      "name": "Answer Option — Default",
+      "kind": "button",
+      "refersTo": "answer-option",
+      "description": "Quiz answer button before the player has selected. Dark glass panel, amber letter badge, vehicle name + country stacked.",
+      "html": "<button class=\"ds-answer ds-answer--default\"><span class=\"ds-answer-badge\">A</span><span class=\"ds-answer-content\"><span class=\"ds-answer-name\">M1 Abrams</span><span class=\"ds-answer-country\">United States</span></span></button>",
+      "css": ".ds-answer { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 11px 14px; border-radius: 2px; border: 1px solid; cursor: pointer; font-family: 'Rajdhani', sans-serif; text-align: left; transition: border-color 0.15s, background 0.15s; } .ds-answer--default { background: rgba(15,23,42,0.85); border-color: rgba(245,158,11,0.2); color: #e2e8f0; } .ds-answer--default:hover { border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.07); } .ds-answer--default:focus-visible { outline: 2px solid #f59e0b; outline-offset: 2px; } .ds-answer-badge { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 2px; background: rgba(245,158,11,0.15); color: #f59e0b; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; } .ds-answer-content { display: flex; flex-direction: column; flex: 1; } .ds-answer-name { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.02em; } .ds-answer-country { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; opacity: 0.65; letter-spacing: 0.06em; margin-top: 1px; }"
+    },
+    {
+      "name": "Answer Option — Correct",
+      "kind": "button",
+      "refersTo": "answer-correct",
+      "description": "Quiz answer button state when this option is the correct answer (revealed after selection).",
+      "html": "<button class=\"ds-answer ds-answer--correct\" disabled><span class=\"ds-answer-badge ds-answer-badge--correct\">C</span><span class=\"ds-answer-content\"><span class=\"ds-answer-name\">M1 Abrams</span><span class=\"ds-answer-country\">United States</span></span><span class=\"ds-answer-icon\">✓</span></button>",
+      "css": ".ds-answer--correct { background: rgba(34,197,94,0.1); border-color: #22c55e; color: #86efac; cursor: default; } .ds-answer-badge--correct { background: rgba(34,197,94,0.2); color: #4ade80; } .ds-answer-icon { font-size: 1.1rem; font-weight: 700; color: #4ade80; }"
+    },
+    {
+      "name": "Answer Option — Wrong",
+      "kind": "button",
+      "refersTo": "answer-wrong",
+      "description": "Quiz answer button state when the player selected this option but it is incorrect.",
+      "html": "<button class=\"ds-answer ds-answer--wrong\" disabled><span class=\"ds-answer-badge ds-answer-badge--wrong\">B</span><span class=\"ds-answer-content\"><span class=\"ds-answer-name\">T-72</span><span class=\"ds-answer-country\">Soviet Union</span></span><span class=\"ds-answer-icon ds-answer-icon--wrong\">✗</span></button>",
+      "css": ".ds-answer--wrong { background: rgba(239,68,68,0.1); border-color: #ef4444; color: #fca5a5; cursor: default; } .ds-answer-badge--wrong { background: rgba(239,68,68,0.2); color: #f87171; } .ds-answer-icon--wrong { color: #f87171; font-size: 1.1rem; font-weight: 700; }"
+    },
+    {
+      "name": "TacCard",
+      "kind": "card",
+      "refersTo": "tac-card",
+      "description": "Bracketed container for structured mission data. Corner brackets replace a shadow or thick border. Used for Mission Intel (home), score card (debrief), future stats panels.",
+      "html": "<div class=\"ds-tac-card\"><div class=\"ds-tac-corner ds-tac-corner--tl\"></div><div class=\"ds-tac-corner ds-tac-corner--tr\"></div><div class=\"ds-tac-corner ds-tac-corner--bl\"></div><div class=\"ds-tac-corner ds-tac-corner--br\"></div><div class=\"ds-tac-label\">MISSION INTEL</div><div class=\"ds-tac-stat\">10 <span class=\"ds-tac-stat-sub\">VEHICLES READY</span></div></div>",
+      "css": ".ds-tac-card { position: relative; background: rgba(26,39,68,0.45); border: 1px solid rgba(245,158,11,0.18); border-radius: 2px; padding: 24px 28px; } .ds-tac-corner { position: absolute; width: 14px; height: 14px; border-color: #f59e0b; } .ds-tac-corner--tl { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; } .ds-tac-corner--tr { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; } .ds-tac-corner--bl { bottom: -1px; left: -1px; border-bottom: 2px solid; border-left: 2px solid; } .ds-tac-corner--br { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; } .ds-tac-label { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.14em; color: rgba(245,158,11,0.4); margin-bottom: 16px; } .ds-tac-stat { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1; color: #e2e8f0; } .ds-tac-stat-sub { font-family: 'Rajdhani', sans-serif; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.1em; color: #64748b; display: block; margin-top: 4px; }"
+    },
+    {
+      "name": "Result Panel — Correct",
+      "kind": "custom",
+      "refersTo": "tac-card",
+      "description": "Feedback panel shown below answer options after a correct selection. Announces TARGET ACQUIRED, surfaces the fun fact.",
+      "html": "<div class=\"ds-result ds-result--correct\"><p class=\"ds-result-verdict\">✓ TARGET ACQUIRED</p><p class=\"ds-result-fact\"><span class=\"ds-result-glyph\">◈ </span>The M1 Abrams is powered by a gas turbine engine — the same type used in helicopters.</p></div>",
+      "css": "@keyframes ds-fadeSlideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .ds-result { padding: 16px; border-radius: 2px; border: 1px solid; animation: ds-fadeSlideUp 0.25s cubic-bezier(0.25,1,0.5,1) forwards; } .ds-result--correct { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.3); } .ds-result-verdict { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: 0.1em; color: #4ade80; margin: 0 0 6px 0; } .ds-result-fact { font-family: 'Rajdhani', sans-serif; font-size: 0.875rem; font-weight: 600; line-height: 1.5; color: #94a3b8; margin: 0; } .ds-result-glyph { color: #f59e0b; }"
+    },
+    {
+      "name": "Progress Bar",
+      "kind": "custom",
+      "refersTo": "button-primary",
+      "description": "Tracks quiz round progress. Amber fill on near-invisible amber track. Animates width on question advance.",
+      "html": "<div class=\"ds-progress-track\"><div class=\"ds-progress-fill\" style=\"width: 40%\"></div></div>",
+      "css": ".ds-progress-track { width: 100%; height: 3px; background: rgba(245,158,11,0.1); border-radius: 9999px; overflow: hidden; } .ds-progress-fill { height: 100%; background: #f59e0b; border-radius: 9999px; transition: width 0.4s cubic-bezier(0.25,1,0.5,1); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Training Range",
+    "overview": "MatKenGame is built for a student who takes the subject seriously. The interface doesn't cheerfully reward participation — it sets conditions for focus. Every screen should feel like arriving at a place where the work happens: austere, purposeful, configured for the task at hand. The tactical aesthetic is not decoration; it is the logical visual register for a military vehicle identification exercise.\n\nThe system works in near-darkness. A deep, navy-tinted black fills the background; surfaces layer progressively lighter without ever getting bright. The sole bright element is amber — reserved strictly as an intel highlight, marking the one thing on screen that demands attention right now. Everything else recedes deliberately.\n\nThis system explicitly rejects the cheerful quiz-app idiom: no pastel bubbles, no celebratory confetti bursts, no encouragement copy written for children. The register is closer to a well-designed field manual or a serious simulator: authoritative, functional, and entirely in service of the learning that happens inside it.",
+    "keyCharacteristics": [
+      "Near-black background with subtle amber grid — sets the atmospheric stage before content appears",
+      "Single amber accent used as strict intel highlight, never decoration",
+      "Three-font system: commanding display, working body, data label — each with one fixed job",
+      "Tonal depth through layered dark surfaces; zero box-shadows anywhere in the system",
+      "Corner brackets frame data containers — a structural signal, not visual flair",
+      "Feedback states (correct / wrong) are informational, not celebratory or punitive"
+    ],
+    "rules": [
+      { "name": "The Intel Highlight Rule", "body": "Amber (#f59e0b) is reserved exclusively for active significance: what demands attention right now. It is never used as a color accent on static, decorative, or secondary elements. If amber appears on a screen and nothing is actively happening, the design is wrong.", "section": "colors" },
+      { "name": "The No-Pure-White Rule", "body": "Neither #ffffff nor #000000 appears in this system. All text is #e2e8f0 or dimmer; the darkest background is #070b14. Tinting neutrals toward the navy hue keeps the dark-mode palette cohesive.", "section": "colors" },
+      { "name": "The Three Voices Rule", "body": "Bebas Neue is the commanding voice: screen titles and primary actions only. Rajdhani is the working voice: all body, UI labels, and button text that isn't a primary CTA. Share Tech Mono is the data voice: numbers, counters, and machine-readable metadata. These roles are fixed and never swap.", "section": "typography" },
+      { "name": "The No-Shadow Doctrine", "body": "box-shadow is prohibited. Not ambient, not structural, not decorative. Depth comes from tonal layering: bg-abyss → header-dark → navy-command. Any need for separation is a layout or tonal problem.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do reserve Amber Intel (#f59e0b) for active significance only. Its rarity is its power.",
+      "Do use Bebas Neue exclusively for primary screen titles and CTA button labels.",
+      "Do use Share Tech Mono for all scores, counters, question indexes, and status glyphs.",
+      "Do maintain the tonal stack: Abyss → Header Dark → Command Navy. New surfaces land on one of these three steps.",
+      "Do apply the scanline overlay on all game screens to unify the atmospheric layer.",
+      "Do keep corner brackets on TacCards structural — they mark bounded data containers only.",
+      "Do honor prefers-reduced-motion by wrapping animation declarations in the appropriate media query.",
+      "Do verify WCAG 2.1 AA contrast on every new text/background pairing."
+    ],
+    "donts": [
+      "Don't use pastel colors, rounded bubble shapes, bouncy animations, or cheerful encouragement copy. No Kahoot, no Quizlet.",
+      "Don't use box-shadow anywhere. The No-Shadow Doctrine is absolute.",
+      "Don't add a fourth font. Three voices is the complete system.",
+      "Don't add gradient text (background-clip: text). Text is a single solid color.",
+      "Don't use border-left as a colored accent stripe on cards or list items.",
+      "Don't use glassmorphism (backdrop-filter: blur) as a visual effect.",
+      "Don't use confetti, star bursts, badge pops, coin animations, or any mobile F2P reward mechanic.",
+      "Don't let the result panel animate on re-render — the fadeSlideUp fires once on mount only."
+    ]
+  }
+}
