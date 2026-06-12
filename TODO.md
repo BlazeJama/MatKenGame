@@ -148,10 +148,11 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ### Study Data Content
 - [x] Study data populated for all 14 Main Battle Tanks (About, Specs, Armament, Protection, What's It?, Variants)
-- [ ] Study data for APCs (10 vehicles)
-- [ ] Study data for IFVs (10 vehicles)
-- [ ] Study data for Artillery (10 vehicles)
-- [ ] Study data for Helicopters (10 vehicles)
+- [x] Study data for APCs (10 vehicles)
+- [x] Study data for IFVs (10 vehicles) — including Tulpar, ASCOD, Piranha V, VBCI, VBM Freccia
+- [x] Study data for Artillery (10 vehicles) — including CAESAR, K9 Thunder, AS-90, M270 MLRS, 2S7 Pion, M777, PLZ-05
+- [x] Study data for Helicopters (10 vehicles) — including CH-47 Chinook, Tiger HAD, UH-1 Huey, Mi-8 Hip, NH90, AW101 Merlin
+- [x] **ALL 61 vehicles** now have complete study data — Vehicle Study screen fully operational
 
 ### Progress Tracking
 - [x] Best score saved per category (localStorage)

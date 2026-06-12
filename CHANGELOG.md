@@ -13,15 +13,15 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
-### Added — Study Data populated for all 14 Main Battle Tanks
-- Comprehensive vehicle data now populated for all MBTs in the database:
+### Added — Study Data populated for ALL 61 vehicles (v60)
+- **18 remaining vehicles** completed: 5 IFVs (Tulpar, ASCOD, Piranha V, VBCI, VBM Freccia), 7 Artillery (CAESAR, K9 Thunder, AS-90, M270 MLRS, 2S7 Pion, M777, PLZ-05), 6 Helicopters (CH-47 Chinook, Tiger HAD, UH-1 Huey, Mi-8 Hip, NH90, AW101 Merlin)
+- Each vehicle includes complete study data structure:
   - **Overview tab**: About (history/context), Crew, Weight, Length, Width, Height, Engine type, Horsepower, Fuel capacity, Speed, Range, Entered Service year
   - **Armament tab**: Main gun and secondary weapons with technical specifications
   - **Protection tab**: Armor composition, protective systems, and sensor descriptions
   - **What's It? tab**: Visual identification guide with letter-keyed distinctive features (e.g. "E" for Engine, "B" for Blow-out panels, "H" for Hatch placement)
   - **Variants tab**: Historical production variants with years, labels, and visible/internal differences
-- Tanks covered: M1 Abrams, Leopard 2, Challenger 2, Leclerc, T-90, KF51 Panther, Leopard 2A-RC 3.0, Altay T1, C1 Ariete, T-72, Centurion, Tiger I, T-34, M4 Sherman
-- All data structure follows admin form schema; ready for immediate playback in Vehicle Study screen and admin editing
+- **All 61 vehicles** in the database now have complete study data. Vehicle Study screen fully functional for every vehicle.
 
 ### Added — New screen flow: Landing, Learning Hub, Vehicle Study
 - **LandingScreen**: new app entry point replacing the direct Game Setup landing. Shows three TacCards: Training (→ Game Setup), Learning Hub (→ vehicle browser), and Leaderboard. Displays operator callsign, vehicle count, and personal best score.
