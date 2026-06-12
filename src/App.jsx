@@ -354,7 +354,7 @@ function TargetBrackets({ size = 18, color = "#f59e0b", thickness = 2, inset = -
 }
 
 // Dark translucent card with amber border and corner brackets
-function TacCard({ children, className = "", style: extraStyle = {} }) {
+function TacCard({ children, className = "", style: extraStyle = {}, ...rest }) {
   return (
     <div
       className={`relative ${className}`}
@@ -364,6 +364,7 @@ function TacCard({ children, className = "", style: extraStyle = {} }) {
         borderRadius: 2,
         ...extraStyle,
       }}
+      {...rest}
     >
       <TargetBrackets size={14} thickness={2} inset={-1} />
       {children}
@@ -580,7 +581,7 @@ function WelcomeScreen({ onSave }) {
 // Home Screen
 // ============================================================================
 
-function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
+function GameSetupScreen({ onPlay, onGoHome, totalInCategory, playableCount, usingDraft,
                       selectedCategory, onCategoryChange, categoryCounts,
                       selectedEra, onEraChange, eraCounts,
                       selectedPact, onPactChange, pactCounts,
@@ -613,7 +614,16 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
       )}
 
       {/* Title block */}
-      <header className="px-6 pb-6 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)" }}>
+      <header className="px-6 pb-6 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.4rem)" }}>
+        <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: 10 }}>
+          <button
+            onClick={onGoHome}
+            className="font-data"
+            style={{ background: "transparent", border: "none", cursor: "pointer", color: "#475569", letterSpacing: "0.12em", fontSize: "0.68rem", padding: 0 }}
+          >
+            ← HOME
+          </button>
+        </div>
         <h1
           className="font-display text-white"
           style={{ fontSize: "clamp(3rem, 13vw, 4.8rem)", lineHeight: 1, letterSpacing: "0.04em", textAlign: "center", width: "100%" }}
@@ -1005,6 +1015,359 @@ function HomeScreen({ onPlay, totalInCategory, playableCount, usingDraft,
           v0.2.0 · CLASSIFIED
         </span>
       </footer>
+    </div>
+  );
+}
+
+// ============================================================================
+// Landing Screen  (entry point — 3-card home)
+// ============================================================================
+
+function LandingScreen({ callsign, vehicles, bestScores, onSetup, onLeaderboard, onLearning, onEditCallsign }) {
+  const playableCount = vehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
+  const overallBest = Object.values(bestScores).flatMap((cat) =>
+    Object.values(cat).flatMap((diff) => Object.values(diff))
+  ).reduce((a, b) => Math.max(a, b), 0);
+
+  return (
+    <div className="min-h-screen flex flex-col tac-grid font-tac" style={{ background: "#070b14" }}>
+      <header className="px-5 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.5rem)", paddingBottom: "1.2rem" }}>
+        <div className="font-data" style={{ fontSize: "0.62rem", letterSpacing: "0.2em", color: "rgba(245,158,11,0.5)", marginBottom: 10 }}>
+          ◈ ARMOURED RECOGNITION SYSTEM ◈
+        </div>
+        <h1 className="font-display text-white" style={{ fontSize: "clamp(3rem, 13vw, 4.8rem)", lineHeight: 1, letterSpacing: "0.04em" }}>
+          MAT<span style={{ color: "#f59e0b" }}>KEN</span>GAME
+        </h1>
+        <button
+          onClick={onEditCallsign}
+          style={{ background: "transparent", border: "none", cursor: "pointer", marginTop: 10 }}
+        >
+          <span className="font-data" style={{ fontSize: "0.62rem", letterSpacing: "0.12em", color: "#334155" }}>
+            OPERATOR: <span style={{ color: "#64748b" }}>{callsign}</span>
+          </span>
+        </button>
+      </header>
+
+      <main className="flex-1 flex flex-col px-5 gap-3 max-w-md mx-auto w-full pb-10">
+        {/* Training */}
+        <TacCard
+          className="w-full"
+          style={{ padding: "20px 18px", cursor: "pointer", userSelect: "none" }}
+          onClick={onSetup}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && onSetup()}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+            <div>
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.2em", color: "rgba(245,158,11,0.6)", marginBottom: 4 }}>◈ TRAINING</div>
+              <div className="font-display text-white" style={{ fontSize: "1.7rem", letterSpacing: "0.06em", lineHeight: 1.1 }}>
+                TEST YOUR<br />KNOWLEDGE
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.12em", color: "#334155", marginBottom: 2 }}>BEST SCORE</div>
+              <div className="font-display" style={{ fontSize: "1.6rem", color: overallBest > 0 ? "#f59e0b" : "#1e293b", letterSpacing: "0.04em" }}>
+                {overallBest > 0 ? overallBest : "—"}
+              </div>
+            </div>
+          </div>
+          <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.08em", lineHeight: 1.6, marginBottom: 14 }}>
+            {playableCount} VEHICLES · MULTIPLE CATEGORIES · 3 DIFFICULTY LEVELS
+          </div>
+          <div className="font-display w-full text-center" style={{ fontSize: "1.1rem", letterSpacing: "0.14em", background: "#f59e0b", color: "#070b14", borderRadius: 2, padding: "10px 0" }}>
+            BEGIN TRAINING →
+          </div>
+        </TacCard>
+
+        {/* Learning */}
+        <TacCard
+          className="w-full"
+          style={{ padding: "20px 18px", cursor: "pointer", userSelect: "none" }}
+          onClick={onLearning}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && onLearning()}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+            <div>
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.2em", color: "rgba(245,158,11,0.6)", marginBottom: 4 }}>◈ INTELLIGENCE</div>
+              <div className="font-display text-white" style={{ fontSize: "1.7rem", letterSpacing: "0.06em", lineHeight: 1.1 }}>
+                LEARNING<br />HUB
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.12em", color: "#334155", marginBottom: 2 }}>IN DATABASE</div>
+              <div className="font-display" style={{ fontSize: "1.6rem", color: "#f59e0b", letterSpacing: "0.04em" }}>
+                {vehicles.length}
+              </div>
+            </div>
+          </div>
+          <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.08em", lineHeight: 1.6, marginBottom: 14 }}>
+            BROWSE VEHICLE PROFILES · ARMAMENT · PROTECTION · VARIANTS
+          </div>
+          <div className="font-display w-full text-center" style={{ fontSize: "1.1rem", letterSpacing: "0.14em", border: "1px solid rgba(245,158,11,0.35)", color: "#f59e0b", borderRadius: 2, padding: "10px 0" }}>
+            STUDY VEHICLES →
+          </div>
+        </TacCard>
+
+        {/* Leaderboard */}
+        <TacCard
+          className="w-full"
+          style={{ padding: "20px 18px", cursor: "pointer", userSelect: "none" }}
+          onClick={onLeaderboard}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && onLeaderboard()}
+        >
+          <div style={{ marginBottom: 8 }}>
+            <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.2em", color: "rgba(245,158,11,0.6)", marginBottom: 4 }}>◈ GLOBAL</div>
+            <div className="font-display text-white" style={{ fontSize: "1.7rem", letterSpacing: "0.06em", lineHeight: 1.1 }}>
+              LEADER<span style={{ color: "#f59e0b" }}>BOARD</span>
+            </div>
+          </div>
+          <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.08em", lineHeight: 1.6, marginBottom: 14 }}>
+            COMPETE GLOBALLY · RANKED BY SCORE · ALL CATEGORIES
+          </div>
+          <div className="font-display w-full text-center" style={{ fontSize: "1.1rem", letterSpacing: "0.14em", border: "1px solid rgba(51,65,85,0.5)", color: "#64748b", borderRadius: 2, padding: "10px 0" }}>
+            VIEW RANKINGS →
+          </div>
+        </TacCard>
+      </main>
+
+      <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
+        <span className="font-data text-xs" style={{ color: "#1e293b", letterSpacing: "0.12em" }}>v0.2.0 · CLASSIFIED</span>
+      </footer>
+    </div>
+  );
+}
+
+// ============================================================================
+// Learning Home Screen
+// ============================================================================
+
+const LEARN_CATS = [
+  { id: "all",              label: "ALL"  },
+  { id: "Main Battle Tank", label: "MBT"  },
+  { id: "APC",              label: "APC"  },
+  { id: "IFV",              label: "IFV"  },
+  { id: "Artillery",        label: "ARTY" },
+  { id: "Helicopter",       label: "HELO" },
+];
+
+function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }) {
+  const [search, setSearch] = useState("");
+  const [cat,    setCat]    = useState("all");
+
+  const filtered = vehicles.filter((v) => {
+    const matchCat  = cat === "all" || v.category === cat;
+    const q         = search.toLowerCase();
+    const matchName = !q || v.name.toLowerCase().includes(q) || (v.country || "").toLowerCase().includes(q);
+    return matchCat && matchName;
+  });
+
+  return (
+    <div className="min-h-screen flex flex-col tac-grid font-tac" style={{ background: "#070b14" }}>
+      <header className="px-5" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.6rem)", paddingBottom: "1rem" }}>
+        <button
+          onClick={onBack}
+          className="font-data"
+          style={{ background: "transparent", border: "none", cursor: "pointer", color: "#475569", letterSpacing: "0.12em", fontSize: "0.68rem", padding: 0, marginBottom: 10 }}
+        >
+          ← HOME
+        </button>
+        <div className="font-data" style={{ fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(245,158,11,0.5)", marginBottom: 4 }}>◈ INTELLIGENCE FILES</div>
+        <h1 className="font-display text-white" style={{ fontSize: "2.4rem", lineHeight: 1, letterSpacing: "0.06em" }}>
+          VEHICLE<span style={{ color: "#f59e0b" }}> LIBRARY</span>
+        </h1>
+      </header>
+
+      <div className="px-5 mb-3">
+        <input
+          type="text"
+          placeholder="SEARCH BY NAME OR COUNTRY..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full font-data"
+          style={{
+            background: "rgba(26,39,68,0.3)", border: "1px solid rgba(245,158,11,0.15)",
+            borderRadius: 2, color: "#94a3b8", padding: "10px 14px",
+            fontSize: "0.7rem", letterSpacing: "0.08em", outline: "none", minHeight: 44,
+          }}
+        />
+      </div>
+
+      <div className="px-5 mb-4">
+        <div className="flex flex-wrap gap-2">
+          {LEARN_CATS.map((opt) => {
+            const sel = cat === opt.id;
+            return (
+              <button key={opt.id} onClick={() => setCat(opt.id)} className="font-data"
+                style={{
+                  fontSize: "0.68rem", padding: "5px 12px", borderRadius: 2,
+                  letterSpacing: "0.1em", minHeight: 36,
+                  border: `1px solid ${sel ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                  background: sel ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
+                  color: sel ? "#f59e0b" : "#64748b", cursor: "pointer",
+                }}
+              >{opt.label}</button>
+            );
+          })}
+        </div>
+      </div>
+
+      <main className="flex-1 px-5 pb-10 max-w-md mx-auto w-full overflow-y-auto">
+        {filtered.length === 0 ? (
+          <div className="text-center font-data text-xs py-16" style={{ color: "#334155", letterSpacing: "0.12em", lineHeight: 2 }}>
+            NO VEHICLES MATCH<br /><span style={{ color: "#1e293b" }}>Adjust your search or filter</span>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {filtered.map((v) => {
+              const img = Array.isArray(v.images) && v.images.length > 0 ? v.images[0].url : null;
+              return (
+                <TacCard
+                  key={v.id}
+                  style={{ cursor: "pointer", overflow: "hidden", padding: 0 }}
+                  onClick={() => onSelectVehicle(v)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === "Enter" && onSelectVehicle(v)}
+                >
+                  <div style={{ width: "100%", height: 90, background: "#0d1520", overflow: "hidden" }}>
+                    {img ? (
+                      <img src={img} alt={v.name} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.85 }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span className="font-data" style={{ fontSize: "0.55rem", color: "#1e293b", letterSpacing: "0.12em" }}>NO IMAGE</span>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ padding: "8px 10px" }}>
+                    <div className="font-display text-white" style={{ fontSize: "0.95rem", letterSpacing: "0.04em", lineHeight: 1.2, marginBottom: 3 }}>{v.name}</div>
+                    <div className="font-data" style={{ fontSize: "0.58rem", color: "#475569", letterSpacing: "0.08em" }}>{v.country}</div>
+                    {v.category && (
+                      <div className="font-data" style={{ fontSize: "0.52rem", letterSpacing: "0.1em", marginTop: 5, color: "rgba(245,158,11,0.6)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 2, padding: "2px 5px", display: "inline-block" }}>
+                        {v.category === "Main Battle Tank" ? "MBT" : v.category.toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                </TacCard>
+              );
+            })}
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+// ============================================================================
+// Vehicle Study Screen
+// ============================================================================
+
+const STUDY_TABS = ["OVERVIEW", "ARMAMENT", "PROTECTION", "WHATS", "VARIANTS"];
+
+function VehicleStudyScreen({ vehicle, onBack }) {
+  const [tab,    setTab]    = useState("OVERVIEW");
+  const [imgIdx, setImgIdx] = useState(0);
+
+  if (!vehicle) return null;
+  const images = Array.isArray(vehicle.images) ? vehicle.images : [];
+
+  return (
+    <div className="min-h-screen flex flex-col tac-grid font-tac" style={{ background: "#070b14" }}>
+      <header className="px-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.4rem)", paddingBottom: "0.8rem" }}>
+        <button
+          onClick={onBack}
+          className="font-data"
+          style={{ background: "transparent", border: "none", cursor: "pointer", color: "#475569", letterSpacing: "0.12em", fontSize: "0.68rem", padding: 0, marginBottom: 8 }}
+        >
+          ← VEHICLE LIBRARY
+        </button>
+        <div className="font-display text-white" style={{ fontSize: "2rem", letterSpacing: "0.05em", lineHeight: 1.1 }}>{vehicle.name}</div>
+        <div className="font-data" style={{ fontSize: "0.62rem", color: "#475569", letterSpacing: "0.1em", marginTop: 2 }}>
+          {vehicle.country}{vehicle.era ? ` · ${vehicle.era}` : ""}
+        </div>
+      </header>
+
+      {images.length > 0 && (
+        <div style={{ position: "relative", width: "100%", height: 190, background: "#0d1520", overflow: "hidden", flexShrink: 0 }}>
+          <img src={images[imgIdx]?.url} alt={vehicle.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          {images[imgIdx]?.stars && (
+            <div className="font-data" style={{ position: "absolute", top: 10, right: 10, background: "rgba(7,11,20,0.8)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 2, padding: "3px 8px", fontSize: "0.6rem", letterSpacing: "0.1em", color: "#f59e0b" }}>
+              {"★".repeat(images[imgIdx].stars)}
+            </div>
+          )}
+        </div>
+      )}
+
+      {images.length > 1 && (
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, padding: "10px 0", background: "#070b14", flexShrink: 0 }}>
+          {images.map((_, i) => (
+            <button key={i} onClick={() => setImgIdx(i)} style={{ width: i === imgIdx ? 18 : 6, height: 6, borderRadius: 3, background: i === imgIdx ? "#f59e0b" : "rgba(245,158,11,0.2)", border: "none", cursor: "pointer", padding: 0, transition: "width 0.2s" }} />
+          ))}
+        </div>
+      )}
+
+      {/* Tab bar */}
+      <div style={{ flexShrink: 0, borderBottom: "1px solid rgba(245,158,11,0.12)" }}>
+        <div style={{ display: "flex", overflowX: "auto" }}>
+          {STUDY_TABS.map((t) => (
+            <button key={t} onClick={() => setTab(t)} className="font-data"
+              style={{
+                flex: "0 0 auto", padding: "12px 14px", fontSize: "0.6rem", letterSpacing: "0.12em",
+                border: "none", cursor: "pointer", background: "transparent",
+                color: tab === t ? "#f59e0b" : "#334155",
+                borderBottom: `2px solid ${tab === t ? "#f59e0b" : "transparent"}`,
+                marginBottom: -1,
+              }}
+            >{t}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tab content */}
+      <main className="flex-1 px-4 py-4 max-w-md mx-auto w-full overflow-y-auto">
+        {tab === "OVERVIEW" ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <TacCard style={{ padding: "14px 16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 16px" }}>
+                {[
+                  { label: "COUNTRY",  value: vehicle.country  || "—" },
+                  { label: "CATEGORY", value: vehicle.category === "Main Battle Tank" ? "MBT" : (vehicle.category || "—") },
+                  { label: "ERA",      value: vehicle.era       || "—" },
+                  { label: "IMAGES",   value: images.length > 0 ? `${images.length} on file` : "None" },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 3 }}>{label}</div>
+                    <div className="font-data" style={{ fontSize: "0.8rem", color: "#94a3b8", letterSpacing: "0.04em" }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+            </TacCard>
+
+            {Array.isArray(vehicle.funFacts) && vehicle.funFacts.length > 0 && (
+              <div>
+                <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ FIELD NOTES</div>
+                {vehicle.funFacts.map((fact, i) => (
+                  <TacCard key={i} style={{ padding: "12px 14px", marginBottom: 8 }}>
+                    <div className="font-data" style={{ fontSize: "0.72rem", color: "#64748b", letterSpacing: "0.04em", lineHeight: 1.6 }}>{fact}</div>
+                  </TacCard>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 200, paddingTop: 30 }}>
+            <div className="font-data text-center" style={{ fontSize: "0.62rem", letterSpacing: "0.16em", color: "rgba(245,158,11,0.35)", marginBottom: 8 }}>◈ {tab}</div>
+            <div className="font-display text-center" style={{ fontSize: "1.5rem", letterSpacing: "0.08em", color: "#1e293b", marginBottom: 10 }}>INTEL PENDING</div>
+            <div className="font-data text-center" style={{ fontSize: "0.62rem", color: "#1e293b", letterSpacing: "0.1em", lineHeight: 1.8 }}>
+              DETAILED SPECIFICATIONS<br />COMING IN A FUTURE UPDATE
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
@@ -2259,9 +2622,10 @@ function LeaderboardScreen({ initialCategory, initialDifficulty, initialMode, on
 // ============================================================================
 
 function App() {
-  const [screen, setScreen]         = useState("home");
+  const [screen, setScreen]         = useState("landing");
   const [round, setRound]           = useState(null);
   const [finalScore, setFinalScore] = useState(0);
+  const [studyVehicle, setStudyVehicle] = useState(null);
 
   // ── Service-worker update detection ────────────────────────────────────────
   // When a new SW has installed and is waiting, we show an update banner.
@@ -2491,7 +2855,7 @@ function App() {
   const returnHome = () => {
     setRound(null);
     setFinalScore(0);
-    setScreen("home");
+    setScreen("landing");
   };
 
   const goToStats = () => setScreen("stats");
@@ -2547,10 +2911,26 @@ function App() {
         callsign={callsign}
       />
     );
-  } else {
+  } else if (screen === "learning") {
     body = (
-      <HomeScreen
+      <LearningHomeScreen
+        vehicles={vehicles}
+        onBack={() => setScreen("landing")}
+        onSelectVehicle={(v) => { setStudyVehicle(v); setScreen("vehicle-study"); }}
+      />
+    );
+  } else if (screen === "vehicle-study") {
+    body = (
+      <VehicleStudyScreen
+        vehicle={studyVehicle}
+        onBack={() => setScreen("learning")}
+      />
+    );
+  } else if (screen === "home") {
+    body = (
+      <GameSetupScreen
         onPlay={startGame}
+        onGoHome={() => setScreen("landing")}
         totalInCategory={totalInCategory}
         playableCount={playableCount}
         usingDraft={usingDraft}
@@ -2575,6 +2955,18 @@ function App() {
         onViewStats={goToStats}
         onViewLeaderboard={() => goToLeaderboard("all", "all")}
         callsign={callsign}
+        onEditCallsign={() => setCallsignModalOpen(true)}
+      />
+    );
+  } else {
+    body = (
+      <LandingScreen
+        callsign={callsign}
+        vehicles={vehicles}
+        bestScores={bestScores}
+        onSetup={() => setScreen("home")}
+        onLeaderboard={() => goToLeaderboard("all", "all")}
+        onLearning={() => setScreen("learning")}
         onEditCallsign={() => setCallsignModalOpen(true)}
       />
     );

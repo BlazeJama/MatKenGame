@@ -71,6 +71,9 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 ## 🥇 MVP — Core Quiz Game
 
 ### UI Screens
+- [x] Landing screen (entry point: Training / Learning Hub / Leaderboard cards)
+- [x] Learning Hub screen (search + filter + vehicle grid)
+- [x] Vehicle Study screen (image carousel + 5 tabs: Overview, Armament, Protection, Whats, Variants)
 - [x] Home screen with Play button
 - [x] Quiz screen — vehicle image display
 - [x] Quiz screen — 4 answer option buttons

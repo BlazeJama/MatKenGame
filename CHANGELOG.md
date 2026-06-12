@@ -13,6 +13,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — New screen flow: Landing, Learning Hub, Vehicle Study
+- **LandingScreen**: new app entry point replacing the direct Game Setup landing. Shows three TacCards: Training (→ Game Setup), Learning Hub (→ vehicle browser), and Leaderboard. Displays operator callsign, vehicle count, and personal best score.
+- **LearningHomeScreen**: vehicle browser with full-text search (name/country), category filter pills (ALL/MBT/APC/IFV/ARTY/HELO), and a 2-column responsive vehicle grid showing photo, name, country, and category badge.
+- **VehicleStudyScreen**: tabbed vehicle detail page. Image carousel with difficulty star badge and dot navigation. Overview tab shows country/category/era/image count and fun facts. Armament/Protection/Whats/Variants tabs show "INTEL PENDING" placeholder (data structure not yet defined).
+- **GameSetupScreen** (renamed from HomeScreen internally): added "← HOME" back button so players can return to Landing from the setup screen.
+- Updated app routing: initial screen changed from `"home"` to `"landing"`; `returnHome()` now navigates to Landing; added `screen` states `"learning"` and `"vehicle-study"`.
+- `TacCard` now accepts and spreads extra props (e.g. `onClick`, `role`, `tabIndex`) enabling full-card interactive patterns.
+
 ### Changed — Vite migration (branch: vite-migration)
 - Replaced CDN-based React/Tailwind/Babel setup with Vite + npm packages (`react`, `react-dom`, `tailwindcss`, `@vitejs/plugin-react`)
 - `src/App.jsx` — proper ES module imports; removed CDN globals and bottom-of-file `ReactDOM.createRoot` call
