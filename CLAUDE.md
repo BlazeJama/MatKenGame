@@ -37,7 +37,7 @@ See game-design-document.md for the full feature plan across all phases.
 
 | Layer | Choice | Notes |
 |---|---|---|
-| UI | React 18 | Via npm + Vite (no CDN) |
+| UI | React 19 | Via npm + Vite (no CDN) |
 | Styling | Tailwind CSS 3 | Via npm + PostCSS (no CDN) |
 | Icons | No icon library | Keep it simple |
 | Language | JavaScript (ES6+) | No TypeScript for now |
