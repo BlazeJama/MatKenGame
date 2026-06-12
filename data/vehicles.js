@@ -975,6 +975,41 @@ export const vehicles = [
       "The Piranha family is the foundation for the Stryker, LAV-25, and Pandur — all of those Western APCs are derived from this Swiss 8×8 design.",
       "Switzerland is officially neutral, yet its arms industry produces the Piranha which serves with more than 20 militaries worldwide.",
       "The Piranha III can be air-transported by C-130 Hercules and reconfigured between APC, IFV, command vehicle, ambulance, and mortar carrier roles."
+    ],
+    about: "A highly adaptable 8x8 wheeled armored personnel carrier developed by Mowag, serving as the design foundation for numerous modern western military vehicle families.",
+    specs: {
+      crew: "2 personnel (plus 10 passengers)",
+      weight: "18.5 tonnes",
+      length: "6.93 m",
+      width: "2.66 m",
+      height: "2.17 m",
+      engine: "Caterpillar 3126 diesel",
+      horsepower: "400 hp",
+      fuel: "300 litres",
+      speed: "100 km/h",
+      range: "750 km",
+      enteredService: "1996, Switzerland"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "12.7mm M2HB heavy machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Coaxial 7.62mm machine gun", description: "" },
+      { section: "SMOKE", name: "Smoke grenade launchers", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "High-hardness modular steel plate armor", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Spall liners for interior compartment safety", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "NBC overpressure collective filtration system", description: "" }
+    ],
+    whats: {
+      intro: "A classic, sharp-nosed 8x8 wheeled vehicle with an angular hull top layout and clean vertical sidewalls.",
+      cues: [
+        { letter: "A", keyword: "NOSE", description: "Distinctive multi-angled front nose wedge" },
+        { letter: "B", keyword: "WHEELS", description: "Four large evenly spaced wheels down each side" }
+      ]
+    },
+    variants: [
+      { name: "Piranha IIIH", year: 2000, label: "Features an upgraded heavy suspension configuration package", visibleDifferences: [], internalDifferences: [] },
+      { name: "LAV III", year: 2002, label: "Canadian variant heavily modified with a 25mm autocannon turret", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -992,6 +1027,41 @@ export const vehicles = [
       "Israel's Eitan was designed using lessons from the 2006 Lebanon War — it carries the Trophy active protection system, which can intercept incoming RPGs and anti-tank missiles in flight.",
       "The Eitan replaces the M113 in Israeli service, which had been criticised for inadequate protection against modern anti-armour weapons.",
       "Despite weighing over 35 tonnes, the Eitan can reach 90 km/h on roads — making it one of the fastest heavily-armoured wheeled APCs ever built."
+    ],
+    about: "Israel's cutting-edge heavy 8x8 wheeled armored personnel carrier, developed to replace aging M113 tracks with unmatched mine and ballistic protection.",
+    specs: {
+      crew: "3 personnel (plus 9 passengers)",
+      weight: "35.0 tonnes",
+      length: "8.00 m",
+      width: "3.10 m",
+      height: "2.80 m",
+      engine: "MTU turbocharged diesel",
+      horsepower: "750 hp",
+      fuel: "400 litres",
+      speed: "90 km/h",
+      range: "800 km",
+      enteredService: "2023, Israel"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "Samson Remote Weapon Station with 12.7mm machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Optional 30mm uncrewed autocannon module", description: "" },
+      { section: "MISSILES", name: "Integrated 60mm internal mortar system", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Advanced modular composite structural armor array", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Iron Fist Active Protection System (APS) hard-kill suite", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "V-shaped anti-blast underbelly hull plates", description: "" }
+    ],
+    whats: {
+      intro: "An immense, exceptionally tall and broad 8-wheeled vehicle with massive thick armor panel flanks.",
+      cues: [
+        { letter: "A", keyword: "SIZE", description: "Massive overall size profile with high ground clearance stance" },
+        { letter: "B", keyword: "OPTICS", description: "Prominent camera and sensor optics housings" }
+      ]
+    },
+    variants: [
+      { name: "Eitan APC", year: 2023, label: "Standard baseline infantry carrier configuration carrying a remote weapon station", visibleDifferences: [], internalDifferences: [] },
+      { name: "Eitan IFV", year: 2025, label: "Heavy fire support version carrying an uncrewed 30mm turret setup", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1130,6 +1200,41 @@ export const vehicles = [
       "The BMP-3 is the only infantry fighting vehicle in the world armed with a 100mm gun, a 30mm autocannon, and three 7.62mm machine guns — all at the same time.",
       "Its 100mm gun can fire both conventional shells and laser-guided anti-tank missiles through the same barrel.",
       "The BMP-3 is fully amphibious and fast — it can reach 10 km/h on water using two water jets, fast enough to conduct river assault crossings under fire."
+    ],
+    about: "A unique and heavily armed Soviet-designed tracked infantry fighting vehicle featuring a radical dual-caliber integrated gun system.",
+    specs: {
+      crew: "3 personnel (plus 7 passengers)",
+      weight: "18.7 tonnes",
+      length: "7.14 m",
+      width: "3.23 m",
+      height: "2.45 m",
+      engine: "UTD-29M V10 diesel",
+      horsepower: "500 hp",
+      fuel: "700 litres",
+      speed: "70 km/h",
+      range: "600 km",
+      enteredService: "1987, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "100mm 2A70 rifled gun / missile launcher", description: "" },
+      { section: "SECONDARY WEAPONS", name: "30mm 2A72 coaxial automatic cannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "3 x 7.62mm PKT machine guns (coaxial and bow-mounted)", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Aluminum alloy hull with steel face appliqué panels", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Arena or Shtora defensive countermeasure suites", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Hydrojet amphibious water propulsion drives", description: "" }
+    ],
+    whats: {
+      intro: "A low-slung, boxy tracked vehicle with a wide centered turret sporting two barrels clamped side-by-side.",
+      cues: [
+        { letter: "A", keyword: "BARRELS", description: "Distinctive dual-barrel assembly layout (one thick, one thin)" },
+        { letter: "B", keyword: "DOORS", description: "Rear hull troop roof doors that flip upward" }
+      ]
+    },
+    variants: [
+      { name: "BMP-3M", year: 2005, label: "Upgraded modern configuration with digital fire control and a new engine", visibleDifferences: [], internalDifferences: [] },
+      { name: "Dragun", year: 2011, label: "Re-engineered variant shifting the engine block forward to create a standard rear troop ramp", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1155,6 +1260,41 @@ export const vehicles = [
       "The Warrior's armour was specifically designed to protect against 14.5mm heavy machine gun fire on all sides — much tougher than contemporary Soviet IFVs.",
       "During the 1991 Gulf War, Warriors advanced so quickly across the Iraqi desert that they outpaced the infantry they were supposed to be supporting.",
       "The Warrior can run on flat tyres — its road wheels are designed to keep the vehicle moving even after being punctured by shrapnel or small-arms fire."
+    ],
+    about: "The stalwart tracked infantry fighting vehicle of the British Army, designed to provide rugged battlefield survivability and mobility to mechanized infantry squads.",
+    specs: {
+      crew: "3 personnel (plus 7 passengers)",
+      weight: "25.4 tonnes (up to 30.0+ tonnes with combat armor upgrades)",
+      length: "6.34 m",
+      width: "3.03 m",
+      height: "2.79 m",
+      engine: "Perkins CV8 TCA V8 diesel",
+      horsepower: "550 hp",
+      fuel: "770 litres",
+      speed: "75 km/h",
+      range: "660 km",
+      enteredService: "1988, United Kingdom"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "30mm L21A1 RARDEN autocannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm L94A1 coaxial chain gun", description: "" },
+      { section: "SMOKE", name: "2 x 4 smoke grenade dischargers", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "All-welded aluminum armor skin with steel appliqué frames", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Thick side-skirt armor arrays protecting tracks", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Fire suppression system in engine and crew cabins", description: "" }
+    ],
+    whats: {
+      intro: "A boxy, flat-roofed tracked vehicle with a small offset two-man turret and an external storage basket rack layout.",
+      cues: [
+        { letter: "A", keyword: "BARREL", description: "Long, slender 30mm barrel with a prominent cage-style flash hider" },
+        { letter: "B", keyword: "DOOR", description: "Single flat rear access door" }
+      ]
+    },
+    variants: [
+      { name: "Warrior Desert Variant", year: 1990, label: "Equipped with enhanced cooling packs and Chobham appliqué armor plates", visibleDifferences: [], internalDifferences: [] },
+      { name: "Warrior CSP", year: 2018, label: "Capability Sustainment Programme prototype adding a fully stabilized 40mm cased telescoped weapon turret", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1178,6 +1318,41 @@ export const vehicles = [
       "The CV90 was designed to start its engine reliably at -40°C and operate in the deep snow of Nordic terrain, conditions that would stop most other IFVs.",
       "Its 40mm autocannon is one of the most powerful ever fitted to an IFV, capable of destroying lightly armoured vehicles at over 1,500 metres.",
       "The CV90 is one of the best-selling IFVs in the world, used by Norway, Sweden, Switzerland, Finland, the Netherlands, and Denmark."
+    ],
+    about: "A world-class family of tracked armored vehicles developed by Sweden, renowned for its incredible firepower options, stealth contours, and agility in winter terrain.",
+    specs: {
+      crew: "3 personnel (plus 7 passengers)",
+      weight: "23.0 to 38.0 tonnes (depending on armor pack generation)",
+      length: "6.55 m",
+      width: "3.10 m",
+      height: "2.70 m",
+      engine: "Scania V8 diesel",
+      horsepower: "550 to 1,000 hp (varies by block iteration)",
+      fuel: "525 litres",
+      speed: "70 km/h",
+      range: "320 km",
+      enteredService: "1993, Sweden"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "40mm Bofors autocannon (Swedish version) or 30mm/35mm Bushmaster (export versions)", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" },
+      { section: "MISSILES", name: "Anti-tank guided missile launchers (integrated into select modern turrets)", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Steel core composite matrix shell layer", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Barracuda thermal signature management camouflage system", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Hard-kill active protection system (optional modern variants)", description: "" }
+    ],
+    whats: {
+      intro: "A highly geometric, sharp-edged tracked vehicle with an angled turret face and clean sloping chassis hulls.",
+      cues: [
+        { letter: "A", keyword: "CANNON", description: "Prominent heavy caliber autocannon barrel" },
+        { letter: "B", keyword: "HULL", description: "Continuous crisp sloping hull lines from front nose to rear" }
+      ]
+    },
+    variants: [
+      { name: "CV9040", year: 1993, label: "Standard Swedish version carrying the hard-hitting 40mm Bofors cannon", visibleDifferences: [], internalDifferences: [] },
+      { name: "CV9035", year: 1998, label: "Export version carrying a 35mm Bushmaster chain gun and a taller turret ring", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1259,6 +1434,41 @@ export const vehicles = [
       "Introduced in 1966, the BMP-1 was the world's first true infantry fighting vehicle — combining troop transport, armour, and direct fire support in one platform.",
       "Its 73mm low-pressure gun could fire HEAT rounds capable of penetrating early NATO tanks at close range, making the BMP-1 a serious threat far beyond a typical APC.",
       "The BMP-1 has been used in nearly every major conflict since the 1973 Yom Kippur War, with over 20,000 built and many still in service today."
+    ],
+    about: "The world's first mass-produced infantry fighting vehicle, revolutionizing mechanized warfare by combining low-profile transport with an anti-tank gun and missile.",
+    specs: {
+      crew: "3 personnel (plus 8 passengers)",
+      weight: "13.2 tonnes",
+      length: "6.73 m",
+      width: "2.94 m",
+      height: "2.06 m",
+      engine: "UTD-20 V6 diesel",
+      horsepower: "300 hp",
+      fuel: "462 litres",
+      speed: "65 km/h",
+      range: "500 km",
+      enteredService: "1966, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "73mm 2A28 Grom low-pressure smoothbore gun", description: "" },
+      { section: "MISSILES", name: "9M14 Malyutka (AT-3 Sagger) wire-guided anti-tank missile rail mount", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm PKT coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Highly sloped thin rolled homogeneous steel plate armor", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Low physical silhouette presentation mask", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Collective NBC system filters", description: "" }
+    ],
+    whats: {
+      intro: "An ultra-low tracked vehicle with a long, multi-ribbed forward engine deck and a very small cone turret.",
+      cues: [
+        { letter: "A", keyword: "GUN", description: "Short, stubby main gun barrel" },
+        { letter: "B", keyword: "DOORS", description: "Track-integrated rear cabin doors fitted with dual glass viewing vision blocks" }
+      ]
+    },
+    variants: [
+      { name: "BMP-1P", year: 1979, label: "Upgraded version swapping out the old Sagger rail for a pintle-mounted Fagot/Konkurs ATGM system", visibleDifferences: [], internalDifferences: [] },
+      { name: "BMP-1 AM Basurmanin", year: 2015, label: "Modern Russian overhaul replacing the old turret with an open 30mm BTR-82A gun pod module", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1338,6 +1548,41 @@ export const vehicles = [
       "South Korea's K21 uses inflatable pontoons that deploy from the hull on demand, giving it enough buoyancy to swim across rivers without preparation.",
       "Its 40mm autocannon is one of the few fitted to any IFV that can engage tanks frontally at close range using armour-piercing rounds.",
       "The K21 is built largely from glass-fibre composite to keep weight down, making it air-transportable by C-17 and giving it excellent cross-country agility."
+    ],
+    about: "South Korea's premier tracked infantry fighting vehicle, meticulously optimized to achieve lightweight amphibious operation and high autocannon fire rates.",
+    specs: {
+      crew: "3 personnel (plus 9 passengers)",
+      weight: "25.6 tonnes",
+      length: "6.90 m",
+      width: "3.40 m",
+      height: "2.60 m",
+      engine: "Doosan D2840LXE V10 diesel",
+      horsepower: "750 hp",
+      fuel: "500 litres",
+      speed: "70 km/h",
+      range: "500 km",
+      enteredService: "2009, South Korea"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "40mm S&T Dynamics K40 automatic cannon", description: "" },
+      { section: "MISSILES", name: "Twin anti-tank guided missile launcher pod", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Fiberglass-reinforced layered composite matrix armor skin", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Inflatable side pontoon flotation screens", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Laser warning receivers linked to smoke salvos", description: "" }
+    ],
+    whats: {
+      intro: "A blocky, broad tracked vehicle with a wide angular two-man turret carrying a prominent heavy-caliber autocannon.",
+      cues: [
+        { letter: "A", keyword: "SKIRTS", description: "Wide side-skirt panels housing the internal inflatable bags" },
+        { letter: "B", keyword: "OPTICS", description: "Square modern optronic optics blocks above the gun shield" }
+      ]
+    },
+    variants: [
+      { name: "K21 IFV", year: 2009, label: "Standard operational army configuration variant", visibleDifferences: [], internalDifferences: [] },
+      { name: "AS21 Redback", year: 2018, label: "Heavily up-armored derivative variant built specifically for the Australian Army upgrade program", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1355,6 +1600,41 @@ export const vehicles = [
       "The ZBD-04A is China's first true modern IFV, drawing design inspiration from the Russian BMP-3 but with significant Chinese improvements and updated electronics.",
       "Like the BMP-3, it carries a 100mm gun and 30mm autocannon — but with improved digital fire control and crew interfaces.",
       "The ZBD-04A is one of the few IFVs in the world capable of swimming at over 12 km/h using water jets, supporting amphibious operations."
+    ],
+    about: "China's frontline tracked infantry fighting vehicle, featuring a Russian-style dual 100mm/30mm weapon turret mated to an improved domestic armor chassis.",
+    specs: {
+      crew: "3 personnel (plus 7 passengers)",
+      weight: "24.0 tonnes",
+      length: "7.20 m",
+      width: "3.20 m",
+      height: "2.50 m",
+      engine: "Turbocharged diesel",
+      horsepower: "600 hp",
+      fuel: "600 litres",
+      speed: "65 km/h",
+      range: "500 km",
+      enteredService: "2014, China"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "100mm semi-automatic rifled gun / missile launcher", description: "" },
+      { section: "SECONDARY WEAPONS", name: "30mm coaxial autocannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Hardened steel armor with modular ceramic bolt-on panels", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Laser countermeasure and warning device array", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Detachable track side armor sheets", description: "" }
+    ],
+    whats: {
+      intro: "A long tracked vehicle with flat bolt-on armor panel flanks and a wide turret displaying two distinct barrels protruding together.",
+      cues: [
+        { letter: "A", keyword: "BARRELS", description: "Double gun barrel pairing layout" },
+        { letter: "B", keyword: "HULL", description: "Square bolt patterns along the hull flanks with high crisp nose ridge lines" }
+      ]
+    },
+    variants: [
+      { name: "ZBD-04", year: 2004, label: "Original baseline light variant with an un-stepped amphibious nose shape", visibleDifferences: [], internalDifferences: [] },
+      { name: "ZBD-04A", year: 2014, label: "The modernized heavy variant featuring flat boxy bolt-on side skirts", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
