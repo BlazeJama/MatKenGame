@@ -13,6 +13,12 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Component Showcase page (v62)
+- New `src/screens/ShowcaseScreen.jsx` — a standalone design system reference page accessible from the landing screen.
+- Tapping the `v0.2.0 · CLASSIFIED` version badge in the landing footer navigates to the showcase.
+- Sections: Colour Palette (14 swatches with hex values), Typography (Bebas Neue display + Share Tech Mono data at all sizes), TacCard variants (default, stat, image), Buttons (primary/ghost amber/ghost grey/danger/small/disabled), Filter Pills (category, difficulty, mode), Answer Options (all 4 states: default/correct/wrong/eliminated), Badges & Labels (category/difficulty/mode/YOU tag), Progress Bars (round, timer at amber/orange/red, score percent), Score Display (4 rating tiers), Input Fields (callsign + search), Target Brackets (4 sizes), SW Update Banner.
+- Landing screen `onShowcase` prop added; `App.jsx` wired the route and passes the prop.
+
 ### Added — Study Data populated for ALL 61 vehicles (v60)
 - **18 remaining vehicles** completed: 5 IFVs (Tulpar, ASCOD, Piranha V, VBCI, VBM Freccia), 7 Artillery (CAESAR, K9 Thunder, AS-90, M270 MLRS, 2S7 Pion, M777, PLZ-05), 6 Helicopters (CH-47 Chinook, Tiger HAD, UH-1 Huey, Mi-8 Hip, NH90, AW101 Merlin)
 - Each vehicle includes complete study data structure:

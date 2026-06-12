@@ -1,7 +1,7 @@
 import React from 'react';
 import TacCard from '../components/TacCard';
 
-export default function LandingScreen({ callsign, vehicles, bestScores, onSetup, onLeaderboard, onLearning, onEditCallsign }) {
+export default function LandingScreen({ callsign, vehicles, bestScores, onSetup, onLeaderboard, onLearning, onEditCallsign, onShowcase }) {
   const playableCount = vehicles.filter((v) => Array.isArray(v.images) && v.images.length > 0).length;
   const overallBest = Object.values(bestScores).flatMap((cat) =>
     Object.values(cat).flatMap((diff) => Object.values(diff))
@@ -114,7 +114,9 @@ export default function LandingScreen({ callsign, vehicles, bestScores, onSetup,
       </main>
 
       <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
-        <span className="font-data text-xs" style={{ color: "#1e293b", letterSpacing: "0.12em" }}>v0.2.0 · CLASSIFIED</span>
+        <button onClick={onShowcase} className="font-data text-xs" style={{ background: "none", border: "none", cursor: "pointer", color: "#1e293b", letterSpacing: "0.12em", padding: "8px" }}>
+          v0.2.0 · CLASSIFIED
+        </button>
       </footer>
     </div>
   );

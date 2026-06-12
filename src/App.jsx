@@ -19,6 +19,7 @@ import StatsScreen       from './screens/StatsScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
 import LearningHomeScreen  from './screens/LearningHomeScreen';
 import VehicleStudyScreen  from './screens/VehicleStudyScreen';
+import ShowcaseScreen      from './screens/ShowcaseScreen';
 
 function App() {
   const [screen, setScreen]         = useState("landing");
@@ -259,6 +260,8 @@ function App() {
     );
   } else if (screen === "vehicle-study") {
     body = <VehicleStudyScreen vehicle={studyVehicle} onBack={() => setScreen("learning")} />;
+  } else if (screen === "showcase") {
+    body = <ShowcaseScreen onBack={returnHome} />;
   } else if (screen === "home") {
     body = (
       <GameSetupScreen
@@ -301,6 +304,7 @@ function App() {
         onLeaderboard={() => goToLeaderboard("all", "all")}
         onLearning={() => setScreen("learning")}
         onEditCallsign={() => setCallsignModalOpen(true)}
+        onShowcase={() => setScreen("showcase")}
       />
     );
   }
