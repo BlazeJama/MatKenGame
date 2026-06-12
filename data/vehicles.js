@@ -563,6 +563,40 @@ export const vehicles = [
       "The M113 is the most widely used armoured fighting vehicle in history, with over 80,000 built and operators in more than 50 countries.",
       "Despite being designed in the 1950s, modified M113s are still used in active service by dozens of militaries today.",
       "The M113's aluminium hull was controversial at first — critics worried it would melt under fire — but it proved lighter and faster than steel alternatives."
+    ],
+    about: "The legendary aluminum-hulled workhorse of Western mechanized forces, providing basic battlefield mobility and battlefield transport to infantry squads across dozens of global conflicts.",
+    specs: {
+      crew: "2 personnel (plus 11 passengers)",
+      weight: "12.3 tonnes",
+      length: "4.86 m",
+      width: "2.69 m",
+      height: "2.20 m",
+      engine: "Detroit Diesel 6V53 V6 engine",
+      horsepower: "212 hp",
+      fuel: "360 litres",
+      speed: "66 km/h",
+      range: "480 km",
+      enteredService: "1960, United States"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "12.7mm M2 Browning heavy machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Optional pintle-mounted 7.62mm M60 machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "5083 Aircraft-grade aluminum alloy armor", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Internal spall suppression blankets", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Front-mounted trim vane engine heat shield", description: "" }
+    ],
+    whats: {
+      intro: "A boxy, tracked rectangular transport hull with a steeply sloped front nose and a wide hydraulic deployment ramp at the back.",
+      cues: [
+        { letter: "A", keyword: "WHEELS", description: "Five road wheels per side with no return rollers" },
+        { letter: "B", keyword: "CUPOLA", description: "Exposed high-mounted commander's cupola ring with single heavy gun layout" }
+      ]
+    },
+    variants: [
+      { name: "M113A2", year: 1964, label: "Improved engine cooling setup and rugged suspension dampers", visibleDifferences: [], internalDifferences: [] },
+      { name: "M113A3", year: 1987, label: "Massive upgrade including a turbocharged 275 hp engine and external armored fuel cell pods", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -580,6 +614,41 @@ export const vehicles = [
       "The BTR-80 can cross rivers under its own power using a water jet, with no preparation needed — the crew simply raises the trim vane and drives in.",
       "Its eight wheels are all driven, giving it excellent cross-country mobility even if two wheels are destroyed by a mine.",
       "The BTR-80 replaced the BTR-60 and BTR-70 specifically because Soviet troops complained that the older models' exits were dangerous under fire — the new side hatches open forward to provide cover."
+    ],
+    about: "Designed to rectify the operational downfalls of earlier Soviet wheeled transports, the BTR-80 features cross-country 8x8 mobility and distinctive dual-section troop access doors.",
+    specs: {
+      crew: "3 personnel (plus 7 passengers)",
+      weight: "13.6 tonnes",
+      length: "7.55 m",
+      width: "2.95 m",
+      height: "2.41 m",
+      engine: "KamAZ-7403 V8 turbocharged diesel",
+      horsepower: "260 hp",
+      fuel: "300 litres",
+      speed: "80 km/h",
+      range: "600 km",
+      enteredService: "1984, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "14.5mm KPVT heavy machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm PKT coaxial machine gun", description: "" },
+      { section: "SMOKE", name: "6 x 81mm smoke grenade launchers", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "All-welded steel armor protecting against 7.62mm rounds", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Overpressurized collective NBC filtration suite", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Bullet-resistant pneumatic run-flat tires", description: "" }
+    ],
+    whats: {
+      intro: "A lengthy, low-slung 8-wheeled amphibious vehicle with an angular boat-like hull belly and a small pointed turret positioned forward.",
+      cues: [
+        { letter: "A", keyword: "WHEELS", description: "Four evenly spaced large rubber tires on each side" },
+        { letter: "B", keyword: "DOORS", description: "Distinctive side passenger split doors wedged between the second and third axles" }
+      ]
+    },
+    variants: [
+      { name: "BTR-80K", year: 1986, label: "Command framework variation fitted with advanced long-range radios and navigation tracking equipment", visibleDifferences: [], internalDifferences: [] },
+      { name: "BTR-80A", year: 1994, label: "Fitted with a prominent modular weapons system carrying a 30mm 2A72 autocannon", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -597,6 +666,41 @@ export const vehicles = [
       "The Stryker was specifically sized to fit inside a C-130 Hercules transport aircraft, giving the US Army the ability to deploy armoured units anywhere in the world within hours.",
       "Unlike most APCs, the Stryker uses a remote weapon station that the gunner operates from inside the vehicle — keeping them protected while engaging targets.",
       "The Stryker's network of sensors and computers links every vehicle in a unit together, giving commanders a real-time picture of all friendly positions on the battlefield."
+    ],
+    about: "The centerpiece of the US Army's rapid-deployment brigade combat teams, the Stryker bridges the tactical operational gap between heavy tracked forces and light infantry.",
+    specs: {
+      crew: "2 personnel (plus 9 passengers)",
+      weight: "16.5 tonnes",
+      length: "6.95 m",
+      width: "2.72 m",
+      height: "2.64 m",
+      engine: "Caterpillar 3126 diesel engine",
+      horsepower: "350 hp",
+      fuel: "212 litres",
+      speed: "100 km/h",
+      range: "530 km",
+      enteredService: "2002, United States"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "Protector Remote Weapon Station (RWS) with 12.7mm M2 machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Alternate Mk 19 40mm automatic grenade launcher", description: "" },
+      { section: "SMOKE", name: "4 x M6 smoke grenade clusters", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "High-hardness steel hull backed by MEXAS ceramic armor tiles", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Reinforced shock-absorbing internal troop bench frames", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Integrated automatic fire suppression array", description: "" }
+    ],
+    whats: {
+      intro: "A high-stature, very modern 8x8 wheeled vehicle with a sharp wedge nose, slab sides, and a low-profile weapon turret on the roof.",
+      cues: [
+        { letter: "A", keyword: "HULL", description: "Tall, flat vertical side hull structures" },
+        { letter: "B", keyword: "RWS", description: "Central remote weapon module with no traditional manned gun turret" }
+      ]
+    },
+    variants: [
+      { name: "M1126 ICV", year: 2002, label: "Infantry Carrier Vehicle basic baseline troop transporter configuration", visibleDifferences: [], internalDifferences: [] },
+      { name: "M1128 MGS", year: 2003, label: "Mobile Gun System variant sporting an external 105mm tank cannon", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -614,6 +718,40 @@ export const vehicles = [
       "The FV432 entered British Army service in 1963 and variants are still in use today — over 60 years of front-line service.",
       "During the Falklands War, FV432s were used as ambulances and command vehicles, showing how versatile the basic hull design could be.",
       "The FV432 was designed to be fully amphibious using a flotation screen, though this feature was rarely used in practice."
+    ],
+    about: "Serving as the primary tracked infantry delivery platform for the British Army for generations, the FV432 is a simple, heavy-gauge steel armored battlefield box.",
+    specs: {
+      crew: "2 personnel (plus 10 passengers)",
+      weight: "15.3 tonnes",
+      length: "5.25 m",
+      width: "2.55 m",
+      height: "2.28 m",
+      engine: "Rolls-Royce K60 multi-fuel engine",
+      horsepower: "240 hp",
+      fuel: "454 litres",
+      speed: "52 km/h",
+      range: "425 km",
+      enteredService: "1963, United Kingdom"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "7.62mm L7 General Purpose Machine Gun (GPMG)", description: "" },
+      { section: "SMOKE", name: "Dual three-barrel forward smoke dischargers", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "All-welded heavy steel plate providing defense up to 12.7mm rounds", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Retractable fabric wading screens for water operations", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Sealed interior chemical blast defense liner", description: "" }
+    ],
+    whats: {
+      intro: "A squat, short tracked vehicle with completely flat steel sides and an offset exhaust pipe running cleanly along its roofline edge.",
+      cues: [
+        { letter: "A", keyword: "HATCH", description: "Large circular commander's roof escape hatch" },
+        { letter: "B", keyword: "WHEELS", description: "Five road wheels layout with distinctive dual upper track support return rollers" }
+      ]
+    },
+    variants: [
+      { name: "FV432 Mortar Carrier", year: 1965, label: "Fitted with an internal 81mm mortar firing straight through a spinning roof port", visibleDifferences: [], internalDifferences: [] },
+      { name: "FV432 Bulldog", year: 2006, label: "Modern variant upgraded with bolt-on reactive composite armor grids and air-conditioning units", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -631,6 +769,41 @@ export const vehicles = [
       "The Patria AMV is one of the most modular APCs ever built — the same hull can be reconfigured as a troop carrier, IFV, mortar carrier, ambulance, or command vehicle in the field.",
       "Finland designed the AMV to operate reliably at -40°C, with heating systems that keep the engine and crew compartment functional without external power.",
       "The AMV's hull can be fitted with add-on armour packages that nearly double its protection level, adapting it to different threat environments."
+    ],
+    about: "A cutting-edge European modular 8x8 armored system, globally renowned for its exceptional mines protection design and flexible layout changes.",
+    specs: {
+      crew: "3 personnel (plus 10 passengers)",
+      weight: "26.0 tonnes (can reach up to 32.0 tonnes depending on weapon gear)",
+      length: "7.70 m",
+      width: "2.80 m",
+      height: "2.30 m",
+      engine: "Scania DI12 12-cylinder turbo diesel",
+      horsepower: "540 hp",
+      fuel: "400 litres",
+      speed: "100 km/h",
+      range: "800 km",
+      enteredService: "2004, Finland"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "12.7mm heavy machine gun in a Remote Weapon Station", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Coaxial 7.62mm machine gun", description: "" },
+      { section: "SMOKE", name: "Integrated multi-directional defensive smoke block arrays", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Advanced high-tier modular ballistic armor kit", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Double-layered V-shaped anti-mine underside blast hull belly", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Specialized infra-red absorbing low-visibility thermal paint finish", description: "" }
+    ],
+    whats: {
+      intro: "A massive, highly angular modern 8x8 wheeled vehicle with clean modular panels, a tall ride clearance, and a wide rear stance.",
+      cues: [
+        { letter: "A", keyword: "FENDERS", description: "Distinctive wheel layout with wide geometric fenders" },
+        { letter: "B", keyword: "PANELS", description: "Clean modular bolt seams visible along the engine and cabin panels" }
+      ]
+    },
+    variants: [
+      { name: "Patria AMV APC", year: 2004, label: "Baseline configuration infantry sector variant with light remote weapon mount", visibleDifferences: [], internalDifferences: [] },
+      { name: "Rosomak IFV", year: 2004, label: "Polish variant boasting an Italian Oto Melara Hitfist turret equipped with a 30mm cannon", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -648,6 +821,41 @@ export const vehicles = [
       "The Boxer uses a revolutionary 'drive module plus mission module' design — the front crew cab can be separated from the rear payload section and swapped in under an hour.",
       "This modularity means a single Boxer drive module can serve as an APC one day and an ambulance or command vehicle the next, without any workshop modifications.",
       "The Boxer is in service with Germany, the Netherlands, Lithuania, and Australia, and is one of the heaviest wheeled APCs ever built — nearly as well protected as some infantry fighting vehicles."
+    ],
+    about: "Built around a unique dual-component concept, the Boxer features an interchangeable rear mission module that can be hot-swapped in under an hour to change its role.",
+    specs: {
+      crew: "3 personnel (plus 8 passengers)",
+      weight: "33.0 tonnes (gross configuration weight)",
+      length: "7.88 m",
+      width: "2.99 m",
+      height: "2.37 m",
+      engine: "MTU V8 199 TE20 diesel engine",
+      horsepower: "711 hp",
+      fuel: "500 litres",
+      speed: "103 km/h",
+      range: "1,050 km",
+      enteredService: "2009, Germany / Netherlands"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "Heckler & Koch GMG 40mm automatic grenade launcher or 12.7mm machine gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Pintle-mounted 7.62mm MG3 support weapon", description: "" },
+      { section: "SMOKE", name: "Roof-integrated perimeter smoke grid assemblies", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "AMAP (Advanced Modular Armour Protection) composite layer system", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Dual-wall decoupled hull shell for isolating blast waves", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Top-attack armor defenses shielding against sub-munitions", description: "" }
+    ],
+    whats: {
+      intro: "An exceptionally large, heavy 8-wheeled vehicle with a tall geometric profile and a visible split line where the rear module drops into place.",
+      cues: [
+        { letter: "A", keyword: "PROFILE", description: "Immense structural height with heavily sloped upper nose glazing" },
+        { letter: "B", keyword: "MODULE", description: "Visible square structural seam running completely around the rear half" }
+      ]
+    },
+    variants: [
+      { name: "Boxer GTK", year: 2009, label: "Standard baseline armored personnel transport version", visibleDifferences: [], internalDifferences: [] },
+      { name: "Boxer RCT30", year: 2018, label: "Upgraded infantry fighting version utilizing the uncrewed Puma IFV 30mm turret", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -665,6 +873,40 @@ export const vehicles = [
       "The BTR-60 was the first Soviet APC built on its own purpose-designed chassis rather than adapted from a truck — every wheeled Soviet APC since traces its lineage to it.",
       "The BTR-60 uses two engines, each driving four wheels on its own side. If one engine is destroyed, the vehicle can still drive away on the other.",
       "Over 25,000 BTR-60s were built, and they served with more than 50 countries — many of them still operating modernised variants today."
+    ],
+    about: "Developing the foundational blueprint for Soviet 8x8 wheeled armored platforms, the BTR-60 brought amphibious squad transport capabilities to Soviet motorized rifle units.",
+    specs: {
+      crew: "2 personnel (plus 14 passengers)",
+      weight: "10.3 tonnes",
+      length: "7.56 m",
+      width: "2.82 m",
+      height: "2.31 m",
+      engine: "2 x GAZ-49 6-cylinder gasoline engines",
+      horsepower: "180 hp total (90 hp per engine)",
+      fuel: "290 litres",
+      speed: "80 km/h",
+      range: "500 km",
+      enteredService: "1960, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "14.5mm KPVT heavy machine gun (BTR-60PB variant)", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm PKT coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Sloped welded homogeneous steel plate skin", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Built-in amphibious rear hull water jet channel propulsion", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Central tire inflation management system", description: "" }
+    ],
+    whats: {
+      intro: "A classic boat-shaped 8-wheeled Soviet combat carrier with a distinctively tapered lower chin profile and a small conical turret.",
+      cues: [
+        { letter: "A", keyword: "WHEELS", description: "Eight large wheels with visible gaps between them" },
+        { letter: "B", keyword: "HATCHES", description: "Dual roof passenger entry escape hatches, engine ventilation slits located at the very rear" }
+      ]
+    },
+    variants: [
+      { name: "BTR-60PA", year: 1963, label: "Introduced a fully enclosed, welded steel roof over the passenger hold", visibleDifferences: [], internalDifferences: [] },
+      { name: "BTR-60PB", year: 1966, label: "Fully finalized version carrying the conical machine gun turret assembly", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -682,6 +924,40 @@ export const vehicles = [
       "The VAB (Véhicule de l'Avant Blindé) is fully amphibious using two water jets — French marines used it for beach assaults and river crossings without preparation.",
       "Over 5,000 VABs have been built, and the platform has seen combat with French forces in Lebanon, Bosnia, Mali, Afghanistan, and the Sahel.",
       "Despite being designed in the 1970s, modernised VABs are still in front-line French service — replacements (the Griffon) only began arriving in the early 2020s."
+    ],
+    about: "France's foundational armored front-line transport, the VAB is a highly versatile, reliable wheeled system configured in both 4x4 and 6x6 variations.",
+    specs: {
+      crew: "2 personnel (plus 10 passengers)",
+      weight: "13.0 tonnes",
+      length: "5.98 m",
+      width: "2.49 m",
+      height: "2.06 m",
+      engine: "Renault MIDR 062045 diesel engine",
+      horsepower: "320 hp",
+      fuel: "310 litres",
+      speed: "92 km/h",
+      range: "1,200 km",
+      enteredService: "1976, France"
+    },
+    armament: [
+      { section: "MAIN WEAPON", name: "12.7mm M2HB heavy machine gun in a manual open ring mount", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Alternate 7.62mm AA-52 light defense machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "High-strength steel alloy armor rated against 7.62mm rounds", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Integrated twin hydraulic rear water-jet propulsion impellers", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Thick armored driver windshield protective safety shutters", description: "" }
+    ],
+    whats: {
+      intro: "A compact, angled 4-wheeled or 6-wheeled vehicle with a distinctive sloping forward nose plate featuring two large armored cabin windshields.",
+      cues: [
+        { letter: "A", keyword: "WINDSHIELDS", description: "Two large armored front observation windows" },
+        { letter: "B", keyword: "REAR", description: "A boxy flat rear profile with two large outward-opening access doors" }
+      ]
+    },
+    variants: [
+      { name: "VAB VTT", year: 1976, label: "Standard baseline French Army 4x4 infantry transporter version", visibleDifferences: [], internalDifferences: [] },
+      { name: "VCAC Mephisto", year: 1984, label: "Anti-tank variation fitted with a four-tube retractable HOT guided missile mount", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -738,6 +1014,41 @@ export const vehicles = [
       "The Bradley is unusual in that it can both transport soldiers AND fight alongside them — its 25mm chain gun and TOW missiles make it capable of destroying enemy tanks.",
       "During the 1991 Gulf War, Bradleys destroyed more Iraqi armoured vehicles than M1 Abrams tanks did.",
       "The Bradley's development was so troubled and expensive that it inspired a satirical 1998 film — 'The Pentagon Wars' — depicting how the original simple APC design grew into a complex fighting vehicle."
+    ],
+    about: "Engineered to engage and destroy enemy armor assets while delivering infantry directly into the line of fire, the Bradley combines a fast autocannon with hard-hitting anti-tank missiles.",
+    specs: {
+      crew: "3 personnel (plus 6 passengers)",
+      weight: "25.0 tonnes (early models) or up to 35.0 tonnes on modern variants",
+      length: "6.55 m",
+      width: "3.60 m",
+      height: "2.98 m",
+      engine: "Cummins VTA-903T 8-cylinder diesel",
+      horsepower: "600 hp",
+      fuel: "662 litres",
+      speed: "64 km/h",
+      range: "480 km",
+      enteredService: "1981, United States"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "25mm M242 Bushmaster chain gun", description: "" },
+      { section: "MISSILES", name: "Twin BGM-71 TOW anti-tank guided missile box launcher", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm M240C coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Spaced laminate aluminum/steel ballistic alloy armour skin", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Bolt-on explosive reactive armor (ERA) panel blocks (A2 onwards)", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Integrated vehicle perimeter smoke launch systems", description: "" }
+    ],
+    whats: {
+      intro: "A tall, tracked armored vehicle with an angled front glacis, a large two-man offset turret, and a rectangular missile launcher pod folded along its left side.",
+      cues: [
+        { letter: "A", keyword: "LAUNCHER", description: "Distinctive boxy TOW launcher arm fixed onto the left turret side" },
+        { letter: "B", keyword: "TRACKS", description: "Complex heavy double-pin track skirts along both sides" }
+      ]
+    },
+    variants: [
+      { name: "M2A2 ODS", year: 1992, label: "Desert Storm upgrade integrating laser rangefinders and battlefield GPS links", visibleDifferences: [], internalDifferences: [] },
+      { name: "M2A3", year: 2000, label: "Fully digitized version outfitted with a tall independent commander's thermal panoramic sight", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -761,6 +1072,41 @@ export const vehicles = [
       "The BMP-2's 30mm autocannon can engage both ground targets and low-flying helicopters, making it one of the most versatile IFVs ever built.",
       "Unlike most Western IFVs, the BMP-2 was designed so infantry could fire their personal weapons from inside the vehicle through firing ports along the sides.",
       "The BMP-2 is amphibious — it swims using its tracks with no preparation, though crews found its low freeboard made river crossings nerve-wracking in rough water."
+    ],
+    about: "A legendary Soviet tracked amphibious design, the BMP-2 improved on its predecessor by introducing a wider two-man turret and a high-rate-of-fire 30mm autocannon.",
+    specs: {
+      crew: "3 personnel (plus 7 passengers)",
+      weight: "14.3 tonnes",
+      length: "6.74 m",
+      width: "3.15 m",
+      height: "2.45 m",
+      engine: "UTD-20/3 V6 liquid-cooled diesel",
+      horsepower: "300 hp",
+      fuel: "462 litres",
+      speed: "65 km/h",
+      range: "600 km",
+      enteredService: "1980, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "30mm 2A42 automatic dual-feed cannon", description: "" },
+      { section: "MISSILES", name: "Roof-mounted 9M113 Konkurs anti-tank guided missile launcher", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm PKT coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Welded steel alloy armor optimized with highly sloped armor angles", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Low-profile infrared target mask configuration", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Amphibious track-driven water displacement hull design", description: "" }
+    ],
+    whats: {
+      intro: "An exceptionally low, flat tracked vehicle with an ultra-long sloped rib-textured front nose deck and a wide, low turret.",
+      cues: [
+        { letter: "A", keyword: "GUN", description: "Prominent, long needle-like 30mm gun barrel extending past the front nose" },
+        { letter: "B", keyword: "DOORS", description: "Dual rear access doors that double as internal fuel storage reservoirs" }
+      ]
+    },
+    variants: [
+      { name: "BMP-2D", year: 1982, label: "Modified variant adding heavy steel side armor plates; loses amphibious capability due to weight", visibleDifferences: [], internalDifferences: [] },
+      { name: "BMP-2M Berezhok", year: 2005, label: "Modern upgrade package incorporating four side-mounted Kornet missile tubes and digital optical sights", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -854,6 +1200,41 @@ export const vehicles = [
       "The Marder was one of the first true infantry fighting vehicles — designed not just to carry troops but to fight alongside them with its own heavy weapons.",
       "Its design placed such a priority on infantry protection that the troop compartment can withstand hits from 20mm rounds on all sides.",
       "The Marder has been continuously upgraded since its introduction in 1971 and remained in front-line German service for over 50 years."
+    ],
+    about: "A foundational pillar of Cold War West German armored vehicle design, the Marder was built to run alongside the Leopard 1 tank, establishing mechanized infantry tactics for the Bundeswehr.",
+    specs: {
+      crew: "3 personnel (plus 6 passengers)",
+      weight: "33.5 tonnes (A3 standard combat weight)",
+      length: "6.88 m",
+      width: "3.38 m",
+      height: "3.02 m",
+      engine: "MTU MB 833 Ea-500 6-cylinder diesel",
+      horsepower: "600 hp",
+      fuel: "650 litres",
+      speed: "65 km/h",
+      range: "500 km",
+      enteredService: "1971, West Germany"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "20mm Rheinmetall Rh-202 automatic cannon", description: "" },
+      { section: "MISSILES", name: "MILAN anti-tank guided missile launcher (stationed at the commander's hatch)", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm MG3 coaxial machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "All-welded steel plates shielding against 14.5mm armor-piercing ammunition", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Add-on spaced rubber shock-absorbing armor panels (A3 variant onwards)", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Standard interior overpressure chemical NBC system", description: "" }
+    ],
+    whats: {
+      intro: "A long, steeply pitched tracked vehicle with a small, narrow weapon pod turret sitting on a highly angular hull frame.",
+      cues: [
+        { letter: "A", keyword: "EXHAUST", description: "Sloping nose layout with the engine exhaust grill mounted on the front right flank" },
+        { letter: "B", keyword: "TURRET", description: "External exposed open weapon cradle on the small turret" }
+      ]
+    },
+    variants: [
+      { name: "Marder 1A1", year: 1979, label: "Introduced dual-feed system autocannons and passive night vision arrays", visibleDifferences: [], internalDifferences: [] },
+      { name: "Marder 1A3", year: 1988, label: "Heavily up-armored model featuring bolt-on armor plates; eliminates the old hull side firing ports", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -899,6 +1280,42 @@ export const vehicles = [
       "The Puma is one of the most heavily protected IFVs ever built — its modular armour can be upgraded in the field from 'Combat Light' (38 tonnes, air-transportable) to 'Combat' (43 tonnes, maximum protection).",
       "Its turret is unmanned — the gunner and commander sit inside the hull, removing the most exposed crew positions from harm's way.",
       "Germany's Puma development programme cost over 10 billion euros, making it one of the most expensive IFVs per unit ever fielded."
+    ],
+    about: "One of the most technologically advanced and heavily armored infantry fighting vehicles in service today, the Puma is built around modular security packages and an unmanned turret.",
+    specs: {
+      crew: "3 personnel (plus 6 passengers)",
+      weight: "31.4 tonnes (Level A baseline) or 43.0 tonnes (Level C fully up-armored configuration)",
+      length: "7.40 m",
+      width: "3.70 m",
+      height: "3.10 m (to turret roof)",
+      engine: "MTU MT 892 Ka-501 V10 diesel",
+      horsepower: "1,088 hp",
+      fuel: "900 litres",
+      speed: "70 km/h",
+      range: "600 km",
+      enteredService: "2015, Germany"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "30mm Mauser MK 30-2/ABM airburst-capable autocannon", description: "" },
+      { section: "SECONDARY WEAPONS", name: "5.56mm HK MG4 or 7.62mm MG5 coaxial machine gun", description: "" },
+      { section: "MISSILES", name: "Spike-LR anti-tank guided missile launcher assembly", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "AMAP advanced modular composite armor array blocks", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "MUSS (Multifunctional Self-Protection System) soft-kill missile countermeasure suite", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Decoupled mine-resistant floor structure plates", description: "" }
+    ],
+    whats: {
+      intro: "A massive, highly futuristic tracked vehicle with blocky, geometric armor plating and a compact uncrewed turret centered on the roof.",
+      cues: [
+        { letter: "A", keyword: "TURRET", description: "Unmanned turret layout offset to the left" },
+        { letter: "B", keyword: "OPTICS", description: "Prominent cylindrical optronic sensor mast" },
+        { letter: "C", keyword: "ARMOUR", description: "Massive multi-layered block armor flanks" }
+      ]
+    },
+    variants: [
+      { name: "Puma Level A", year: 2015, label: "Air-transportable baseline weight configuration designed for loading inside an Airbus A400M", visibleDifferences: [], internalDifferences: [] },
+      { name: "Puma Level C", year: 2015, label: "Heavy combat configuration outfitted with thick composite side blocks and turret roof protection modules", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -955,6 +1372,40 @@ export const vehicles = [
       "The M109 Paladin can fire its first round within 60 seconds of stopping and be moving again 60 seconds later — a tactic called 'shoot and scoot' to avoid counter-battery fire.",
       "It has been continuously upgraded since 1963 and is still the primary self-propelled howitzer of the US Army today.",
       "The Paladin's 155mm shell can reach targets over 30 kilometres away with standard ammunition — and over 40 km with rocket-assisted rounds."
+    ],
+    about: "The most widely used Western self-propelled howitzer in history, the M109 delivers mobile heavy fire support via a 155mm cannon mounted inside a massive fully rotating turret.",
+    specs: {
+      crew: "6 personnel (reduced to 4 on modernized variants)",
+      weight: "27.5 tonnes",
+      length: "9.12 m",
+      width: "3.15 m",
+      height: "3.27 m",
+      engine: "Detroit Diesel 8V71T supercharged engine",
+      horsepower: "450 hp",
+      fuel: "511 litres",
+      speed: "56 km/h",
+      range: "350 km",
+      enteredService: "1963, United States"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "155mm M126 Howitzer cannon (or M284 long-barrel on later variants)", description: "" },
+      { section: "SECONDARY WEAPONS", name: "12.7mm M2HB roof-mounted heavy defense machine gun", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "32mm welded structural aluminum core hull skin", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Secure internal hydraulic ammunition storage configurations", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Dual massive rear ground-anchor stabilizing spades", description: "" }
+    ],
+    whats: {
+      intro: "A tall, wide tracked vehicle with an oversized box-shaped turret and a massive heavy artillery barrel ending in a dual-baffle muzzle brake.",
+      cues: [
+        { letter: "A", keyword: "TURRET", description: "Large square hatch doors at the rear of the turret for loading ammunition shells" },
+        { letter: "B", keyword: "WHEELS", description: "Seven road wheels per side with no return rollers" }
+      ]
+    },
+    variants: [
+      { name: "M109A2", year: 1979, label: "Introduced a longer barrel layout with improved ammunition blast storage", visibleDifferences: [], internalDifferences: [] },
+      { name: "M109A6 Paladin", year: 1991, label: "Deep modernization featuring an automated fire control computer system, allowing it to halt and fire within 30 seconds", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -972,6 +1423,41 @@ export const vehicles = [
       "The PzH 2000 can fire three rounds in 9 seconds and sustain 10-13 rounds per minute — faster than almost any other self-propelled howitzer in the world.",
       "Its automated loading system means the crew of five never has to manually handle the 43 kg shells, reducing fatigue and increasing sustained rate of fire.",
       "The PzH 2000 saw combat in Afghanistan with Dutch forces and in Ukraine, where its range and accuracy made it one of the most prized artillery systems of that conflict."
+    ],
+    about: "A pinnacle of modern artillery engineering, the Panzerhaubitze 2000 is a fully automated 155mm system capable of immense rapid-fire bursts and multiple-round simultaneous impact target missions.",
+    specs: {
+      crew: "5 personnel (can operate with 3 in automated combat modes)",
+      weight: "55.8 tonnes",
+      length: "11.70 m",
+      width: "3.60 m",
+      height: "3.10 m",
+      engine: "MTU MT881 Ka-500 supercharged diesel",
+      horsepower: "986 hp",
+      fuel: "1,000 litres",
+      speed: "67 km/h",
+      range: "420 km",
+      enteredService: "1998, Germany"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "Rheinmetall 155mm L52 chromium-lined artillery gun", description: "" },
+      { section: "SECONDARY WEAPONS", name: "7.62mm Rheinmetall MG3 roof defense machine gun", description: "" },
+      { section: "SMOKE", name: "2 x 4 smoke grenade launchers", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "All-welded steel armor core resistant to 14.5mm direct fires", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Turret roof blanket armor specifically designed to defeat top-attack cluster bomblets", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Full automated internal NBC collective overpressure seals", description: "" }
+    ],
+    whats: {
+      intro: "An immense, tank-sized tracked artillery vehicle with an ultra-long barrel that extends far past the vehicle's front hull line.",
+      cues: [
+        { letter: "A", keyword: "BARREL", description: "Long 52-caliber gun barrel with an integrated fume extractor midway down" },
+        { letter: "B", keyword: "TURRET", description: "A boxy turret featuring slanted side panel wedges" }
+      ]
+    },
+    variants: [
+      { name: "PzH 2000 A2", year: 2010, label: "Upgraded model adding an independent auxiliary power unit and crew cooling ventilation systems", visibleDifferences: [], internalDifferences: [] },
+      { name: "PzH 2000 A5", year: 2020, label: "Modernized digital framework upgrade featuring an advanced ammunition automated loader terminal", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -989,6 +1475,40 @@ export const vehicles = [
       "The 2S19 Msta-S uses the same hull as the T-80 tank, giving it excellent cross-country mobility compared to most self-propelled howitzers.",
       "It can fire a special Krasnopol laser-guided shell that homes in on a target painted by a forward observer, hitting with near-pinpoint accuracy at over 20 km.",
       "The Msta-S is designed for fully automated ammunition handling — the autoloader can cycle a round every 6–7 seconds without crew intervention."
+    ],
+    about: "Designed to replace the aging Akatsiya platforms, the 2S19 Msta utilizes a heavy tracked chassis derived from T-72 and T-80 components to deploy a rapid-firing 152mm gun system.",
+    specs: {
+      crew: "5 personnel (plus 2 ground ammunition loaders when stationary)",
+      weight: "42.0 tonnes",
+      length: "11.92 m",
+      width: "3.58 m",
+      height: "2.98 m",
+      engine: "V-84A 12-cylinder multi-fuel diesel",
+      horsepower: "840 hp",
+      fuel: "850 litres",
+      speed: "60 km/h",
+      range: "500 km",
+      enteredService: "1989, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "152mm 2A64 long-range rifled howitzer", description: "" },
+      { section: "SECONDARY WEAPONS", name: "Remote-operated 12.7mm NSVT roof anti-aircraft machine gun", description: "" },
+      { section: "SMOKE", name: "6 x turret-mounted smoke grenade dischargers", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Welded steel plating shielding against small arms and shell splinters", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Internal armored separation walls dividing the shell and charge rooms", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Automatic fire suppression sensors", description: "" }
+    ],
+    whats: {
+      intro: "A long, imposing tracked artillery system featuring a high-clearance main chassis running a massive, high-angle turret block.",
+      cues: [
+        { letter: "A", keyword: "CLAMP", description: "Distinctive dual-spring travel lock bracket clamp fixed onto the center nose glacis plate to secure the gun barrel during transit" }
+      ]
+    },
+    variants: [
+      { name: "2S19M1", year: 2006, label: "Upgraded model integrating an automated digital lay computer system and satellite guidance mapping", visibleDifferences: [], internalDifferences: [] },
+      { name: "2S19M2", year: 2013, label: "Heavily modernized variant updating the piece to a higher 8-round-per-minute rate of fire with advanced thermal signature shrouds", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1125,6 +1645,42 @@ export const vehicles = [
       "The Apache's fire control radar can track up to 128 targets simultaneously and prioritise which to engage — allowing a single crew to coordinate attacks on an entire armoured column.",
       "Apache pilots wear helmet-mounted displays that slave the 30mm chain gun directly to where they look — wherever the pilot looks, the gun points.",
       "The Apache is designed to survive hits from 23mm rounds — its critical components are armoured, its rotor blades can take multiple bullet hits and keep flying, and its engines can run for 30 minutes after losing all oil."
+    ],
+    about: "The definitive Western attack helicopter, the Apache is an armored tandem-seat twin-engine platform engineered to locate and destroy heavy armor formations in any weather environment.",
+    specs: {
+      crew: "2 personnel (Pilot in rear cockpit, Co-pilot/Gunner in front cockpit)",
+      weight: "5,160 kg (empty weight) or up to 10,432 kg max takeoff weight",
+      length: "17.70 m (overall with rotors turning)",
+      width: "4.80 m (stub wing span)",
+      height: "3.87 m",
+      engine: "2 x General Electric T700-GE-701C turboshaft engines",
+      horsepower: "3,780 hp total (1,890 hp per engine)",
+      fuel: "1,420 litres (internal capacity)",
+      speed: "293 km/h",
+      range: "480 km",
+      enteredService: "1984, United States"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "30mm M230 automatic chain gun (1,200 rounds)", description: "" },
+      { section: "MISSILES", name: "Up to 16 x AGM-114 Hellfire laser-guided anti-tank missiles", description: "" },
+      { section: "ROCKETS", name: "Hydra 70 70mm folding-fin aerial rocket pods", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Lightweight Kevlar-lined titanium crew survival tub structure", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Boron-composite armor cockpit dividers and blast shields", description: "" },
+      { section: "SENSORS", name: "IHADSS integrated electronic thermal jamming countermeasures", description: "" }
+    ],
+    whats: {
+      intro: "A narrow, aggressive attack helicopter with a prominent chin-mounted gun pod, small weapon-carrying stub wings, and two massive engine nacelles clamped tightly to its upper back.",
+      cues: [
+        { letter: "A", keyword: "COCKPITS", description: "Step-up tandem glass bubble cockpits" },
+        { letter: "B", keyword: "WINGS", description: "Short mid-mounted weapon pylons" },
+        { letter: "C", keyword: "GUN", description: "A heavy mechanical gun dangling behind the front nose gear" }
+      ]
+    },
+    variants: [
+      { name: "AH-64A", year: 1984, label: "The original base production version deployed during the Cold War era", visibleDifferences: [], internalDifferences: [] },
+      { name: "AH-64D Longbow", year: 1997, label: "Features a highly distinct circular millimeter-wave radar dome mounted directly on top of the main rotor mast", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1142,6 +1698,41 @@ export const vehicles = [
       "The Mi-24 Hind is unique among attack helicopters — it has a full troop compartment capable of carrying eight fully-equipped soldiers, making it simultaneously a gunship and an assault transport.",
       "Afghan Mujahideen fighters called the Mi-24 the 'flying tank' and 'devil's chariot' — its armoured hull could absorb small arms fire that would destroy other helicopters.",
       "The Mi-24 was so feared during the Soviet-Afghan War that the CIA supplied Stinger man-portable missiles to the Mujahideen specifically to counter it."
+    ],
+    about: "A unique Cold War hybrid design, the Mi-24 'Hind' functions as both a heavily armed attack gunship and a light armored infantry transport capable of inserting a squad of troops.",
+    specs: {
+      crew: "2 to 3 personnel (plus 8 fully equipped combat soldiers in the center hold)",
+      weight: "8,500 kg (empty) or 12,000 kg max takeoff mass",
+      length: "17.50 m (fuselage length)",
+      width: "6.50 m (stub wing span)",
+      height: "6.50 m",
+      engine: "2 x Klimov TV3-117 turboshaft engines",
+      horsepower: "4,400 hp total (2,200 hp per engine)",
+      fuel: "1,500 litres",
+      speed: "335 km/h",
+      range: "450 km (extends to 950 km with external drop tanks)",
+      enteredService: "1972, Soviet Union"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "12.7mm Yak-B four-barrel rotary nose machine gun (or fixed twin 30mm side cannon on Hind-F)", description: "" },
+      { section: "MISSILES", name: "9M114 Shturm (AT-6 Spiral) radio-guided anti-tank missiles", description: "" },
+      { section: "ROCKETS", name: "S-8 80mm unguided aerial rocket launcher pods", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Steel and titanium cockpit shell armor plates resistant to 12.7mm rounds", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Ballistic-resistant glass canopy bubbles", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Fully overpressurized collective interior NBC defense suite", description: "" }
+    ],
+    whats: {
+      intro: "A massive, bulking attack helicopter with distinctive downward-canted stub wings and an enlarged passenger fuselage midsection.",
+      cues: [
+        { letter: "A", keyword: "COCKPITS", description: "Double-bubble separate canopy cockpits (on D variants and up)" },
+        { letter: "B", keyword: "WINGS", description: "Prominent forward-swept wing pylons creating a broad shoulder profile" }
+      ]
+    },
+    variants: [
+      { name: "Mi-24D Hind-D", year: 1973, label: "Introduced the iconic stepped tandem double bubble cockpit canopy layout", visibleDifferences: [], internalDifferences: [] },
+      { name: "Mi-24P Hind-F", year: 1981, label: "Swapped out the movable nose gun for a fixed, devastating double-barrel 30mm autocannon bolted to the starboard fuselage side", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1159,6 +1750,40 @@ export const vehicles = [
       "A single UH-60 Black Hawk can carry 11 combat-equipped soldiers, sling-load up to 4 tonnes of external cargo, or be rapidly converted into a medevac aircraft with six stretchers.",
       "The Black Hawk is specifically designed to be crash-worthy — its airframe is engineered to absorb impacts at up to 13.4 m/s vertical descent, protecting the crew in a hard landing.",
       "Black Hawks are used by over 30 countries and have served in virtually every US military operation since replacing the UH-1 Huey in 1979."
+    ],
+    about: "The premier medium-lift tactical transport asset of the US military, the Black Hawk is a rugged, low-profile helicopter engineered to deliver air assault squads into hot landing zones.",
+    specs: {
+      crew: "2 Pilots (plus 1 to 2 crew chiefs/door gunners, and 11 fully armed soldiers in the back)",
+      weight: "5,224 kg (empty) or up to 9,979 kg max tactical mission configuration",
+      length: "19.76 m (overall with rotors turning)",
+      width: "2.36 m (cabin body width)",
+      height: "5.13 m",
+      engine: "2 x General Electric T700-GE-701C turboshaft engines",
+      horsepower: "3,780 hp total (1,890 hp per engine)",
+      fuel: "1,360 litres (internal tanks)",
+      speed: "294 km/h",
+      range: "584 km (extends beyond 1,600 km using ESSS external wing auxiliary cells)",
+      enteredService: "1979, United States"
+    },
+    armament: [
+      { section: "SECONDARY WEAPONS", name: "2 x 7.62mm M134 Miniguns or M60D machine guns mounted in cabin windows", description: "" },
+      { section: "MISSILES", name: "Optional ESSS external wings carrying Hellfire missile clusters", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Heavy armor-plated crew seats and cockpit floor mats", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Ballistic-tolerant main rotor spars constructed with titanium cores", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Self-sealing, crash-resistant internal fuel cell architecture", description: "" }
+    ],
+    whats: {
+      intro: "A long, slender, low-profile utility helicopter resting on a rugged fixed wheel landing gear with a lengthy passenger cabin box.",
+      cues: [
+        { letter: "A", keyword: "ROTORS", description: "Four swept-tip composite main rotor blades" },
+        { letter: "B", keyword: "TAIL", description: "A distinctively canted tail rotor wheel trailing flat on the ground" }
+      ]
+    },
+    variants: [
+      { name: "UH-60A", year: 1979, label: "The initial original base model deployed during the late Cold War", visibleDifferences: [], internalDifferences: [] },
+      { name: "UH-60L", year: 1988, label: "Upgraded model outfitted with uprated engines and an enhanced high-durability main gearbox network", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
@@ -1193,6 +1818,41 @@ export const vehicles = [
       "The Ka-52 uses a coaxial rotor system — two sets of blades on the same mast spinning in opposite directions — which eliminates the tail rotor entirely and allows it to rotate and fly sideways as easily as forward.",
       "The Ka-52 is the only attack helicopter in the world fitted with an ejection seat — the rotor blades are blown off explosively before the seat fires, allowing the crew to escape in an emergency.",
       "Its nose-mounted radar and sensor suite allows it to fly behind terrain using 'pop-up' attack profiles, rising briefly to fire before dropping back into cover."
+    ],
+    about: "A highly unique heavy attack platform, the Ka-52 is characterized by a distinct side-by-side cockpit layout and a signature dual contra-rotating coaxial main rotor assembly.",
+    specs: {
+      crew: "2 personnel (Pilot and Weapons System Operator seated shoulder-to-shoulder)",
+      weight: "7,700 kg (empty) or 10,800 kg max takeoff weight",
+      length: "16.00 m",
+      width: "7.30 m (stub wing span)",
+      height: "4.93 m",
+      engine: "2 x Klimov TV3-117VMA turboshaft engines",
+      horsepower: "4,400 hp total (2,200 hp per engine)",
+      fuel: "1,500 kg (approx. 1,900 litres internal)",
+      speed: "310 km/h",
+      range: "520 km",
+      enteredService: "2011, Russia"
+    },
+    armament: [
+      { section: "MAIN GUN", name: "30mm 2A42 automatic cannon (mounted on the starboard hull flank)", description: "" },
+      { section: "MISSILES", name: "Up to 12 x 9K121 Vikhr laser-guided supersonic anti-tank missiles", description: "" },
+      { section: "ROCKETS", name: "B-8V20 80mm rocket launcher blocks", description: "" }
+    ],
+    protection: [
+      { section: "ARMOUR", name: "Full perimeter armored cockpit capsule shielding against 23mm projectiles", description: "" },
+      { section: "PROTECTION SYSTEMS", name: "Vital engine compartment side-armor titanium plates", description: "" },
+      { section: "SENSORS", name: "Vitebsk L-370 integrated directional infrared laser jammer pods", description: "" }
+    ],
+    whats: {
+      intro: "An aggressive attack helicopter with a noticeably wide front nose cockpit housing two crew members side-by-side, and two layers of main rotor blades with no tail rotor.",
+      cues: [
+        { letter: "A", keyword: "ROTORS", description: "Coaxial dual main rotors stacked directly on top of each other" },
+        { letter: "B", keyword: "TAIL", description: "Complete absence of a tail rotor assembly at the rear fin block" }
+      ]
+    },
+    variants: [
+      { name: "Ka-50 Black Shark", year: 1995, label: "The earlier single-seat prototype baseline foundation concept", visibleDifferences: [], internalDifferences: [] },
+      { name: "Ka-52K Katran", year: 2015, label: "Navalised variant engineered with folding composite rotor blades and anti-corrosion marine metallurgy", visibleDifferences: [], internalDifferences: [] }
     ]
   },
   {
