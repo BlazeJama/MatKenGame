@@ -1268,12 +1268,244 @@ function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }) {
 
 const STUDY_TABS = ["OVERVIEW", "ARMAMENT", "PROTECTION", "WHATS", "VARIANTS"];
 
+// Group an armament/protection array by their section field
+function groupBySection(items) {
+  const order = [];
+  const map = {};
+  (items || []).forEach((item) => {
+    if (!map[item.section]) { map[item.section] = []; order.push(item.section); }
+    map[item.section].push(item);
+  });
+  return order.map((s) => ({ section: s, entries: map[s] }));
+}
+
+// Shared "no data" placeholder
+function IntelPending({ tab }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 200, paddingTop: 30 }}>
+      <div className="font-data text-center" style={{ fontSize: "0.62rem", letterSpacing: "0.16em", color: "rgba(245,158,11,0.35)", marginBottom: 8 }}>◈ {tab}</div>
+      <div className="font-display text-center" style={{ fontSize: "1.5rem", letterSpacing: "0.08em", color: "#1e293b", marginBottom: 10 }}>INTEL PENDING</div>
+      <div className="font-data text-center" style={{ fontSize: "0.62rem", color: "#1e293b", letterSpacing: "0.1em", lineHeight: 1.8 }}>
+        DATA NOT YET COMPILED<br />FOR THIS VEHICLE
+      </div>
+    </div>
+  );
+}
+
 function VehicleStudyScreen({ vehicle, onBack }) {
   const [tab,    setTab]    = useState("OVERVIEW");
   const [imgIdx, setImgIdx] = useState(0);
 
   if (!vehicle) return null;
   const images = Array.isArray(vehicle.images) ? vehicle.images : [];
+  const specs  = vehicle.specs || {};
+
+  const SPEC_ROWS = [
+    { label: "CREW",            key: "crew"           },
+    { label: "WEIGHT",          key: "weight"         },
+    { label: "LENGTH",          key: "length"         },
+    { label: "WIDTH",           key: "width"          },
+    { label: "HEIGHT",          key: "height"         },
+    { label: "ENGINE",          key: "engine"         },
+    { label: "HORSEPOWER",      key: "horsepower"     },
+    { label: "FUEL",            key: "fuel"           },
+    { label: "TOP SPEED",       key: "speed"          },
+    { label: "RANGE",           key: "range"          },
+    { label: "ENTERED SERVICE", key: "enteredService" },
+  ].filter(({ key }) => specs[key]);
+
+  const renderTabContent = () => {
+    if (tab === "OVERVIEW") {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* About */}
+          {vehicle.about && (
+            <div>
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ ABOUT</div>
+              <div className="font-data" style={{ fontSize: "0.75rem", color: "#64748b", letterSpacing: "0.03em", lineHeight: 1.7 }}>{vehicle.about}</div>
+            </div>
+          )}
+
+          {/* Specs grid */}
+          {SPEC_ROWS.length > 0 && (
+            <div>
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ SPECIFICATIONS</div>
+              <TacCard style={{ padding: "12px 14px" }}>
+                {SPEC_ROWS.map(({ label, key }, i) => (
+                  <div key={key} style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "baseline",
+                    padding: "6px 0",
+                    borderBottom: i < SPEC_ROWS.length - 1 ? "1px solid rgba(30,41,59,0.5)" : "none",
+                    gap: 12,
+                  }}>
+                    <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.12em", color: "#334155", flexShrink: 0 }}>{label}</div>
+                    <div className="font-data" style={{ fontSize: "0.72rem", color: "#94a3b8", letterSpacing: "0.03em", textAlign: "right" }}>{specs[key]}</div>
+                  </div>
+                ))}
+              </TacCard>
+            </div>
+          )}
+
+          {/* No study data fallback for basic info */}
+          {!vehicle.about && SPEC_ROWS.length === 0 && (
+            <TacCard style={{ padding: "14px 16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 16px" }}>
+                {[
+                  { label: "COUNTRY",  value: vehicle.country  || "—" },
+                  { label: "CATEGORY", value: vehicle.category === "Main Battle Tank" ? "MBT" : (vehicle.category || "—") },
+                  { label: "ERA",      value: vehicle.era       || "—" },
+                  { label: "IMAGES",   value: images.length > 0 ? `${images.length} on file` : "None" },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 3 }}>{label}</div>
+                    <div className="font-data" style={{ fontSize: "0.8rem", color: "#94a3b8", letterSpacing: "0.04em" }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+            </TacCard>
+          )}
+
+          {/* Fun facts */}
+          {Array.isArray(vehicle.funFacts) && vehicle.funFacts.length > 0 && (
+            <div>
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ FIELD NOTES</div>
+              {vehicle.funFacts.map((fact, i) => (
+                <TacCard key={i} style={{ padding: "12px 14px", marginBottom: 8 }}>
+                  <div className="font-data" style={{ fontSize: "0.72rem", color: "#64748b", letterSpacing: "0.04em", lineHeight: 1.6 }}>{fact}</div>
+                </TacCard>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (tab === "ARMAMENT") {
+      if (!vehicle.armament?.length) return <IntelPending tab={tab} />;
+      const groups = groupBySection(vehicle.armament);
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {groups.map(({ section, entries }) => (
+            <div key={section}>
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ {section}</div>
+              <TacCard style={{ padding: "4px 0" }}>
+                {entries.map((entry, i) => (
+                  <div key={i} style={{ padding: "10px 14px", borderBottom: i < entries.length - 1 ? "1px solid rgba(30,41,59,0.45)" : "none" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: entry.description ? 4 : 0 }}>
+                      <div className="font-data" style={{ fontSize: "0.75rem", color: "#94a3b8", letterSpacing: "0.03em", lineHeight: 1.4 }}>{entry.name}</div>
+                      {entry.visibilityRating > 0 && (
+                        <div className="font-data" style={{ fontSize: "0.6rem", color: "rgba(245,158,11,0.7)", flexShrink: 0 }}>{"◉".repeat(entry.visibilityRating)}</div>
+                      )}
+                    </div>
+                    {entry.description ? (
+                      <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.03em", lineHeight: 1.5 }}>{entry.description}</div>
+                    ) : null}
+                  </div>
+                ))}
+              </TacCard>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (tab === "PROTECTION") {
+      if (!vehicle.protection?.length) return <IntelPending tab={tab} />;
+      const groups = groupBySection(vehicle.protection);
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {groups.map(({ section, entries }) => (
+            <div key={section}>
+              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ {section}</div>
+              <TacCard style={{ padding: "4px 0" }}>
+                {entries.map((entry, i) => (
+                  <div key={i} style={{ padding: "10px 14px", borderBottom: i < entries.length - 1 ? "1px solid rgba(30,41,59,0.45)" : "none" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: entry.description ? 4 : 0 }}>
+                      <div className="font-data" style={{ fontSize: "0.75rem", color: "#94a3b8", letterSpacing: "0.03em", lineHeight: 1.4 }}>{entry.name}</div>
+                      {entry.visibilityRating > 0 && (
+                        <div className="font-data" style={{ fontSize: "0.6rem", color: "rgba(245,158,11,0.7)", flexShrink: 0 }}>{"◉".repeat(entry.visibilityRating)}</div>
+                      )}
+                    </div>
+                    {entry.description ? (
+                      <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.03em", lineHeight: 1.5 }}>{entry.description}</div>
+                    ) : null}
+                  </div>
+                ))}
+              </TacCard>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (tab === "WHATS") {
+      if (!vehicle.whats?.cues?.length) return <IntelPending tab={tab} />;
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {vehicle.whats.intro && (
+            <div className="font-data" style={{ fontSize: "0.75rem", color: "#64748b", letterSpacing: "0.03em", lineHeight: 1.7 }}>
+              {vehicle.whats.intro}
+            </div>
+          )}
+          <div>
+            <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ VISUAL CUES</div>
+            <TacCard style={{ padding: "4px 0" }}>
+              {vehicle.whats.cues.map((cue, i) => (
+                <div key={i} style={{ display: "flex", gap: 14, padding: "12px 14px", borderBottom: i < vehicle.whats.cues.length - 1 ? "1px solid rgba(30,41,59,0.45)" : "none", alignItems: "flex-start" }}>
+                  <div className="font-display" style={{ fontSize: "1.6rem", color: "#f59e0b", lineHeight: 1, flexShrink: 0, minWidth: 22 }}>{cue.letter}</div>
+                  <div>
+                    <div className="font-data" style={{ fontSize: "0.72rem", color: "#94a3b8", letterSpacing: "0.06em", marginBottom: 3 }}>{cue.keyword}</div>
+                    {cue.description && (
+                      <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.03em", lineHeight: 1.5 }}>{cue.description}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </TacCard>
+          </div>
+        </div>
+      );
+    }
+
+    if (tab === "VARIANTS") {
+      if (!vehicle.variants?.length) return <IntelPending tab={tab} />;
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {vehicle.variants.map((v, i) => (
+            <TacCard key={i} style={{ padding: "14px 16px" }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
+                <div className="font-display text-white" style={{ fontSize: "1.1rem", letterSpacing: "0.06em" }}>{v.name}</div>
+                {v.year && <div className="font-data" style={{ fontSize: "0.6rem", color: "#475569", letterSpacing: "0.08em" }}>{v.year}</div>}
+              </div>
+              {v.label && (
+                <div className="font-data" style={{ fontSize: "0.68rem", color: "#64748b", letterSpacing: "0.03em", lineHeight: 1.5, marginBottom: v.visibleDifferences?.length || v.internalDifferences?.length ? 10 : 0 }}>
+                  {v.label}
+                </div>
+              )}
+              {Array.isArray(v.visibleDifferences) && v.visibleDifferences.length > 0 && (
+                <div style={{ marginTop: 6 }}>
+                  <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.14em", color: "rgba(245,158,11,0.5)", marginBottom: 4 }}>◉ VISIBLE DIFFERENCES</div>
+                  {v.visibleDifferences.map((d, j) => (
+                    <div key={j} className="font-data" style={{ fontSize: "0.65rem", color: "#475569", lineHeight: 1.6 }}>· {d}</div>
+                  ))}
+                </div>
+              )}
+              {Array.isArray(v.internalDifferences) && v.internalDifferences.length > 0 && (
+                <div style={{ marginTop: 6 }}>
+                  <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.14em", color: "#334155", marginBottom: 4 }}>⚙ INTERNAL DIFFERENCES</div>
+                  {v.internalDifferences.map((d, j) => (
+                    <div key={j} className="font-data" style={{ fontSize: "0.65rem", color: "#475569", lineHeight: 1.6 }}>· {d}</div>
+                  ))}
+                </div>
+              )}
+            </TacCard>
+          ))}
+        </div>
+      );
+    }
+
+    return <IntelPending tab={tab} />;
+  };
 
   return (
     <div className="min-h-screen flex flex-col tac-grid font-tac" style={{ background: "#070b14" }}>
@@ -1329,44 +1561,7 @@ function VehicleStudyScreen({ vehicle, onBack }) {
 
       {/* Tab content */}
       <main className="flex-1 px-4 py-4 max-w-md mx-auto w-full overflow-y-auto">
-        {tab === "OVERVIEW" ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <TacCard style={{ padding: "14px 16px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 16px" }}>
-                {[
-                  { label: "COUNTRY",  value: vehicle.country  || "—" },
-                  { label: "CATEGORY", value: vehicle.category === "Main Battle Tank" ? "MBT" : (vehicle.category || "—") },
-                  { label: "ERA",      value: vehicle.era       || "—" },
-                  { label: "IMAGES",   value: images.length > 0 ? `${images.length} on file` : "None" },
-                ].map(({ label, value }) => (
-                  <div key={label}>
-                    <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 3 }}>{label}</div>
-                    <div className="font-data" style={{ fontSize: "0.8rem", color: "#94a3b8", letterSpacing: "0.04em" }}>{value}</div>
-                  </div>
-                ))}
-              </div>
-            </TacCard>
-
-            {Array.isArray(vehicle.funFacts) && vehicle.funFacts.length > 0 && (
-              <div>
-                <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ FIELD NOTES</div>
-                {vehicle.funFacts.map((fact, i) => (
-                  <TacCard key={i} style={{ padding: "12px 14px", marginBottom: 8 }}>
-                    <div className="font-data" style={{ fontSize: "0.72rem", color: "#64748b", letterSpacing: "0.04em", lineHeight: 1.6 }}>{fact}</div>
-                  </TacCard>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 200, paddingTop: 30 }}>
-            <div className="font-data text-center" style={{ fontSize: "0.62rem", letterSpacing: "0.16em", color: "rgba(245,158,11,0.35)", marginBottom: 8 }}>◈ {tab}</div>
-            <div className="font-display text-center" style={{ fontSize: "1.5rem", letterSpacing: "0.08em", color: "#1e293b", marginBottom: 10 }}>INTEL PENDING</div>
-            <div className="font-data text-center" style={{ fontSize: "0.62rem", color: "#1e293b", letterSpacing: "0.1em", lineHeight: 1.8 }}>
-              DETAILED SPECIFICATIONS<br />COMING IN A FUTURE UPDATE
-            </div>
-          </div>
-        )}
+        {renderTabContent()}
       </main>
     </div>
   );
