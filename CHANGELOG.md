@@ -13,6 +13,54 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Full UI redesign: Landing, Learning Library, Vehicle Study screens (Figma pull)
+
+Rebuilt three screens from scratch to match the Figma design system (Rajdhani / Bebas Neue / Share Tech Mono, MatKen Colors, 390px frames). All screens now use the double-div max-width pattern (`tac-grid` outer wrapper + `max-width: 390px, margin: 0 auto` inner) so layout stays centred and unscaled on wide desktop browsers.
+
+**LandingScreen** (`src/screens/LandingScreen.jsx`) — Figma node 49:2
+- Title split: MATKEN (white #e2e8f0) + GAME (amber #f59e0b) in Bebas Neue, `clamp(3rem, 13vw, 4.8rem)`
+- Subtitle: Rajdhani Medium 0.68rem, `#47576b`, tight tracking — "MILITARY VEHICLE RECOGNITION TRAINING"
+- Card order changed to: Leaderboard → Study Vehicles → Test Your Knowledge
+- Leaderboard TacCard: rank (#—), "YOUR BEST RANK" label, divider, neighbour rows
+- Study / Test cards: centred Bebas Neue 2.25rem white label, amber border `rgba(245,158,11,0.35)`
+
+**LearningHomeScreen** (`src/screens/LearningHomeScreen.jsx`) — Figma node 56:2
+- Header Secondary: `← BACK` (Rajdhani SemiBold, #64748b) + `◈ INTELLIGENCE FILES` (amber) + `VEHICLE LIBRARY` (Bebas Neue 3rem, white + amber split), 110px total height
+- Search bar: 43px height, `rgba(15,23,42,0.5)` background, `rgba(51,65,85,0.5)` border, Rajdhani Medium
+- Category chips: `justify-between`, 44px height, Rajdhani SemiBold — ALL / MBT / APC / IFV / ARTY / HELO
+- Vehicle grid: 2-col CSS grid, 11px gap. Each card: 89px photo area (`#0a0f1c`), 36px text area (Rajdhani SemiBold name + `CAT · ERA` in Rajdhani Medium `#64748b`)
+- Back button in footer navigates to home via `onBack`
+
+**VehicleStudyScreen** (`src/screens/VehicleStudyScreen.jsx`) — Figma nodes 76:2, 78:2, 78:59, 78:116, 78:173
+- **Nav Area**: `← ALL VEHICLES` (Rajdhani SemiBold, amber 35% opacity) → vehicle name (Bebas Neue 34px) → `CATEGORY · ERA · COUNTRY` breadcrumb (Rajdhani Medium 11px, `#637387`)
+- **Image Carousel**: 190px `#141f38` background; shows image or `[ VEHICLE PHOTO ]` placeholder; `★ EASY/MEDIUM/HARD` star label at bottom-left; ‹ › circular nav buttons (32px, dark glass) when multiple images
+- **Dots Row**: 36px centred row; amber active dot, dark inactive dots; clickable for direct image jump
+- **Tab Bar**: `#1e293b` background, 44px height, 5 fixed-width tabs × 78px (OVERVIEW / ARMAMENT / PROTECTION / WHATS / VARIANTS); active tab = white Rajdhani SemiBold + amber 2px bottom underline; inactive = `rgba(99,115,135,0.7)` Rajdhani Medium
+- **OVERVIEW tab**: ABOUT paragraph (Rajdhani Medium 13px, `#637387`) + SPECIFICATIONS table (label: Rajdhani Medium `#637387` / value: Rajdhani SemiBold white) with `rgba(51,65,85,0.3)` dividers
+- **ARMAMENT / PROTECTION tabs**: section headers (Rajdhani SemiBold 11px, `#334155`) + entries (name white + `◉ N` amber visibility badge + description `#637387`) with dividers
+- **WHATS tab**: intro text (Rajdhani Medium, `rgba(99,115,135,0.6)`) + letter/keyword/description entries (Bebas Neue 22px amber letter + Rajdhani SemiBold keyword + Rajdhani Medium description) with dividers
+- **VARIANTS tab**: `◉ VISIBLE ID DIFFERENCE  ⚙ INTERNAL / NOT VISIBLE` legend + variant entries (Bebas Neue 18px name + year + tag label + amber `◉ visible` lines + grey `⚙ internal` lines) with dividers
+- INTEL PENDING state unchanged for all tabs with no data
+
+### Changed — Admin page: full vehicle data in view panel, W.H.A.T.S. rename, template buttons, image thumbnails (v63)
+
+**Left panel — vehicle card thumbnails**
+- Each vehicle card now shows the first image as an `80×56px` thumbnail between the name and the Delete button, so you can visually identify vehicles without remembering their names.
+- Vehicles with no images show a dashed "No image" placeholder instead.
+
+**Right panel — full data view on select**
+- Selecting a vehicle now shows ALL data without needing to open Edit: About text, Specs grid, Fun facts, Armament entries, Protection entries, W.H.A.T.S. cues, Variants, and full image gallery.
+- First 3 images displayed as a quick preview strip at the top of the panel (below Difficulty Status), above the Overview section.
+
+**W.H.A.T.S. rename**
+- All references to "What's It?" updated to "W.H.A.T.S." — both in the form section header and the study data description line.
+
+**W.H.A.T.S. template buttons**
+- Two template buttons added to the W.H.A.T.S. section header in the edit form:
+  - **W.H.A.T.S.** (blue) — pre-fills 5 cues: W=Wheels/Tracks, H=Hull, A=Armament, T=Turret, S=Suspension/Silhouette
+  - **W.E.F.T.** (purple) — pre-fills 4 cues for helicopters: W=Wings, E=Engines, F=Fuselage, T=Tail
+- Both buttons confirm before replacing existing cues.
+
 ### Added — Component Showcase page (v62)
 - New `src/screens/ShowcaseScreen.jsx` — a standalone design system reference page accessible from the landing screen.
 - Tapping the `v0.2.0 · CLASSIFIED` version badge in the landing footer navigates to the showcase.

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import TacCard from '../components/TacCard';
 
 const STUDY_TABS = ["OVERVIEW", "ARMAMENT", "PROTECTION", "WHATS", "VARIANTS"];
+
+const STAR_LABEL = { 1: "EASY", 2: "MEDIUM", 3: "HARD" };
 
 function groupBySection(items) {
   const order = [];
@@ -13,12 +14,26 @@ function groupBySection(items) {
   return order.map((s) => ({ section: s, entries: map[s] }));
 }
 
+const Divider = () => (
+  <div style={{ height: 1, background: "rgba(51,65,85,0.3)", flexShrink: 0 }} />
+);
+
+const SectionLabel = ({ children }) => (
+  <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.154em", color: "#334155", margin: 0 }}>
+    {children}
+  </p>
+);
+
 function IntelPending({ tab }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 200, paddingTop: 30 }}>
-      <div className="font-data text-center" style={{ fontSize: "0.62rem", letterSpacing: "0.16em", color: "rgba(245,158,11,0.35)", marginBottom: 8 }}>◈ {tab}</div>
-      <div className="font-display text-center" style={{ fontSize: "1.5rem", letterSpacing: "0.08em", color: "#1e293b", marginBottom: 10 }}>INTEL PENDING</div>
-      <div className="font-data text-center" style={{ fontSize: "0.62rem", color: "#1e293b", letterSpacing: "0.1em", lineHeight: 1.8 }}>
+      <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.154em", color: "rgba(245,158,11,0.35)", marginBottom: 8, textAlign: "center" }}>
+        ◈ {tab}
+      </div>
+      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.5rem", letterSpacing: "0.08em", color: "#1e293b", marginBottom: 10, textAlign: "center" }}>
+        INTEL PENDING
+      </div>
+      <div style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: "0.62rem", color: "#1e293b", letterSpacing: "0.1em", lineHeight: 1.8, textAlign: "center" }}>
         DATA NOT YET COMPILED<br />FOR THIS VEHICLE
       </div>
     </div>
@@ -32,6 +47,7 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
   if (!vehicle) return null;
   const images = Array.isArray(vehicle.images) ? vehicle.images : [];
   const specs  = vehicle.specs || {};
+  const currentImage = images[imgIdx];
 
   const SPEC_ROWS = [
     { label: "CREW",            key: "crew"           },
@@ -47,55 +63,41 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
     { label: "ENTERED SERVICE", key: "enteredService" },
   ].filter(({ key }) => specs[key]);
 
+  const breadcrumb = [vehicle.category, vehicle.era, vehicle.country].filter(Boolean).join("  ·  ");
+
   const renderTabContent = () => {
     if (tab === "OVERVIEW") {
+      const hasAbout = !!vehicle.about;
+      const hasSpecs = SPEC_ROWS.length > 0;
+      if (!hasAbout && !hasSpecs) return <IntelPending tab={tab} />;
       return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {vehicle.about && (
-            <div>
-              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ ABOUT</div>
-              <div className="font-data" style={{ fontSize: "0.75rem", color: "#64748b", letterSpacing: "0.03em", lineHeight: 1.7 }}>{vehicle.about}</div>
-            </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {hasAbout && (
+            <>
+              <SectionLabel>ABOUT</SectionLabel>
+              <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.8rem", color: "#637387", lineHeight: "20px", letterSpacing: "0.04em", margin: 0 }}>
+                {vehicle.about}
+              </p>
+              <div style={{ height: 8 }} />
+            </>
           )}
-          {SPEC_ROWS.length > 0 && (
-            <div>
-              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ SPECIFICATIONS</div>
-              <TacCard style={{ padding: "12px 14px" }}>
-                {SPEC_ROWS.map(({ label, key }, i) => (
-                  <div key={key} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "6px 0", borderBottom: i < SPEC_ROWS.length - 1 ? "1px solid rgba(30,41,59,0.5)" : "none", gap: 12 }}>
-                    <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.12em", color: "#334155", flexShrink: 0 }}>{label}</div>
-                    <div className="font-data" style={{ fontSize: "0.72rem", color: "#94a3b8", letterSpacing: "0.03em", textAlign: "right" }}>{specs[key]}</div>
+          {hasSpecs && (
+            <>
+              <SectionLabel>SPECIFICATIONS</SectionLabel>
+              {SPEC_ROWS.map(({ label, key }, i) => (
+                <React.Fragment key={key}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", gap: 12 }}>
+                    <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", letterSpacing: "0.11em", color: "#637387" }}>
+                      {label}
+                    </span>
+                    <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.8rem", color: "#e2e8f0", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+                      {specs[key]}
+                    </span>
                   </div>
-                ))}
-              </TacCard>
-            </div>
-          )}
-          {!vehicle.about && SPEC_ROWS.length === 0 && (
-            <TacCard style={{ padding: "14px 16px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 16px" }}>
-                {[
-                  { label: "COUNTRY",  value: vehicle.country  || "—" },
-                  { label: "CATEGORY", value: vehicle.category === "Main Battle Tank" ? "MBT" : (vehicle.category || "—") },
-                  { label: "ERA",      value: vehicle.era       || "—" },
-                  { label: "IMAGES",   value: images.length > 0 ? `${images.length} on file` : "None" },
-                ].map(({ label, value }) => (
-                  <div key={label}>
-                    <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 3 }}>{label}</div>
-                    <div className="font-data" style={{ fontSize: "0.8rem", color: "#94a3b8", letterSpacing: "0.04em" }}>{value}</div>
-                  </div>
-                ))}
-              </div>
-            </TacCard>
-          )}
-          {Array.isArray(vehicle.funFacts) && vehicle.funFacts.length > 0 && (
-            <div>
-              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ FIELD NOTES</div>
-              {vehicle.funFacts.map((fact, i) => (
-                <TacCard key={i} style={{ padding: "12px 14px", marginBottom: 8 }}>
-                  <div className="font-data" style={{ fontSize: "0.72rem", color: "#64748b", letterSpacing: "0.04em", lineHeight: 1.6 }}>{fact}</div>
-                </TacCard>
+                  {i < SPEC_ROWS.length - 1 && <Divider />}
+                </React.Fragment>
               ))}
-            </div>
+            </>
           )}
         </div>
       );
@@ -105,26 +107,34 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
       if (!vehicle.armament?.length) return <IntelPending tab={tab} />;
       const groups = groupBySection(vehicle.armament);
       return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {groups.map(({ section, entries }) => (
-            <div key={section}>
-              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ {section}</div>
-              <TacCard style={{ padding: "4px 0" }}>
-                {entries.map((entry, i) => (
-                  <div key={i} style={{ padding: "10px 14px", borderBottom: i < entries.length - 1 ? "1px solid rgba(30,41,59,0.45)" : "none" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: entry.description ? 4 : 0 }}>
-                      <div className="font-data" style={{ fontSize: "0.75rem", color: "#94a3b8", letterSpacing: "0.03em", lineHeight: 1.4 }}>{entry.name}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {groups.map(({ section, entries }, gi) => (
+            <React.Fragment key={section}>
+              {gi > 0 && <div style={{ height: 4 }} />}
+              <SectionLabel>{section}</SectionLabel>
+              {entries.map((entry, i) => (
+                <React.Fragment key={i}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 0" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                      <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.8rem", color: "#e2e8f0", letterSpacing: "0.04em" }}>
+                        {entry.name}
+                      </span>
                       {entry.visibilityRating > 0 && (
-                        <div className="font-data" style={{ fontSize: "0.6rem", color: "rgba(245,158,11,0.7)", flexShrink: 0 }}>{"◉".repeat(entry.visibilityRating)}</div>
+                        <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.625rem", color: "rgba(245,158,10,0.75)", letterSpacing: "0.08em", flexShrink: 0 }}>
+                          ◉ {entry.visibilityRating}
+                        </span>
                       )}
                     </div>
-                    {entry.description ? (
-                      <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.03em", lineHeight: 1.5 }}>{entry.description}</div>
-                    ) : null}
+                    {entry.description && (
+                      <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#637387", lineHeight: "16px", letterSpacing: "0.044em", margin: 0 }}>
+                        {entry.description}
+                      </p>
+                    )}
                   </div>
-                ))}
-              </TacCard>
-            </div>
+                  <Divider />
+                </React.Fragment>
+              ))}
+            </React.Fragment>
           ))}
         </div>
       );
@@ -134,26 +144,34 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
       if (!vehicle.protection?.length) return <IntelPending tab={tab} />;
       const groups = groupBySection(vehicle.protection);
       return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {groups.map(({ section, entries }) => (
-            <div key={section}>
-              <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ {section}</div>
-              <TacCard style={{ padding: "4px 0" }}>
-                {entries.map((entry, i) => (
-                  <div key={i} style={{ padding: "10px 14px", borderBottom: i < entries.length - 1 ? "1px solid rgba(30,41,59,0.45)" : "none" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: entry.description ? 4 : 0 }}>
-                      <div className="font-data" style={{ fontSize: "0.75rem", color: "#94a3b8", letterSpacing: "0.03em", lineHeight: 1.4 }}>{entry.name}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {groups.map(({ section, entries }, gi) => (
+            <React.Fragment key={section}>
+              {gi > 0 && <div style={{ height: 4 }} />}
+              <SectionLabel>{section}</SectionLabel>
+              {entries.map((entry, i) => (
+                <React.Fragment key={i}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 0" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                      <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.8rem", color: "#e2e8f0", letterSpacing: "0.04em" }}>
+                        {entry.name}
+                      </span>
                       {entry.visibilityRating > 0 && (
-                        <div className="font-data" style={{ fontSize: "0.6rem", color: "rgba(245,158,11,0.7)", flexShrink: 0 }}>{"◉".repeat(entry.visibilityRating)}</div>
+                        <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.625rem", color: "rgba(245,158,10,0.75)", letterSpacing: "0.08em", flexShrink: 0 }}>
+                          ◉ {entry.visibilityRating}
+                        </span>
                       )}
                     </div>
-                    {entry.description ? (
-                      <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.03em", lineHeight: 1.5 }}>{entry.description}</div>
-                    ) : null}
+                    {entry.description && (
+                      <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#637387", lineHeight: "16px", letterSpacing: "0.044em", margin: 0 }}>
+                        {entry.description}
+                      </p>
+                    )}
                   </div>
-                ))}
-              </TacCard>
-            </div>
+                  <Divider />
+                </React.Fragment>
+              ))}
+            </React.Fragment>
           ))}
         </div>
       );
@@ -161,29 +179,35 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
 
     if (tab === "WHATS") {
       if (!vehicle.whats?.cues?.length) return <IntelPending tab={tab} />;
+      const cues = vehicle.whats.cues;
       return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {vehicle.whats.intro && (
-            <div className="font-data" style={{ fontSize: "0.75rem", color: "#64748b", letterSpacing: "0.03em", lineHeight: 1.7 }}>
+            <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "rgba(99,115,135,0.6)", lineHeight: "16px", letterSpacing: "0.044em", margin: 0 }}>
               {vehicle.whats.intro}
-            </div>
+            </p>
           )}
-          <div>
-            <div className="font-data" style={{ fontSize: "0.58rem", letterSpacing: "0.16em", color: "#334155", marginBottom: 8 }}>◈ VISUAL CUES</div>
-            <TacCard style={{ padding: "4px 0" }}>
-              {vehicle.whats.cues.map((cue, i) => (
-                <div key={i} style={{ display: "flex", gap: 14, padding: "12px 14px", borderBottom: i < vehicle.whats.cues.length - 1 ? "1px solid rgba(30,41,59,0.45)" : "none", alignItems: "flex-start" }}>
-                  <div className="font-display" style={{ fontSize: "1.6rem", color: "#f59e0b", lineHeight: 1, flexShrink: 0, minWidth: 22 }}>{cue.letter}</div>
-                  <div>
-                    <div className="font-data" style={{ fontSize: "0.72rem", color: "#94a3b8", letterSpacing: "0.06em", marginBottom: 3 }}>{cue.keyword}</div>
-                    {cue.description && (
-                      <div className="font-data" style={{ fontSize: "0.65rem", color: "#475569", letterSpacing: "0.03em", lineHeight: 1.5 }}>{cue.description}</div>
-                    )}
-                  </div>
+          <div style={{ height: 2 }} />
+          {cues.map((cue, i) => (
+            <React.Fragment key={i}>
+              <div style={{ display: "flex", gap: 10, padding: "6px 0", alignItems: "flex-start" }}>
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.375rem", color: "#f59e0a", lineHeight: 1, flexShrink: 0 }}>
+                  {cue.letter}
+                </span>
+                <div style={{ display: "flex", flexDirection: "column", gap: 3, flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.8rem", color: "#e2e8f0", letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
+                    {cue.keyword}
+                  </span>
+                  {cue.description && (
+                    <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#637387", lineHeight: "16px", letterSpacing: "0.044em", margin: 0 }}>
+                      {cue.description}
+                    </p>
+                  )}
                 </div>
-              ))}
-            </TacCard>
-          </div>
+              </div>
+              <Divider />
+            </React.Fragment>
+          ))}
         </div>
       );
     }
@@ -191,35 +215,40 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
     if (tab === "VARIANTS") {
       if (!vehicle.variants?.length) return <IntelPending tab={tab} />;
       return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.56rem", color: "rgba(99,115,135,0.45)", letterSpacing: "0.08em", margin: 0 }}>
+            ◉ VISIBLE ID DIFFERENCE   ⚙ INTERNAL / NOT VISIBLE
+          </p>
+          <div style={{ height: 2 }} />
           {vehicle.variants.map((v, i) => (
-            <TacCard key={i} style={{ padding: "14px 16px" }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
-                <div className="font-display text-white" style={{ fontSize: "1.1rem", letterSpacing: "0.06em" }}>{v.name}</div>
-                {v.year && <div className="font-data" style={{ fontSize: "0.6rem", color: "#475569", letterSpacing: "0.08em" }}>{v.year}</div>}
+            <React.Fragment key={i}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 0" }}>
+                <div style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
+                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.125rem", color: "#e2e8f0" }}>{v.name}</span>
+                  {v.year && (
+                    <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#637387", letterSpacing: "0.044em" }}>
+                      ({v.year})
+                    </span>
+                  )}
+                  {v.label && (
+                    <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.625rem", color: "rgba(245,158,10,0.55)", letterSpacing: "0.12em", flex: 1, minWidth: 0 }}>
+                      {v.label}
+                    </span>
+                  )}
+                </div>
+                {Array.isArray(v.visibleDifferences) && v.visibleDifferences.map((d, j) => (
+                  <p key={j} style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.68rem", color: "rgba(245,158,10,0.85)", lineHeight: "16px", letterSpacing: "0.044em", margin: 0 }}>
+                    ◉  {d}
+                  </p>
+                ))}
+                {Array.isArray(v.internalDifferences) && v.internalDifferences.map((d, j) => (
+                  <p key={j} style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "rgba(99,115,135,0.6)", lineHeight: "16px", letterSpacing: "0.044em", margin: 0 }}>
+                    ⚙  {d}
+                  </p>
+                ))}
               </div>
-              {v.label && (
-                <div className="font-data" style={{ fontSize: "0.68rem", color: "#64748b", letterSpacing: "0.03em", lineHeight: 1.5, marginBottom: v.visibleDifferences?.length || v.internalDifferences?.length ? 10 : 0 }}>
-                  {v.label}
-                </div>
-              )}
-              {Array.isArray(v.visibleDifferences) && v.visibleDifferences.length > 0 && (
-                <div style={{ marginTop: 6 }}>
-                  <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.14em", color: "rgba(245,158,11,0.5)", marginBottom: 4 }}>◉ VISIBLE DIFFERENCES</div>
-                  {v.visibleDifferences.map((d, j) => (
-                    <div key={j} className="font-data" style={{ fontSize: "0.65rem", color: "#475569", lineHeight: 1.6 }}>· {d}</div>
-                  ))}
-                </div>
-              )}
-              {Array.isArray(v.internalDifferences) && v.internalDifferences.length > 0 && (
-                <div style={{ marginTop: 6 }}>
-                  <div className="font-data" style={{ fontSize: "0.55rem", letterSpacing: "0.14em", color: "#334155", marginBottom: 4 }}>⚙ INTERNAL DIFFERENCES</div>
-                  {v.internalDifferences.map((d, j) => (
-                    <div key={j} className="font-data" style={{ fontSize: "0.65rem", color: "#475569", lineHeight: 1.6 }}>· {d}</div>
-                  ))}
-                </div>
-              )}
-            </TacCard>
+              <Divider />
+            </React.Fragment>
           ))}
         </div>
       );
@@ -229,59 +258,108 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col tac-grid font-tac" style={{ background: "#070b14" }}>
-      <header className="px-4" style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.4rem)", paddingBottom: "0.8rem" }}>
-        <button
-          onClick={onBack}
-          className="font-data"
-          style={{ background: "transparent", border: "none", cursor: "pointer", color: "#475569", letterSpacing: "0.12em", fontSize: "0.68rem", padding: 0, marginBottom: 8 }}
-        >
-          ← VEHICLE LIBRARY
-        </button>
-        <div className="font-display text-white" style={{ fontSize: "2rem", letterSpacing: "0.05em", lineHeight: 1.1 }}>{vehicle.name}</div>
-        <div className="font-data" style={{ fontSize: "0.62rem", color: "#475569", letterSpacing: "0.1em", marginTop: 2 }}>
-          {vehicle.country}{vehicle.era ? ` · ${vehicle.era}` : ""}
-        </div>
-      </header>
+    <div className="tac-grid" style={{ background: "#070b14", minHeight: "100vh" }}>
+      <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
-      {images.length > 0 && (
-        <div style={{ position: "relative", width: "100%", height: 190, background: "#0d1520", overflow: "hidden", flexShrink: 0 }}>
-          <img src={images[imgIdx]?.url} alt={vehicle.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          {images[imgIdx]?.stars && (
-            <div className="font-data" style={{ position: "absolute", top: 10, right: 10, background: "rgba(7,11,20,0.8)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 2, padding: "3px 8px", fontSize: "0.6rem", letterSpacing: "0.1em", color: "#f59e0b" }}>
-              {"★".repeat(images[imgIdx].stars)}
+        {/* Nav Area */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "18px 16px 14px", paddingTop: "calc(env(safe-area-inset-top, 0px) + 18px)", flexShrink: 0 }}>
+          <button
+            onClick={onBack}
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}
+          >
+            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.154em", color: "rgba(245,158,10,0.35)" }}>
+              ← ALL VEHICLES
+            </span>
+          </button>
+          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.125rem", color: "#e2e8f0", letterSpacing: "0.08em", lineHeight: 1 }}>
+            {vehicle.name}
+          </div>
+          <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#637387", letterSpacing: "0.11em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {breadcrumb}
+          </div>
+        </div>
+
+        {/* Image Carousel */}
+        <div style={{ position: "relative", width: "100%", height: 190, background: "#141f38", overflow: "hidden", flexShrink: 0 }}>
+          {currentImage ? (
+            <img src={currentImage.url} alt={vehicle.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          ) : (
+            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.8rem", color: "rgba(99,115,135,0.3)", letterSpacing: "0.04em" }}>
+                [ VEHICLE PHOTO ]
+              </span>
             </div>
           )}
+          {currentImage?.stars && (
+            <div style={{ position: "absolute", left: 12, bottom: 10, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.625rem", color: "#f59e0a", letterSpacing: "0.12em" }}>
+              ★  {STAR_LABEL[currentImage.stars] || "★".repeat(currentImage.stars)}
+            </div>
+          )}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={() => setImgIdx((imgIdx - 1 + images.length) % images.length)}
+                style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
+              >‹</button>
+              <button
+                onClick={() => setImgIdx((imgIdx + 1) % images.length)}
+                style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
+              >›</button>
+            </>
+          )}
         </div>
-      )}
 
-      {images.length > 1 && (
-        <div style={{ display: "flex", justifyContent: "center", gap: 6, padding: "10px 0", background: "#070b14", flexShrink: 0 }}>
-          {images.map((_, i) => (
-            <button key={i} onClick={() => setImgIdx(i)} style={{ width: i === imgIdx ? 18 : 6, height: 6, borderRadius: 3, background: i === imgIdx ? "#f59e0b" : "rgba(245,158,11,0.2)", border: "none", cursor: "pointer", padding: 0, transition: "width 0.2s" }} />
-          ))}
+        {/* Dots Row */}
+        <div style={{ display: "flex", gap: 6, height: 36, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          {images.length <= 1 ? (
+            images.length === 1
+              ? <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#f59e0a" }} />
+              : null
+          ) : (
+            images.map((_, i) => (
+              <button key={i} onClick={() => setImgIdx(i)}
+                style={{ width: 6, height: 6, borderRadius: "50%", background: i === imgIdx ? "#f59e0a" : "rgba(51,65,85,0.4)", border: "none", cursor: "pointer", padding: 0, flexShrink: 0 }}
+              />
+            ))
+          )}
         </div>
-      )}
 
-      <div style={{ flexShrink: 0, borderBottom: "1px solid rgba(245,158,11,0.12)" }}>
-        <div style={{ display: "flex", overflowX: "auto" }}>
-          {STUDY_TABS.map((t) => (
-            <button key={t} onClick={() => setTab(t)} className="font-data"
-              style={{
-                flex: "0 0 auto", padding: "12px 14px", fontSize: "0.6rem", letterSpacing: "0.12em",
-                border: "none", cursor: "pointer", background: "transparent",
-                color: tab === t ? "#f59e0b" : "#334155",
-                borderBottom: `2px solid ${tab === t ? "#f59e0b" : "transparent"}`,
-                marginBottom: -1,
-              }}
-            >{t}</button>
-          ))}
+        {/* Tab Bar + Content */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+
+          {/* Tab Bar */}
+          <div style={{ background: "#1e293b", height: 44, display: "flex", flexShrink: 0, position: "relative", overflowX: "auto" }}>
+            <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 1, background: "rgba(51,65,85,0.3)" }} />
+            {STUDY_TABS.map((t) => {
+              const active = tab === t;
+              return (
+                <button key={t} onClick={() => setTab(t)}
+                  style={{
+                    height: 44, minWidth: 78, flex: "0 0 78px",
+                    background: "none", border: "none", cursor: "pointer",
+                    fontFamily: "'Rajdhani', sans-serif",
+                    fontWeight: active ? 600 : 500,
+                    fontSize: "0.625rem", letterSpacing: "0.11em",
+                    color: active ? "#e2e8f0" : "rgba(99,115,135,0.7)",
+                    position: "relative",
+                  }}
+                >
+                  {t}
+                  {active && (
+                    <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 2, background: "#f59e0a", zIndex: 1 }} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tab Content */}
+          <main style={{ flex: 1, overflowY: "auto", padding: "14px 16px", paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}>
+            {renderTabContent()}
+          </main>
+
         </div>
       </div>
-
-      <main className="flex-1 px-4 py-4 max-w-md mx-auto w-full overflow-y-auto">
-        {renderTabContent()}
-      </main>
     </div>
   );
 }
