@@ -13,6 +13,24 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Vehicle image swipe gestures + lightbox fullscreen viewer
+
+**Swipe to navigate** (`VehicleStudyScreen`) — the image carousel now responds to horizontal finger swipes on mobile. Swiping left/right advances or rewinds through the vehicle's images. The existing ‹ › arrow buttons remain for desktop. `touch-action: pan-y` is set on the carousel so the browser still handles vertical page scroll and only horizontal touches are captured by the swipe handler.
+
+**Lightbox / fullscreen overlay** — tapping any vehicle image opens a full-screen overlay (`position: fixed; z-index: 1000`) with:
+- Image scaled to fit the screen (`max-height: 70vh, object-contain`)
+- Vehicle name + image counter (e.g. `2 / 3`) in the top-left
+- ✕ close button top-right
+- ‹ › navigation arrows at mid-screen left and right (44px touch targets)
+- Dot row for direct image jumping
+- Star difficulty label (★ EASY / MEDIUM / HARD) below the image
+- Hint line: `SWIPE TO NAVIGATE · SWIPE DOWN TO CLOSE`
+- **Swipe left/right** to change image; **swipe down** (>80px vertical, predominantly vertical) to close
+
+Both swipe handlers share a single `touchStartX / touchStartY` ref pair. The carousel and lightbox use separate `onTouchEnd` callbacks so they can each apply the right gesture logic.
+
+---
+
 ### Changed — Full UI redesign: Landing, Learning Library, Vehicle Study screens (Figma pull)
 
 Rebuilt three screens from scratch to match the Figma design system (Rajdhani / Bebas Neue / Share Tech Mono, MatKen Colors, 390px frames). All screens now use the double-div max-width pattern (`tac-grid` outer wrapper + `max-width: 390px, margin: 0 auto` inner) so layout stays centred and unscaled on wide desktop browsers.

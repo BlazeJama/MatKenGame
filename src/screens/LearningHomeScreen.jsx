@@ -41,12 +41,12 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
             onClick={onBack}
             style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center" }}
           >
-            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.01em", color: "#64748b" }}>
+            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.875rem", letterSpacing: 0, color: "#f59e0b" }}>
               ← BACK
             </span>
           </button>
           <div style={{ paddingTop: 10 }}>
-            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#f59e0b" }}>
+            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#64748b" }}>
               ◈ INTELLIGENCE FILES
             </span>
           </div>
@@ -82,7 +82,7 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
       </div>
 
       {/* Category chips */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, paddingLeft: 24, paddingRight: 24, paddingTop: 10, paddingBottom: 10, width: 342, marginLeft: "auto", marginRight: "auto" }}>
+      <div style={{ display: "flex", gap: 10, alignItems: "flex-start", overflow: "hidden", paddingLeft: 24, paddingRight: 24, paddingTop: 10, paddingBottom: 10 }}>
         {CATEGORIES.map((opt) => {
           const active = cat === opt.id;
           return (
@@ -91,14 +91,14 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
               onClick={() => setCat(opt.id)}
               style={{
                 fontFamily: "'Rajdhani', sans-serif", fontWeight: 600,
-                fontSize: "0.68rem", letterSpacing: "0.1em",
+                fontSize: "0.68rem", letterSpacing: "0.11em",
                 height: 44, padding: "0 12px",
                 borderRadius: 2,
                 border: `1px solid ${active ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
                 background: active ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
                 color: active ? "#f59e0b" : "#637387",
                 cursor: "pointer",
-                flex: "0 1 auto",
+                flexShrink: 0,
               }}
             >
               {opt.label}
@@ -160,13 +160,10 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
       </main>
 
       {/* Footer */}
-      <footer className="text-center" style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)" }}>
-        <button
-          onClick={onBack}
-          style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'Share Tech Mono', monospace", fontSize: "0.6rem", letterSpacing: "0.12em", color: "#1e293b", padding: "8px" }}
-        >
-          ← HOME
-        </button>
+      <footer className="text-center" style={{ height: 50, display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "calc(env(safe-area-inset-bottom, 0px))" }}>
+        <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", letterSpacing: "0.132em", color: "#1e293b" }}>
+          v0.2.0 · CLASSIFIED
+        </span>
       </footer>
     </div>
     </div>

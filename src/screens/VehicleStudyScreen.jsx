@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const STUDY_TABS = ["OVERVIEW", "ARMAMENT", "PROTECTION", "WHATS", "VARIANTS"];
 
@@ -41,13 +41,50 @@ function IntelPending({ tab }) {
 }
 
 export default function VehicleStudyScreen({ vehicle, onBack }) {
-  const [tab,    setTab]    = useState("OVERVIEW");
-  const [imgIdx, setImgIdx] = useState(0);
+  const [tab,          setTab]         = useState("OVERVIEW");
+  const [imgIdx,       setImgIdx]      = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
 
   if (!vehicle) return null;
   const images = Array.isArray(vehicle.images) ? vehicle.images : [];
   const specs  = vehicle.specs || {};
   const currentImage = images[imgIdx];
+
+  const prevImage = () => setImgIdx((i) => (i - 1 + images.length) % images.length);
+  const nextImage = () => setImgIdx((i) => (i + 1) % images.length);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  // Carousel: horizontal swipe only
+  const handleCarouselTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && images.length > 1) {
+      dx < 0 ? nextImage() : prevImage();
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
+  // Lightbox: horizontal swipe to navigate, swipe-down to close
+  const handleLightboxTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    if (Math.abs(dy) > 80 && Math.abs(dy) > Math.abs(dx) && dy > 0) {
+      setLightboxOpen(false);
+    } else if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && images.length > 1) {
+      dx < 0 ? nextImage() : prevImage();
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
 
   const SPEC_ROWS = [
     { label: "CREW",            key: "crew"           },
@@ -258,108 +295,211 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
   };
 
   return (
-    <div className="tac-grid" style={{ background: "#070b14", minHeight: "100vh" }}>
-      <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <>
+      <div className="tac-grid" style={{ background: "#070b14", minHeight: "100vh" }}>
+        <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
 
-        {/* Nav Area */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "18px 16px 14px", paddingTop: "calc(env(safe-area-inset-top, 0px) + 18px)", flexShrink: 0 }}>
-          <button
-            onClick={onBack}
-            style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}
-          >
-            <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.154em", color: "rgba(245,158,10,0.35)" }}>
-              ← ALL VEHICLES
-            </span>
-          </button>
-          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.125rem", color: "#e2e8f0", letterSpacing: "0.08em", lineHeight: 1 }}>
-            {vehicle.name}
+          {/* Nav Area */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "18px 16px 14px", paddingTop: "calc(env(safe-area-inset-top, 0px) + 18px)", flexShrink: 0 }}>
+            <button
+              onClick={onBack}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}
+            >
+              <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.154em", color: "rgba(245,158,10,0.35)" }}>
+                ← ALL VEHICLES
+              </span>
+            </button>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.125rem", color: "#e2e8f0", letterSpacing: "0.08em", lineHeight: 1 }}>
+              {vehicle.name}
+            </div>
+            <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#637387", letterSpacing: "0.11em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {breadcrumb}
+            </div>
           </div>
-          <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", color: "#637387", letterSpacing: "0.11em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-            {breadcrumb}
+
+          {/* Image Carousel — swipeable, tap to open lightbox */}
+          <div
+            style={{ position: "relative", width: "100%", height: 190, background: "#141f38", overflow: "hidden", flexShrink: 0, touchAction: "pan-y", userSelect: "none" }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleCarouselTouchEnd}
+          >
+            {currentImage ? (
+              <img
+                src={currentImage.url}
+                alt={vehicle.name}
+                onClick={() => setLightboxOpen(true)}
+                style={{ width: "100%", height: "100%", objectFit: "cover", cursor: "zoom-in", display: "block" }}
+              />
+            ) : (
+              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.8rem", color: "rgba(99,115,135,0.3)", letterSpacing: "0.04em" }}>
+                  [ VEHICLE PHOTO ]
+                </span>
+              </div>
+            )}
+            {currentImage?.stars && (
+              <div style={{ position: "absolute", left: 12, bottom: 10, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.625rem", color: "#f59e0a", letterSpacing: "0.12em", pointerEvents: "none" }}>
+                ★  {STAR_LABEL[currentImage.stars] || "★".repeat(currentImage.stars)}
+              </div>
+            )}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
+                >‹</button>
+                <button
+                  onClick={nextImage}
+                  style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
+                >›</button>
+              </>
+            )}
+          </div>
+
+          {/* Dots Row */}
+          <div style={{ display: "flex", gap: 6, height: 36, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            {images.length <= 1 ? (
+              images.length === 1
+                ? <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#f59e0a" }} />
+                : null
+            ) : (
+              images.map((_, i) => (
+                <button key={i} onClick={() => setImgIdx(i)}
+                  style={{ width: 6, height: 6, borderRadius: "50%", background: i === imgIdx ? "#f59e0a" : "rgba(51,65,85,0.4)", border: "none", cursor: "pointer", padding: 0, flexShrink: 0 }}
+                />
+              ))
+            )}
+          </div>
+
+          {/* Tab Bar + Content */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+
+            {/* Tab Bar */}
+            <div style={{ background: "#1e293b", height: 44, display: "flex", flexShrink: 0, position: "relative", overflowX: "auto" }}>
+              <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 1, background: "rgba(51,65,85,0.3)" }} />
+              {STUDY_TABS.map((t) => {
+                const active = tab === t;
+                return (
+                  <button key={t} onClick={() => setTab(t)}
+                    style={{
+                      height: 44, minWidth: 78, flex: "0 0 78px",
+                      background: "none", border: "none", cursor: "pointer",
+                      fontFamily: "'Rajdhani', sans-serif",
+                      fontWeight: active ? 600 : 500,
+                      fontSize: "0.625rem", letterSpacing: "0.11em",
+                      color: active ? "#e2e8f0" : "rgba(99,115,135,0.7)",
+                      position: "relative",
+                    }}
+                  >
+                    {t}
+                    {active && (
+                      <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 2, background: "#f59e0a", zIndex: 1 }} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Tab Content */}
+            <main style={{ flex: 1, overflowY: "auto", padding: "14px 16px", paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}>
+              {renderTabContent()}
+            </main>
+
           </div>
         </div>
+      </div>
 
-        {/* Image Carousel */}
-        <div style={{ position: "relative", width: "100%", height: 190, background: "#141f38", overflow: "hidden", flexShrink: 0 }}>
-          {currentImage ? (
-            <img src={currentImage.url} alt={vehicle.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          ) : (
-            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.8rem", color: "rgba(99,115,135,0.3)", letterSpacing: "0.04em" }}>
-                [ VEHICLE PHOTO ]
-              </span>
+      {/* Lightbox overlay */}
+      {lightboxOpen && (
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 1000,
+            background: "rgba(7,11,20,0.97)",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            touchAction: "none", userSelect: "none",
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleLightboxTouchEnd}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setLightboxOpen(false)}
+            style={{
+              position: "absolute", top: "calc(env(safe-area-inset-top, 0px) + 16px)", right: 20,
+              background: "rgba(15,23,42,0.8)", border: "1px solid rgba(51,65,85,0.5)",
+              borderRadius: "50%", width: 40, height: 40,
+              color: "#94a3b8", fontSize: "1rem", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >✕</button>
+
+          {/* Vehicle name + image counter */}
+          <div style={{ position: "absolute", top: "calc(env(safe-area-inset-top, 0px) + 20px)", left: 20, right: 72 }}>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.25rem", color: "#e2e8f0", letterSpacing: "0.06em", lineHeight: 1 }}>
+              {vehicle.name}
+            </div>
+            {images.length > 1 && (
+              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.62rem", color: "#637387", letterSpacing: "0.1em", marginTop: 2 }}>
+                {imgIdx + 1} / {images.length}
+              </div>
+            )}
+          </div>
+
+          {/* Image */}
+          {currentImage && (
+            <img
+              src={currentImage.url}
+              alt={vehicle.name}
+              style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain", display: "block" }}
+            />
+          )}
+
+          {/* Star label + swipe hint */}
+          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            {currentImage?.stars && (
+              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.75rem", color: "#f59e0a", letterSpacing: "0.12em" }}>
+                ★  {STAR_LABEL[currentImage.stars] || "★".repeat(currentImage.stars)}
+              </div>
+            )}
+            {images.length > 1 && (
+              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.55rem", color: "rgba(99,115,135,0.4)", letterSpacing: "0.12em" }}>
+                SWIPE TO NAVIGATE · SWIPE DOWN TO CLOSE
+              </div>
+            )}
+            {images.length <= 1 && (
+              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.55rem", color: "rgba(99,115,135,0.4)", letterSpacing: "0.12em" }}>
+                SWIPE DOWN TO CLOSE
+              </div>
+            )}
+          </div>
+
+          {/* Dots */}
+          {images.length > 1 && (
+            <div style={{ display: "flex", gap: 6, marginTop: 16 }}>
+              {images.map((_, i) => (
+                <button key={i} onClick={() => setImgIdx(i)}
+                  style={{ width: 6, height: 6, borderRadius: "50%", background: i === imgIdx ? "#f59e0a" : "rgba(51,65,85,0.5)", border: "none", cursor: "pointer", padding: 0 }}
+                />
+              ))}
             </div>
           )}
-          {currentImage?.stars && (
-            <div style={{ position: "absolute", left: 12, bottom: 10, fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.625rem", color: "#f59e0a", letterSpacing: "0.12em" }}>
-              ★  {STAR_LABEL[currentImage.stars] || "★".repeat(currentImage.stars)}
-            </div>
-          )}
+
+          {/* Prev / Next arrows */}
           {images.length > 1 && (
             <>
               <button
-                onClick={() => setImgIdx((imgIdx - 1 + images.length) % images.length)}
-                style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
+                onClick={prevImage}
+                style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", lineHeight: 1 }}
               >‹</button>
               <button
-                onClick={() => setImgIdx((imgIdx + 1) % images.length)}
-                style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
+                onClick={nextImage}
+                style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", lineHeight: 1 }}
               >›</button>
             </>
           )}
         </div>
-
-        {/* Dots Row */}
-        <div style={{ display: "flex", gap: 6, height: 36, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          {images.length <= 1 ? (
-            images.length === 1
-              ? <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#f59e0a" }} />
-              : null
-          ) : (
-            images.map((_, i) => (
-              <button key={i} onClick={() => setImgIdx(i)}
-                style={{ width: 6, height: 6, borderRadius: "50%", background: i === imgIdx ? "#f59e0a" : "rgba(51,65,85,0.4)", border: "none", cursor: "pointer", padding: 0, flexShrink: 0 }}
-              />
-            ))
-          )}
-        </div>
-
-        {/* Tab Bar + Content */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
-          {/* Tab Bar */}
-          <div style={{ background: "#1e293b", height: 44, display: "flex", flexShrink: 0, position: "relative", overflowX: "auto" }}>
-            <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 1, background: "rgba(51,65,85,0.3)" }} />
-            {STUDY_TABS.map((t) => {
-              const active = tab === t;
-              return (
-                <button key={t} onClick={() => setTab(t)}
-                  style={{
-                    height: 44, minWidth: 78, flex: "0 0 78px",
-                    background: "none", border: "none", cursor: "pointer",
-                    fontFamily: "'Rajdhani', sans-serif",
-                    fontWeight: active ? 600 : 500,
-                    fontSize: "0.625rem", letterSpacing: "0.11em",
-                    color: active ? "#e2e8f0" : "rgba(99,115,135,0.7)",
-                    position: "relative",
-                  }}
-                >
-                  {t}
-                  {active && (
-                    <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 2, background: "#f59e0a", zIndex: 1 }} />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Tab Content */}
-          <main style={{ flex: 1, overflowY: "auto", padding: "14px 16px", paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}>
-            {renderTabContent()}
-          </main>
-
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
