@@ -1,6 +1,6 @@
 // MatKenGame service worker
 // Bump CACHE_VERSION every time you deploy so old caches are evicted.
-const CACHE_VERSION = "matkengame-v59";
+const CACHE_VERSION = "matkengame-v61";
 
 // Hostnames whose responses must NEVER be cached — always go to network.
 const NETWORK_ONLY_HOSTS = ["supabase.co", "supabase.in"];

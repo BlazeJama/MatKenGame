@@ -2246,8 +2246,8 @@ function formatVehicleEntry(v) {
 function generateVehiclesJs(vehicles, pactConfig = {}) {
   const vehicleEntries = vehicles.map(formatVehicleEntry).join(",\n");
   const vehiclesBlock = vehicles.length === 0
-    ? "window.vehicles = [];"
-    : `window.vehicles = [\n${vehicleEntries}\n];`;
+    ? "export const vehicles = [];"
+    : `export const vehicles = [\n${vehicleEntries}\n];`;
 
   // Emit all pact overrides sorted alphabetically so diffs are stable
   const pactLines = Object.entries(pactConfig)
@@ -2256,13 +2256,11 @@ function generateVehiclesJs(vehicles, pactConfig = {}) {
   const pactBlock =
     "// Alliance configuration — maps countries to military alliances.\n" +
     "// Managed via Admin → 🌐 Alliances. Empty = built-in defaults apply.\n" +
-    `window.pactConfig = {\n${pactLines.join(",\n")}\n};`;
+    `export const pactConfig = {\n${pactLines.join(",\n")}\n};`;
 
   return (
     `${EXPORTED_HEADER}\n` +
     `${vehiclesBlock}\n\n` +
-    `// Convenience helper — total count, useful for the home-screen stats card\n` +
-    `window.vehicleCount = window.vehicles.length;\n\n` +
     `${pactBlock}\n`
   );
 }

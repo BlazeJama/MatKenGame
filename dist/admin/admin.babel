@@ -408,8 +408,10 @@ function DifficultyStatus({ vehicle }) {
 // =============================================================================
 
 function VehicleRow({ vehicle, isSelected, onSelect, onDelete }) {
-  const imageCount = (vehicle.images || []).length;
+  const images = vehicle.images || [];
+  const imageCount = images.length;
   const eraClass = ERA_BADGE[vehicle.era] || "bg-gray-100 text-gray-800";
+  const thumbUrl = images.length > 0 ? adminImgSrc(images[0].url) : null;
 
   return (
     <div
@@ -428,13 +430,24 @@ function VehicleRow({ vehicle, isSelected, onSelect, onDelete }) {
           : "border-gray-200 hover:border-navy/40 hover:bg-gray-50"
       }`}
     >
-      {/* Top row: name + delete (PR 4) */}
+      {/* Top row: name + thumbnail + delete */}
       <div className="flex items-start justify-between gap-3 mb-1">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h3 className="font-semibold text-navy truncate">{vehicle.name}</h3>
           <p className="text-xs text-gray-500">{vehicle.country}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          {thumbUrl ? (
+            <img
+              src={thumbUrl}
+              alt={vehicle.name}
+              className="w-20 h-14 object-cover rounded-lg border border-gray-200 bg-gray-100"
+            />
+          ) : (
+            <div className="w-20 h-14 rounded-lg border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center">
+              <span className="text-xs text-gray-300">No image</span>
+            </div>
+          )}
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onDelete(vehicle); }}
@@ -982,6 +995,21 @@ function ImageRow({ image, vehicleId, index, isSelected, onToggleSelect, onChang
 function VehicleDetails({ vehicle, onEdit, onClose }) {
   const facts = readFunFacts(vehicle);
   const eraClass = ERA_BADGE[vehicle.era] || "bg-gray-100 text-gray-800";
+  const specs    = vehicle.specs || {};
+  const armament = vehicle.armament || [];
+  const protection = vehicle.protection || [];
+  const whats    = vehicle.whats || {};
+  const whatsCues = (whats.cues || []).filter((c) => c.letter && c.keyword);
+  const variants = vehicle.variants || [];
+
+  // Section heading used throughout
+  const SectionHeading = ({ label, count }) => (
+    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 border-t border-gray-100 pt-4 mt-4">
+      {label}{count != null ? <span className="ml-1 font-normal text-gray-400">({count})</span> : null}
+    </h3>
+  );
+
+  const hasAnySpecs = SPEC_KEYS.some(([k]) => specs[k] && specs[k].trim());
 
   return (
     <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col min-h-0 overflow-y-auto">
@@ -1014,7 +1042,7 @@ function VehicleDetails({ vehicle, onEdit, onClose }) {
       </div>
 
       {/* Badges */}
-      <div className="flex items-center flex-wrap gap-2 mb-5">
+      <div className="flex items-center flex-wrap gap-2 mb-4">
         <span className={`${CATEGORY_BADGE} text-xs px-2 py-0.5 rounded-full font-medium`}>
           {vehicle.category}
         </span>
@@ -1024,35 +1052,162 @@ function VehicleDetails({ vehicle, onEdit, onClose }) {
       </div>
 
       {/* Difficulty status */}
-      <div className="mb-5">
+      <div className="mb-2">
         <h3 className="text-xs font-medium text-gray-700 mb-2">Difficulty status</h3>
         <DifficultyStatus vehicle={vehicle} />
       </div>
 
-      {/* Fun facts */}
-      <div className="mb-5">
-        <h3 className="text-xs font-medium text-gray-700 mb-2">
-          Fun facts ({facts.length})
-        </h3>
-        {facts.length === 0 ? (
-          <p className="text-sm text-gray-400 italic">No fun facts recorded.</p>
-        ) : (
-          <ul className="space-y-2 text-sm text-gray-700">
-            {facts.map((fact, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="text-gray-400 shrink-0">💡</span>
-                <span>{fact}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {/* ── TOP IMAGES (first 3) ─────────────────────────────────────── */}
+      {vehicle.images.length > 0 && (
+        <div className="flex gap-2 mt-4">
+          {vehicle.images.slice(0, 3).map((img, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center">
+              <img
+                src={adminImgSrc(img.url)}
+                alt={`${vehicle.name} ${STAR_LABEL[img.stars]}`}
+                className="w-full h-24 object-cover rounded-lg bg-gray-100 border border-gray-200"
+              />
+              <span className="mt-1 text-xs text-gray-400">{"★".repeat(img.stars)}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Image thumbnails */}
-      <div>
-        <h3 className="text-xs font-medium text-gray-700 mb-2">
-          Images ({vehicle.images.length})
-        </h3>
+      {/* ── OVERVIEW ─────────────────────────────────────────────────── */}
+      <SectionHeading label="Overview" />
+
+      {vehicle.about ? (
+        <p className="text-sm text-gray-700 mb-3 leading-relaxed">{vehicle.about}</p>
+      ) : (
+        <p className="text-xs text-gray-300 italic mb-3">No about text.</p>
+      )}
+
+      {hasAnySpecs ? (
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 mb-2">
+          {SPEC_KEYS.map(([k, label]) =>
+            specs[k] && specs[k].trim() ? (
+              <div key={k} className="flex gap-1 text-xs">
+                <dt className="text-gray-400 shrink-0 w-28">{label}</dt>
+                <dd className="text-gray-700 font-medium">{specs[k]}</dd>
+              </div>
+            ) : null
+          )}
+        </dl>
+      ) : (
+        <p className="text-xs text-gray-300 italic mb-2">No specs recorded.</p>
+      )}
+
+      {/* ── FUN FACTS ────────────────────────────────────────────────── */}
+      <SectionHeading label="Fun facts" count={facts.length} />
+      {facts.length === 0 ? (
+        <p className="text-xs text-gray-300 italic">No fun facts recorded.</p>
+      ) : (
+        <ul className="space-y-1.5 text-sm text-gray-700">
+          {facts.map((fact, i) => (
+            <li key={i} className="flex gap-2">
+              <span className="text-gray-400 shrink-0">💡</span>
+              <span>{fact}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* ── ARMAMENT ─────────────────────────────────────────────────── */}
+      <SectionHeading label="Armament" count={armament.length} />
+      {armament.length === 0 ? (
+        <p className="text-xs text-gray-300 italic">No armament entries.</p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {armament.map((entry, i) => (
+            <div key={i} className="text-xs border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{entry.section}</span>
+                {entry.visibilityRating && <span className="text-gray-400">◉ {entry.visibilityRating}</span>}
+              </div>
+              <p className="font-medium text-gray-800">{entry.name}</p>
+              {entry.description && <p className="text-gray-500 mt-0.5 leading-snug">{entry.description}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── PROTECTION ───────────────────────────────────────────────── */}
+      <SectionHeading label="Protection" count={protection.length} />
+      {protection.length === 0 ? (
+        <p className="text-xs text-gray-300 italic">No protection entries.</p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {protection.map((entry, i) => (
+            <div key={i} className="text-xs border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{entry.section}</span>
+                {entry.visibilityRating && <span className="text-gray-400">◉ {entry.visibilityRating}</span>}
+              </div>
+              <p className="font-medium text-gray-800">{entry.name}</p>
+              {entry.description && <p className="text-gray-500 mt-0.5 leading-snug">{entry.description}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── W.H.A.T.S. ───────────────────────────────────────────────── */}
+      <SectionHeading label="W.H.A.T.S." count={whatsCues.length} />
+      {whats.intro && <p className="text-xs text-gray-500 italic mb-2">{whats.intro}</p>}
+      {whatsCues.length === 0 ? (
+        <p className="text-xs text-gray-300 italic">No identification cues.</p>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          {whatsCues.map((cue, i) => (
+            <div key={i} className="flex gap-2 text-xs items-start">
+              <span className="font-bold text-navy bg-blue-50 rounded px-1.5 py-0.5 shrink-0 w-6 text-center">{cue.letter}</span>
+              <div>
+                <span className="font-semibold text-gray-700">{cue.keyword}</span>
+                {cue.description && <span className="text-gray-500"> — {cue.description}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── VARIANTS ─────────────────────────────────────────────────── */}
+      <SectionHeading label="Variants" count={variants.length} />
+      {variants.length === 0 ? (
+        <p className="text-xs text-gray-300 italic">No variants recorded.</p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {variants.map((vt, i) => (
+            <div key={i} className="text-xs border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="font-semibold text-gray-800">{vt.name}</span>
+                {vt.year && <span className="text-gray-400">{vt.year}</span>}
+                {vt.label && <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{vt.label}</span>}
+              </div>
+              {vt.visibleDiffs && (
+                <div className="mt-0.5">
+                  <span className="text-gray-400">◉ Visible: </span>
+                  {vt.visibleDiffs.split("\n").filter(Boolean).map((d, j) => (
+                    <span key={j} className="text-gray-600">{d}{j < vt.visibleDiffs.split("\n").filter(Boolean).length - 1 ? " · " : ""}</span>
+                  ))}
+                </div>
+              )}
+              {vt.internalDiffs && (
+                <div className="mt-0.5">
+                  <span className="text-gray-400">⚙ Internal: </span>
+                  {vt.internalDiffs.split("\n").filter(Boolean).map((d, j) => (
+                    <span key={j} className="text-gray-600">{d}{j < vt.internalDiffs.split("\n").filter(Boolean).length - 1 ? " · " : ""}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── IMAGES ───────────────────────────────────────────────────── */}
+      <SectionHeading label="Images" count={vehicle.images.length} />
+      {vehicle.images.length === 0 ? (
+        <p className="text-xs text-gray-300 italic">No images.</p>
+      ) : (
         <div className="grid grid-cols-3 gap-2">
           {vehicle.images.map((img, i) => (
             <div key={i} className="flex flex-col items-center">
@@ -1067,7 +1222,7 @@ function VehicleDetails({ vehicle, onEdit, onClose }) {
             </div>
           ))}
         </div>
-      </div>
+      )}
     </section>
   );
 }
@@ -1387,6 +1542,24 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
   const updateWhatsCue = (i, field, val) =>
     setForm((prev) => ({ ...prev, whats: { ...prev.whats, cues: prev.whats.cues.map((c, idx) => idx === i ? { ...c, [field]: val } : c) } }));
 
+  const WHATS_TEMPLATE = [
+    { letter: "W", keyword: "WHEELS / TRACKS", description: "" },
+    { letter: "H", keyword: "HULL", description: "" },
+    { letter: "A", keyword: "ARMAMENT", description: "" },
+    { letter: "T", keyword: "TURRET", description: "" },
+    { letter: "S", keyword: "SUSPENSION / SILHOUETTE", description: "" },
+  ];
+  const WEFT_TEMPLATE = [
+    { letter: "W", keyword: "WINGS", description: "" },
+    { letter: "E", keyword: "ENGINES", description: "" },
+    { letter: "F", keyword: "FUSELAGE", description: "" },
+    { letter: "T", keyword: "TAIL", description: "" },
+  ];
+  const applyWhatsTemplate = (tpl) => {
+    if (form.whats.cues.length > 0 && !window.confirm("Replace existing cues with template?")) return;
+    setForm((prev) => ({ ...prev, whats: { ...prev.whats, cues: tpl } }));
+  };
+
   const addVariant = () =>
     setForm((prev) => ({ ...prev, variants: [...prev.variants, { name: "", year: "", label: "", visibleDifferencesText: "", internalDifferencesText: "" }] }));
   const removeVariant = (i) =>
@@ -1601,7 +1774,7 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
         <div className="border-t border-gray-200 pt-4">
           <div className="mb-4">
             <h3 className="text-sm font-semibold text-navy">Study Data</h3>
-            <p className="text-xs text-gray-400 mt-0.5">Powers the Vehicle Study screen (Overview · Armament · Protection · What's It? · Variants).</p>
+            <p className="text-xs text-gray-400 mt-0.5">Powers the Vehicle Study screen (Overview · Armament · Protection · W.H.A.T.S. · Variants).</p>
           </div>
 
           {/* OVERVIEW — About + Specs */}
@@ -1736,8 +1909,12 @@ function VehicleForm({ mode, selectedVehicle, vehicles, onSave, onCancel }) {
           {/* WHATS */}
           <div className="mb-6">
             <div className="flex items-baseline justify-between mb-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">What's It? (identification cues)</p>
-              <button type="button" onClick={addWhatsCue} className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50">+ Add cue</button>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">W.H.A.T.S. (identification cues)</p>
+              <div className="flex items-center gap-1.5">
+                <button type="button" onClick={() => applyWhatsTemplate(WHATS_TEMPLATE)} className="text-xs px-2 py-1 rounded-lg border border-blue-300 text-blue-700 hover:bg-blue-50" title="Pre-fill: W=Wheels, H=Hull, A=Armament, T=Turret, S=Suspension">W.H.A.T.S.</button>
+                <button type="button" onClick={() => applyWhatsTemplate(WEFT_TEMPLATE)} className="text-xs px-2 py-1 rounded-lg border border-purple-300 text-purple-700 hover:bg-purple-50" title="Pre-fill: W=Wings, E=Engines, F=Fuselage, T=Tail">W.E.F.T.</button>
+                <button type="button" onClick={addWhatsCue} className="text-xs px-2 py-1 rounded-lg border border-gray-300 hover:bg-gray-50">+ Add cue</button>
+              </div>
             </div>
             <div className="mb-2">
               <label className="block text-xs text-gray-500 mb-0.5">Intro text</label>
@@ -2069,8 +2246,8 @@ function formatVehicleEntry(v) {
 function generateVehiclesJs(vehicles, pactConfig = {}) {
   const vehicleEntries = vehicles.map(formatVehicleEntry).join(",\n");
   const vehiclesBlock = vehicles.length === 0
-    ? "window.vehicles = [];"
-    : `window.vehicles = [\n${vehicleEntries}\n];`;
+    ? "export const vehicles = [];"
+    : `export const vehicles = [\n${vehicleEntries}\n];`;
 
   // Emit all pact overrides sorted alphabetically so diffs are stable
   const pactLines = Object.entries(pactConfig)
@@ -2079,13 +2256,11 @@ function generateVehiclesJs(vehicles, pactConfig = {}) {
   const pactBlock =
     "// Alliance configuration — maps countries to military alliances.\n" +
     "// Managed via Admin → 🌐 Alliances. Empty = built-in defaults apply.\n" +
-    `window.pactConfig = {\n${pactLines.join(",\n")}\n};`;
+    `export const pactConfig = {\n${pactLines.join(",\n")}\n};`;
 
   return (
     `${EXPORTED_HEADER}\n` +
     `${vehiclesBlock}\n\n` +
-    `// Convenience helper — total count, useful for the home-screen stats card\n` +
-    `window.vehicleCount = window.vehicles.length;\n\n` +
     `${pactBlock}\n`
   );
 }

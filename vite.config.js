@@ -26,6 +26,20 @@ export default defineConfig({
           next()
         })
       }
+    },
+    // Copy data/vehicles.js to dist/data/vehicles.js after every build so the
+    // live admin page (a raw CDN-based HTML file, not Vite-bundled) can import
+    // it via `import { vehicles } from '../data/vehicles.js'`. Without this
+    // copy, Vite only bundles the file into the JS blob and the admin gets a
+    // 404, loading with an empty vehicle list.
+    {
+      name: 'copy-vehicles-data',
+      closeBundle() {
+        const src  = path.resolve(__dirname, 'data/vehicles.js')
+        const dest = path.resolve(__dirname, 'dist/data/vehicles.js')
+        fs.mkdirSync(path.dirname(dest), { recursive: true })
+        fs.copyFileSync(src, dest)
+      }
     }
   ],
   base: '/MatKenGame/',
