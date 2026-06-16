@@ -44,23 +44,37 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
   const [tab,          setTab]         = useState("OVERVIEW");
   const [imgIdx,       setImgIdx]      = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const touchStartX = useRef(null);
-  const touchStartY = useRef(null);
+
+  // Zoom state — ref is the live value (no stale closures), state drives render
+  const zoomRef  = useRef({ scale: 1, x: 0, y: 0 });
+  const [zoom, setZoom] = useState({ scale: 1, x: 0, y: 0 });
+  const updateZoom = (z) => { zoomRef.current = z; setZoom(z); };
+  const resetZoom  = ()  => updateZoom({ scale: 1, x: 0, y: 0 });
+
+  // Gesture tracking refs
+  const touchStartX    = useRef(null);
+  const touchStartY    = useRef(null);
+  const pinchStartDist  = useRef(null);
+  const pinchStartScale = useRef(1);
+  const isPinching      = useRef(false);
+  const panStartRef     = useRef(null);
+  const lastTapTime     = useRef(0);
 
   if (!vehicle) return null;
   const images = Array.isArray(vehicle.images) ? vehicle.images : [];
   const specs  = vehicle.specs || {};
   const currentImage = images[imgIdx];
 
-  const prevImage = () => setImgIdx((i) => (i - 1 + images.length) % images.length);
-  const nextImage = () => setImgIdx((i) => (i + 1) % images.length);
+  const prevImage = () => { setImgIdx((i) => (i - 1 + images.length) % images.length); resetZoom(); };
+  const nextImage = () => { setImgIdx((i) => (i + 1) % images.length); resetZoom(); };
+  const closeLightbox = () => { setLightboxOpen(false); resetZoom(); };
 
-  const handleTouchStart = (e) => {
+  // ── Carousel touch handlers (swipe left/right only) ──────────────────────
+  const handleCarouselTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
   };
 
-  // Carousel: horizontal swipe only
   const handleCarouselTouchEnd = (e) => {
     if (touchStartX.current === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX.current;
@@ -72,15 +86,69 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
     touchStartY.current = null;
   };
 
-  // Lightbox: horizontal swipe to navigate, swipe-down to close
+  // ── Lightbox touch handlers (pinch-zoom + pan + swipe + double-tap) ──────
+  const handleLightboxTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      isPinching.current = true;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchStartDist.current  = Math.hypot(dx, dy);
+      pinchStartScale.current = zoomRef.current.scale;
+      touchStartX.current = null;
+      touchStartY.current = null;
+    } else if (e.touches.length === 1) {
+      isPinching.current = false;
+      const x = e.touches[0].clientX;
+      const y = e.touches[0].clientY;
+      touchStartX.current = x;
+      touchStartY.current = y;
+      panStartRef.current = { x, y };
+      // Double-tap: toggle between 1× and 2.5×
+      const now = Date.now();
+      if (now - lastTapTime.current < 300) {
+        zoomRef.current.scale > 1 ? resetZoom() : updateZoom({ scale: 2.5, x: 0, y: 0 });
+        lastTapTime.current = 0;
+      } else {
+        lastTapTime.current = now;
+      }
+    }
+  };
+
+  const handleLightboxTouchMove = (e) => {
+    if (e.touches.length === 2 && pinchStartDist.current !== null) {
+      // Pinch zoom
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist     = Math.hypot(dx, dy);
+      const newScale = Math.min(6, Math.max(1, pinchStartScale.current * (dist / pinchStartDist.current)));
+      updateZoom({ ...zoomRef.current, scale: newScale });
+    } else if (e.touches.length === 1 && zoomRef.current.scale > 1 && panStartRef.current) {
+      // Pan while zoomed
+      const dx = e.touches[0].clientX - panStartRef.current.x;
+      const dy = e.touches[0].clientY - panStartRef.current.y;
+      updateZoom({ ...zoomRef.current, x: zoomRef.current.x + dx, y: zoomRef.current.y + dy });
+      panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  };
+
   const handleLightboxTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    const dy = e.changedTouches[0].clientY - touchStartY.current;
-    if (Math.abs(dy) > 80 && Math.abs(dy) > Math.abs(dx) && dy > 0) {
-      setLightboxOpen(false);
-    } else if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && images.length > 1) {
-      dx < 0 ? nextImage() : prevImage();
+    if (isPinching.current) {
+      isPinching.current    = false;
+      pinchStartDist.current = null;
+      // Snap back if nearly at 1×
+      if (zoomRef.current.scale < 1.05) resetZoom();
+      return;
+    }
+    panStartRef.current = null;
+    // Swipe gestures only work when not zoomed in
+    if (zoomRef.current.scale <= 1 && touchStartX.current !== null) {
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
+      if (Math.abs(dy) > 80 && Math.abs(dy) > Math.abs(dx) && dy > 0) {
+        closeLightbox();
+      } else if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && images.length > 1) {
+        dx < 0 ? nextImage() : prevImage();
+      }
     }
     touchStartX.current = null;
     touchStartY.current = null;
@@ -320,7 +388,7 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
           {/* Image Carousel — swipeable, tap to open lightbox */}
           <div
             style={{ position: "relative", width: "100%", height: 190, background: "#141f38", overflow: "hidden", flexShrink: 0, touchAction: "pan-y", userSelect: "none" }}
-            onTouchStart={handleTouchStart}
+            onTouchStart={handleCarouselTouchStart}
             onTouchEnd={handleCarouselTouchEnd}
           >
             {currentImage ? (
@@ -344,14 +412,8 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
             )}
             {images.length > 1 && (
               <>
-                <button
-                  onClick={prevImage}
-                  style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
-                >‹</button>
-                <button
-                  onClick={nextImage}
-                  style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}
-                >›</button>
+                <button onClick={prevImage} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}>‹</button>
+                <button onClick={nextImage} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", width: 32, height: 32, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", lineHeight: 1 }}>›</button>
               </>
             )}
           </div>
@@ -359,9 +421,7 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
           {/* Dots Row */}
           <div style={{ display: "flex", gap: 6, height: 36, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             {images.length <= 1 ? (
-              images.length === 1
-                ? <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#f59e0a" }} />
-                : null
+              images.length === 1 ? <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#f59e0a" }} /> : null
             ) : (
               images.map((_, i) => (
                 <button key={i} onClick={() => setImgIdx(i)}
@@ -373,38 +433,23 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
 
           {/* Tab Bar + Content */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
-            {/* Tab Bar */}
             <div style={{ background: "#1e293b", height: 44, display: "flex", flexShrink: 0, position: "relative", overflowX: "auto" }}>
               <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 1, background: "rgba(51,65,85,0.3)" }} />
               {STUDY_TABS.map((t) => {
                 const active = tab === t;
                 return (
                   <button key={t} onClick={() => setTab(t)}
-                    style={{
-                      height: 44, minWidth: 78, flex: "0 0 78px",
-                      background: "none", border: "none", cursor: "pointer",
-                      fontFamily: "'Rajdhani', sans-serif",
-                      fontWeight: active ? 600 : 500,
-                      fontSize: "0.625rem", letterSpacing: "0.11em",
-                      color: active ? "#e2e8f0" : "rgba(99,115,135,0.7)",
-                      position: "relative",
-                    }}
+                    style={{ height: 44, minWidth: 78, flex: "0 0 78px", background: "none", border: "none", cursor: "pointer", fontFamily: "'Rajdhani', sans-serif", fontWeight: active ? 600 : 500, fontSize: "0.625rem", letterSpacing: "0.11em", color: active ? "#e2e8f0" : "rgba(99,115,135,0.7)", position: "relative" }}
                   >
                     {t}
-                    {active && (
-                      <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 2, background: "#f59e0a", zIndex: 1 }} />
-                    )}
+                    {active && <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 2, background: "#f59e0a", zIndex: 1 }} />}
                   </button>
                 );
               })}
             </div>
-
-            {/* Tab Content */}
             <main style={{ flex: 1, overflowY: "auto", padding: "14px 16px", paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}>
               {renderTabContent()}
             </main>
-
           </div>
         </div>
       </div>
@@ -412,29 +457,18 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
       {/* Lightbox overlay */}
       {lightboxOpen && (
         <div
-          style={{
-            position: "fixed", inset: 0, zIndex: 1000,
-            background: "rgba(7,11,20,0.97)",
-            display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center",
-            touchAction: "none", userSelect: "none",
-          }}
-          onTouchStart={handleTouchStart}
+          style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(7,11,20,0.97)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", touchAction: "none", userSelect: "none", overflow: "hidden" }}
+          onTouchStart={handleLightboxTouchStart}
+          onTouchMove={handleLightboxTouchMove}
           onTouchEnd={handleLightboxTouchEnd}
         >
           {/* Close button */}
           <button
-            onClick={() => setLightboxOpen(false)}
-            style={{
-              position: "absolute", top: "calc(env(safe-area-inset-top, 0px) + 16px)", right: 20,
-              background: "rgba(15,23,42,0.8)", border: "1px solid rgba(51,65,85,0.5)",
-              borderRadius: "50%", width: 40, height: 40,
-              color: "#94a3b8", fontSize: "1rem", cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}
+            onClick={closeLightbox}
+            style={{ position: "absolute", top: "calc(env(safe-area-inset-top, 0px) + 16px)", right: 20, background: "rgba(15,23,42,0.8)", border: "1px solid rgba(51,65,85,0.5)", borderRadius: "50%", width: 40, height: 40, color: "#94a3b8", fontSize: "1rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
           >✕</button>
 
-          {/* Vehicle name + image counter */}
+          {/* Vehicle name + counter */}
           <div style={{ position: "absolute", top: "calc(env(safe-area-inset-top, 0px) + 20px)", left: 20, right: 72 }}>
             <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.25rem", color: "#e2e8f0", letterSpacing: "0.06em", lineHeight: 1 }}>
               {vehicle.name}
@@ -446,56 +480,57 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
             )}
           </div>
 
-          {/* Image */}
+          {/* Image — pinch/pan transform applied here */}
           {currentImage && (
             <img
               src={currentImage.url}
               alt={vehicle.name}
-              style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain", display: "block" }}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "70vh",
+                objectFit: "contain",
+                display: "block",
+                transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.scale})`,
+                transformOrigin: "center center",
+                // Smooth snap-back when releasing, instant during gesture
+                transition: isPinching.current ? "none" : zoom.scale === 1 ? "transform 0.25s ease" : "none",
+              }}
             />
           )}
 
-          {/* Star label + swipe hint */}
-          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+          {/* Star + hint */}
+          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, pointerEvents: "none" }}>
             {currentImage?.stars && (
               <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 700, fontSize: "0.75rem", color: "#f59e0a", letterSpacing: "0.12em" }}>
                 ★  {STAR_LABEL[currentImage.stars] || "★".repeat(currentImage.stars)}
               </div>
             )}
-            {images.length > 1 && (
-              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.55rem", color: "rgba(99,115,135,0.4)", letterSpacing: "0.12em" }}>
-                SWIPE TO NAVIGATE · SWIPE DOWN TO CLOSE
-              </div>
-            )}
-            {images.length <= 1 && (
-              <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.55rem", color: "rgba(99,115,135,0.4)", letterSpacing: "0.12em" }}>
-                SWIPE DOWN TO CLOSE
-              </div>
-            )}
+            <div style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.55rem", color: "rgba(99,115,135,0.4)", letterSpacing: "0.12em", textAlign: "center" }}>
+              {zoom.scale > 1
+                ? "PINCH TO ZOOM · DOUBLE-TAP TO RESET"
+                : images.length > 1
+                  ? "PINCH TO ZOOM · DOUBLE-TAP · SWIPE TO NAVIGATE · SWIPE DOWN TO CLOSE"
+                  : "PINCH TO ZOOM · DOUBLE-TAP TO RESET · SWIPE DOWN TO CLOSE"
+              }
+            </div>
           </div>
 
           {/* Dots */}
           {images.length > 1 && (
-            <div style={{ display: "flex", gap: 6, marginTop: 16 }}>
+            <div style={{ display: "flex", gap: 6, marginTop: 16, pointerEvents: zoom.scale > 1 ? "none" : "auto" }}>
               {images.map((_, i) => (
-                <button key={i} onClick={() => setImgIdx(i)}
+                <button key={i} onClick={() => { setImgIdx(i); resetZoom(); }}
                   style={{ width: 6, height: 6, borderRadius: "50%", background: i === imgIdx ? "#f59e0a" : "rgba(51,65,85,0.5)", border: "none", cursor: "pointer", padding: 0 }}
                 />
               ))}
             </div>
           )}
 
-          {/* Prev / Next arrows */}
-          {images.length > 1 && (
+          {/* Prev / Next arrows — hidden when zoomed in */}
+          {images.length > 1 && zoom.scale <= 1 && (
             <>
-              <button
-                onClick={prevImage}
-                style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", lineHeight: 1 }}
-              >‹</button>
-              <button
-                onClick={nextImage}
-                style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", lineHeight: 1 }}
-              >›</button>
+              <button onClick={prevImage} style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", lineHeight: 1 }}>‹</button>
+              <button onClick={nextImage} style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", width: 44, height: 44, borderRadius: "50%", background: "rgba(15,23,42,0.7)", border: "1px solid rgba(51,65,85,0.5)", cursor: "pointer", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", lineHeight: 1 }}>›</button>
             </>
           )}
         </div>

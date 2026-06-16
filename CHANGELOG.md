@@ -13,6 +13,23 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Added — Pinch-to-zoom inside lightbox viewer
+
+**Pinch-to-zoom** (`VehicleStudyScreen`) — the lightbox overlay now supports native two-finger zoom and pan on mobile:
+
+- **Pinch in/out** scales the image from 1× up to 6×. A separate `handleLightboxTouchMove` handler fires continuously during the gesture to update scale in real time.
+- **Pan** — while zoomed in (scale > 1), a single finger drags the image freely. Pan resets when zoom snaps back to 1×.
+- **Double-tap** toggles between 1× and 2.5× — tap twice quickly (<300ms) to jump in; double-tap again to reset.
+- **Snap-back** — releasing a pinch at scale < 1.05 snaps cleanly back to 1× with a 0.25s ease transition.
+- **Swipe gestures disabled while zoomed** — swipe-to-navigate and swipe-down-to-close only trigger when scale ≤ 1, preventing accidental navigation while panning.
+- **Arrow buttons hidden while zoomed** — ‹ › nav arrows disappear at scale > 1 to clear the viewport for panning.
+- **Hint text updates dynamically** — shows `PINCH TO ZOOM · DOUBLE-TAP TO RESET` while zoomed, and the full gesture hint at 1×.
+- Zoom resets automatically on image navigate (prev/next) and on lightbox close.
+
+Touch tracking uses dedicated refs (`pinchStartDist`, `pinchStartScale`, `isPinching`, `panStartRef`, `lastTapTime`) alongside a `zoomRef` that mirrors `zoom` state for stale-closure-free reads inside move handlers.
+
+---
+
 ### Added — Vehicle image swipe gestures + lightbox fullscreen viewer
 
 **Swipe to navigate** (`VehicleStudyScreen`) — the image carousel now responds to horizontal finger swipes on mobile. Swiping left/right advances or rewinds through the vehicle's images. The existing ‹ › arrow buttons remain for desktop. `touch-action: pan-y` is set on the carousel so the browser still handles vertical page scroll and only horizontal touches are captured by the swipe handler.
