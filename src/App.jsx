@@ -7,6 +7,7 @@ import {
 } from './lib/constants';
 import {
   loadBestScores, loadDraftFromStorage, buildRound, getVehiclePact,
+  fetchPlayerBest, fetchRankAbove, fetchLeaderboardWindow,
 } from './lib/utils';
 
 import CallsignModal     from './components/CallsignModal';
@@ -74,6 +75,36 @@ function App() {
   const [lastHintsUsed,     setLastHintsUsed]     = useState(0);
   const [callsign,          setCallsign]          = useState(() => localStorage.getItem(CALLSIGN_KEY) || "");
   const [callsignModalOpen, setCallsignModalOpen] = useState(false);
+
+  const [playerRank,    setPlayerRank]    = useState(null);
+  const [rankNeighbors, setRankNeighbors] = useState([]);
+
+  // Fetch the player's global rank and two neighbours for the landing card.
+  // Fires once on load (and again if the callsign changes). Errors are
+  // swallowed silently — the card just stays at "—" if Supabase is down.
+  useEffect(() => {
+    if (!callsign) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const best = await fetchPlayerBest(callsign, "all", "all", "all");
+        if (!best || cancelled) return;
+        const rank = await fetchRankAbove(best.score, "all", "all", "all");
+        if (rank == null || cancelled) return;
+        setPlayerRank(rank);
+        const offset = Math.max(0, rank - 2);
+        const window = await fetchLeaderboardWindow(offset, 3);
+        if (cancelled) return;
+        const neighbors = window
+          .map((e, i) => ({ ...e, rank: offset + i + 1 }))
+          .filter((e) => e.callsign !== callsign)
+          .slice(0, 2)
+          .map((e) => `#${e.rank} ${e.callsign} · ${e.score}`);
+        setRankNeighbors(neighbors);
+      } catch (_) {}
+    })();
+    return () => { cancelled = true; };
+  }, [callsign]);
 
   const [lbInitCategory,   setLbInitCategory]   = useState("all");
   const [lbInitDifficulty, setLbInitDifficulty] = useState("all");
@@ -300,6 +331,8 @@ function App() {
         callsign={callsign}
         vehicles={vehicles}
         bestScores={bestScores}
+        playerRank={playerRank}
+        rankNeighbors={rankNeighbors}
         onSetup={() => setScreen("home")}
         onLeaderboard={() => goToLeaderboard("all", "all")}
         onLearning={() => setScreen("learning")}

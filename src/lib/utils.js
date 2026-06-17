@@ -221,3 +221,22 @@ export async function fetchRankAbove(score, category, difficulty, mode) {
   } catch (_) {}
   return null;
 }
+
+// Fetch a slice of the global leaderboard (all categories/difficulties/modes)
+// starting at `offset` (0-based). Used to build the neighbour list on the
+// landing screen without re-fetching the full top-10.
+export async function fetchLeaderboardWindow(offset, limit = 3) {
+  const url = `${SUPABASE_URL}/rest/v1/leaderboard`
+    + `?select=callsign,score`
+    + `&order=score.desc,created_at.asc`
+    + `&limit=${limit}&offset=${offset}`;
+  try {
+    const res = await fetch(url, {
+      headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch (_) {
+    return [];
+  }
+}
