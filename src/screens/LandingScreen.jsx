@@ -31,7 +31,7 @@ export default function LandingScreen({
 
         {/* Test Your Self */}
         <div
-          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", height: 160, display: "flex", flexDirection: "column", paddingTop: 20, cursor: "pointer" }}
+          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", height: 160, display: "flex", flexDirection: "column", justifyContent: "center", overflow: "hidden", cursor: "pointer" }}
           onClick={onSetup}
           role="button"
           tabIndex={0}
@@ -62,7 +62,7 @@ export default function LandingScreen({
 
         {/* Vehicle Library */}
         <div
-          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", paddingTop: 20, cursor: "pointer" }}
+          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", justifyContent: "center", overflow: "hidden", cursor: "pointer" }}
           onClick={onLearning}
           role="button"
           tabIndex={0}
@@ -93,7 +93,7 @@ export default function LandingScreen({
 
         {/* Leaderboard */}
         <div
-          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,10,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", paddingTop: 20, overflow: "hidden", cursor: "pointer" }}
+          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,10,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", justifyContent: "center", overflow: "hidden", cursor: "pointer" }}
           onClick={onLeaderboard}
           role="button"
           tabIndex={0}

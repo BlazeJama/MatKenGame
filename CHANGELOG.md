@@ -39,6 +39,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 
 ---
 
+### Fixed — Home screen cards no longer expand on narrow screens
+
+Added `overflow: hidden` to all three home screen TacCards. Without it, the `whiteSpace: nowrap` subtitle text was pushing the card wider than the container on viewports narrower than 390px (e.g. iPhone 11 Pro at 375px CSS width), making the card overflow its bounds. Matches the `overflow: clip` behaviour Figma applies by default.
+
+Also restored `justifyContent: center` on all cards (reverted the earlier `paddingTop: 20` change to match the latest Figma pull).
+
+---
+
 ### Changed — Home screen update (Figma re-pull, node 49-2)
 
 - Cards changed from vertically-centred layout to top-aligned with `paddingTop: 20px` — content now flows from the top of each card rather than floating in the middle
