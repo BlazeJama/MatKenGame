@@ -106,7 +106,7 @@ export default function LandingScreen({
               </p>
               <p className="font-display" style={{ fontSize: "2.25rem", lineHeight: 1, margin: 0 }}>
                 <span style={{ color: "#e2e8f0" }}>LEADER</span>
-                <span style={{ color: "#f87171" }}>BOARD</span>
+                <span style={{ color: "#f59e0b" }}>BOARD</span>
               </p>
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", flexShrink: 0 }}>

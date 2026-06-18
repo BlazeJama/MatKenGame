@@ -13,6 +13,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Leaderboard card title accent reverted to amber (Figma pull, node 49-2 @ 375px)
+
+Re-pulled Figma node 49-2 after the user resized the design frame from 390px to 375px to match iPhone 11 Pro's CSS logical pixel width — making the Figma preview pixel-accurate on that device. The frame resize is Figma-side only; `maxWidth: 390` in code is unchanged (correct for the full iPhone range).
+
+One code change: "BOARD" in the Leaderboard card title reverted from red (`#f87171`) back to amber (`#f59e0b`) — the red was a temporary Figma experiment, now resolved.
+
+---
+
 ### Changed — Leaderboard card title accent colour (Figma pull, node 49-2)
 
 Updated `LandingScreen.jsx`: the "BOARD" half of the LEADERBOARD title now uses red (`#f87171`) instead of amber (`#f59e0b`), matching the latest Figma design. "LEADER" remains white (`#e2e8f0`).
