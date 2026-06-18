@@ -13,6 +13,45 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Welcome + Game Setup screen redesigns (Figma pull, nodes 3-2, 14-2)
+
+**WelcomeScreen** (`src/screens/WelcomeScreen.jsx`) — Figma node 3-2:
+- Added double-div max-width wrapper (`tac-grid` + `max-width: 390px, margin: 0 auto`)
+- Header: paddingTop bumped to 80px (+ safe-area), centered layout with precise spacers (20px / 12px)
+- "OPERATOR REGISTRATION" label: switched from Share Tech Mono to Rajdhani SemiBold, amber rgba 0.5
+- Subtitle: both lines now same colour (#94a3b8) — removed the darker tint on line 2
+- "CALLSIGN (1–16 CHARS)": switched from Share Tech Mono to Rajdhani SemiBold #334155
+- DEPLOY button: removed the `▶ ` prefix — text is now just `DEPLOY`
+
+**GameSetupScreen** (`src/screens/GameSetupScreen.jsx`) — Figma node 14-2:
+- Added double-div max-width wrapper
+- Header completely redesigned (140px fixed height):
+  - `← BACK` button: amber (#f59e0b), Rajdhani SemiBold 14px (was `← HOME` in grey Share Tech Mono)
+  - Added `◈ GLOBAL RANKING ◈` amber label above the title
+  - Title changed from `MATKENGAME` to `GAME SETTINGS` (Bebas Neue 48px, "game" white + "settings" amber)
+  - Subtitle: Share Tech Mono 10px grey, centered
+- Section labels (CATEGORY / ERA / ALLIANCE / DIFFICULTY / MODE): switched from Share Tech Mono to Rajdhani SemiBold
+- Filter chips: Rajdhani SemiBold 14px with `padding: 13px 11px` (was Share Tech Mono 0.72rem)
+- Difficulty chips: stars and label now rendered as single string (`★  EASY` / `★★  MEDIUM` / `★★★  HARD`)
+- Mission Intel card: VEHICLES READY / PER ROUND labels switched to Rajdhani SemiBold 13px; BEST row switches from Share Tech Mono to Rajdhani
+- BEGIN TRAINING button: height 40px (was 58px min-height); added `→` arrow suffix
+- Removed utility buttons at bottom (PERF LOG / LEADERBOARD / CALLSIGN edit) — navigation now flows through the home screen
+
+---
+
+### Changed — Home screen redesign (Figma pull, node 49-2)
+
+Rebuilt `LandingScreen.jsx` to match the updated Figma design:
+
+- **Card order** reversed — TEST YOUR SELF is now first (primary action), VEHICLE LIBRARY second, LEADERBOARD third
+- **Each card** now follows a consistent TacCard layout: amber `◈ CATEGORY` label → split-color Bebas Neue title → Rajdhani subtitle → full-width button
+- **Three button tiers**: solid amber fill (Begin Training, primary CTA), amber border (Study Vehicles, secondary), grey border (View Rankings, tertiary)
+- **Header** is now left-aligned (paddingLeft 67px) matching the Figma frame, replacing the previous centered layout
+- **Leaderboard card** retains the live `#rank` display in the top-right, now styled as a clean number column with "YOUR RANK" label above it
+- Removed the `rankNeighbors` list from the leaderboard card (Figma no longer shows it)
+
+---
+
 ### Added — Pinch-to-zoom inside lightbox viewer
 
 **Pinch-to-zoom** (`VehicleStudyScreen`) — the lightbox overlay now supports native two-finger zoom and pan on mobile:
