@@ -13,6 +13,12 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Verified — Home screen aligned with updated Figma layout (node 49-2 re-pull)
+
+Re-pulled Figma node 49-2 to confirm the home screen is in sync after the user switched the Figma frame from a fixed 390px absolute layout to a fluid `w-full` flex layout. No code changes were needed — `LandingScreen.jsx` already uses `width: 100%` cards inside a padded flex container, which produces identical behaviour. Typo corrections made in a prior session (`MULTIPLE`, `INTELLIGENCE`) are retained against the Figma spellings.
+
+---
+
 ### Changed — Welcome + Game Setup screen redesigns (Figma pull, nodes 3-2, 14-2)
 
 **WelcomeScreen** (`src/screens/WelcomeScreen.jsx`) — Figma node 3-2:
