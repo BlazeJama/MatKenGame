@@ -39,6 +39,17 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 
 ---
 
+### Changed — Home screen update (Figma re-pull, node 49-2)
+
+- Cards changed from vertically-centred layout to top-aligned with `paddingTop: 20px` — content now flows from the top of each card rather than floating in the middle
+- Button sections no longer use `flex: 1` growth — buttons sit directly below the subtitle row with breathing room below
+- Subtitle text updates:
+  - Training card: separators changed from `·` to ` - `
+  - Library card: removed leading "BROWSE" → `VEHICLES PROFILES - ARMAMENT - PROTECTION - VARIANTS`
+  - Leaderboard card: completely new copy → `GLOBAL STANDING - RANKED BY SCORE - ALL CATEGORIES`
+
+---
+
 ### Changed — Home screen redesign (Figma pull, node 49-2)
 
 Rebuilt `LandingScreen.jsx` to match the updated Figma design:

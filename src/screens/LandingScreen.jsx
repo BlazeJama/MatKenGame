@@ -31,7 +31,7 @@ export default function LandingScreen({
 
         {/* Test Your Self */}
         <div
-          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", height: 160, display: "flex", flexDirection: "column", justifyContent: "center", cursor: "pointer" }}
+          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", height: 160, display: "flex", flexDirection: "column", paddingTop: 20, cursor: "pointer" }}
           onClick={onSetup}
           role="button"
           tabIndex={0}
@@ -48,10 +48,10 @@ export default function LandingScreen({
           </div>
           <div style={{ padding: "0 20px", flex: "0 0 22px", display: "flex", alignItems: "center" }}>
             <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#64748b", margin: 0, whiteSpace: "nowrap" }}>
-              60+ VEHICLES · MULTIPLE CATEGORIES · 3 DIFFICULTY LEVELS
+              60+ VEHICLES - MULTIPLE CATEGORIES - 3 DIFFICULTY LEVELS
             </p>
           </div>
-          <div style={{ padding: "0 20px", flex: 1, display: "flex", alignItems: "center" }}>
+          <div style={{ padding: "0 20px" }}>
             <div style={{ background: "#f59e0b", height: 40, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
               <span className="font-display" style={{ fontSize: "1.4375rem", color: "#070b14", letterSpacing: "0.14em" }}>
                 BEGIN TRAINING →
@@ -62,7 +62,7 @@ export default function LandingScreen({
 
         {/* Vehicle Library */}
         <div
-          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", justifyContent: "center", cursor: "pointer" }}
+          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", paddingTop: 20, cursor: "pointer" }}
           onClick={onLearning}
           role="button"
           tabIndex={0}
@@ -79,10 +79,10 @@ export default function LandingScreen({
           </div>
           <div style={{ padding: "0 20px", flex: "0 0 22px", display: "flex", alignItems: "center" }}>
             <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#64748b", margin: 0, whiteSpace: "nowrap" }}>
-              BROWSE VEHICLES PROFILES · ARMAMENT · PROTECTION · VARIANTS
+              VEHICLES PROFILES - ARMAMENT - PROTECTION - VARIANTS
             </p>
           </div>
-          <div style={{ padding: "0 20px", flex: 1, display: "flex", alignItems: "center" }}>
+          <div style={{ padding: "0 20px" }}>
             <div style={{ border: "1px solid #f59e0b", borderRadius: 2, height: 40, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
               <span className="font-display" style={{ fontSize: "1.4375rem", color: "#f59e0b", letterSpacing: "0.14em" }}>
                 STUDY VEHICLES →
@@ -93,7 +93,7 @@ export default function LandingScreen({
 
         {/* Leaderboard */}
         <div
-          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,10,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", justifyContent: "center", overflow: "hidden", cursor: "pointer" }}
+          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,10,0.35)", borderRadius: 2, height: 160, display: "flex", flexDirection: "column", paddingTop: 20, overflow: "hidden", cursor: "pointer" }}
           onClick={onLeaderboard}
           role="button"
           tabIndex={0}
@@ -120,10 +120,10 @@ export default function LandingScreen({
           </div>
           <div style={{ padding: "0 20px", flex: "0 0 22px", display: "flex", alignItems: "center" }}>
             <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#64748b", margin: 0, whiteSpace: "nowrap" }}>
-              BROWSE VEHICLES PROFILES · ARMAMENT · PROTECTION · VARIANTS
+              GLOBAL STANDING - RANKED BY SCORE - ALL CATEGORIES
             </p>
           </div>
-          <div style={{ padding: "0 20px", flex: 1, display: "flex", alignItems: "center" }}>
+          <div style={{ padding: "0 20px" }}>
             <div style={{ border: "1px solid #334054", height: 40, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
               <span className="font-display" style={{ fontSize: "1.4375rem", color: "#64748b", letterSpacing: "0.14em" }}>
                 VIEW RANKINGS →
