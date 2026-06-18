@@ -13,6 +13,21 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Home screen header and Training card layout (Figma pull, node 49-2)
+
+Re-pulled node 49-2 after user updated auto-layout settings in Figma.
+
+**Header** (`LandingScreen.jsx`):
+- Switched from absolute-positioned layout to flex-column flow
+- Title and subtitle are now centered within a `paddingLeft/Right: 67px` container with `gap: 12px` and `py: 26px` (was `paddingTop: 40px, paddingBottom: 18px` with title at `left: 67px`)
+
+**Training card** (`TEST YOUR SELF`):
+- Subtitle (`60+ VEHICLES…`) moved up into the label+title block — now a single 88px section containing all three lines, vertically centered
+- Button gets its own dedicated 72px section (was a loose third div with no fixed height)
+- Removes the old three-div structure (`flex: 0 0 57px` / `flex: 0 0 22px` / unsized button)
+
+---
+
 ### Changed — Leaderboard card title accent reverted to amber (Figma pull, node 49-2 @ 375px)
 
 Re-pulled Figma node 49-2 after the user resized the design frame from 390px to 375px to match iPhone 11 Pro's CSS logical pixel width — making the Figma preview pixel-accurate on that device. The frame resize is Figma-side only; `maxWidth: 390` in code is unchanged (correct for the full iPhone range).
