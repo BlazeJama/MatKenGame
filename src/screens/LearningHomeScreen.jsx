@@ -34,7 +34,7 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
     <div className="font-tac flex flex-col" style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh" }}>
 
       {/* Header Secondary */}
-      <header style={{ height: 110, background: "#070b14", position: "relative", overflow: "hidden", paddingTop: "calc(env(safe-area-inset-top, 0px))" }}>
+      <header style={{ height: "calc(110px + env(safe-area-inset-top, 0px))", background: "#070b14", position: "relative", overflow: "hidden", paddingTop: "env(safe-area-inset-top, 0px)" }}>
         {/* Top: back + label */}
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "15px 15px 0", height: 61 }}>
           <button

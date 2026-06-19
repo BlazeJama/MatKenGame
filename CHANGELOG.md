@@ -13,6 +13,14 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Fixed — Vehicle Library header hidden behind status bar in PWA mode
+
+When installed as a PWA (added to home screen), iOS removes the Safari URL bar and the status bar safe-area inset becomes much larger (~47–59px on notch/Dynamic Island devices). The header had a fixed `height: 110px` with `paddingTop: env(safe-area-inset-top)` — the padding consumed space inside the fixed height, pushing the "VEHICLE LIBRARY" title off the bottom of the header and hiding it.
+
+Fix: changed header height to `calc(110px + env(safe-area-inset-top, 0px))` so the header grows to absorb the inset rather than clipping its own content.
+
+---
+
 ### Changed — Vehicle Library card, tab bar, and category chip updates (Figma pulls)
 
 **LearningHomeScreen.jsx** — Vehicle select card (node 56-2):
