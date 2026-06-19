@@ -94,9 +94,9 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
                 fontSize: "0.68rem", letterSpacing: "0.11em",
                 height: 44, padding: "0 12px",
                 borderRadius: 2,
-                border: `1px solid ${active ? "#f59e0b" : "rgba(51,65,85,0.5)"}`,
+                border: `1px solid ${active ? "#f59e0b" : "rgba(51,65,85,0.6)"}`,
                 background: active ? "rgba(245,158,11,0.12)" : "rgba(15,23,42,0.5)",
-                color: active ? "#f59e0b" : "#637387",
+                color: active ? "#f59e0b" : "#94a3b8",
                 cursor: "pointer",
                 flexShrink: 0,
               }}
@@ -135,7 +135,7 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
                   tabIndex={0}
                   onKeyDown={(e) => e.key === "Enter" && onSelectVehicle(v)}
                 >
-                  <div style={{ width: "100%", height: 89, background: "#0a0f1c", overflow: "hidden" }}>
+                  <div style={{ width: "100%", height: 90, background: "#0a0f1c", overflow: "hidden" }}>
                     {img ? (
                       <img src={img} alt={v.name} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.85 }} />
                     ) : (
@@ -144,11 +144,11 @@ export default function LearningHomeScreen({ vehicles, onBack, onSelectVehicle }
                       </div>
                     )}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", padding: "6px", height: 36, justifyContent: "center" }}>
-                    <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.001em", color: "#e2e8f0", lineHeight: 1, margin: "0 0 0px 0" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 10px", height: 50, justifyContent: "center", overflow: "hidden" }}>
+                    <p className="font-display" style={{ fontSize: "1.125rem", color: "#e2e8f0", lineHeight: 1, margin: 0, whiteSpace: "nowrap" }}>
                       {v.name}
                     </p>
-                    <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", letterSpacing: 0, color: "#64748b", lineHeight: 1, margin: 0 }}>
+                    <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.68rem", letterSpacing: 0, color: "#64748b", lineHeight: 1, margin: 0, whiteSpace: "nowrap" }}>
                       {[catShort, era].filter(Boolean).join(" · ")}
                     </p>
                   </div>

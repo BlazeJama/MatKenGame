@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 const STUDY_TABS = ["OVERVIEW", "ARMAMENT", "PROTECTION", "WHATS", "VARIANTS"];
+const TAB_LABEL  = { WHATS: "W.H.A.T.S" };
 
 const STAR_LABEL = { 1: "EASY", 2: "MEDIUM", 3: "HARD" };
 
@@ -439,9 +440,9 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
                 const active = tab === t;
                 return (
                   <button key={t} onClick={() => setTab(t)}
-                    style={{ height: 44, minWidth: 78, flex: "0 0 78px", background: "none", border: "none", cursor: "pointer", fontFamily: "'Rajdhani', sans-serif", fontWeight: active ? 600 : 500, fontSize: "0.625rem", letterSpacing: "0.11em", color: active ? "#e2e8f0" : "rgba(99,115,135,0.7)", position: "relative" }}
+                    style={{ height: 44, minWidth: 78, flex: "0 0 78px", background: "none", border: "none", cursor: "pointer", fontFamily: "'Rajdhani', sans-serif", fontWeight: active ? 600 : 500, fontSize: "0.625rem", letterSpacing: "0.11em", color: active ? "#e2e8f0" : "#94a3b8", position: "relative" }}
                   >
-                    {t}
+                    {TAB_LABEL[t] || t}
                     {active && <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 2, background: "#f59e0a", zIndex: 1 }} />}
                   </button>
                 );

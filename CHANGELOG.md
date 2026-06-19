@@ -13,6 +13,21 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Vehicle Library card, tab bar, and category chip updates (Figma pulls)
+
+**LearningHomeScreen.jsx** — Vehicle select card (node 56-2):
+- Card height: `125px` → `140px`; photo area: `89px` → `90px`
+- Vehicle name font: Rajdhani SemiBold 11px → **Bebas Neue Regular 18px** (resolves browser/Figma font rendering parity)
+- Text frame: height `36px` → `50px`, padding `6px` → `6px 10px`, gap `4px` between name and subtitle
+- Name and subtitle set to `whiteSpace: nowrap` + `overflow: hidden` to clip long names cleanly
+- Category chips (unselected): text `#637387` → `#94a3b8`; border `rgba(51,65,85,0.5)` → `rgba(51,65,85,0.6)`
+
+**VehicleStudyScreen.jsx** — Tab bar (node 656-197):
+- Inactive tab colour: `rgba(99,115,135,0.7)` → `#94a3b8` (matches updated Figma component)
+- "WHATS" tab label renamed to **W.H.A.T.S** (internal key unchanged, display name lookup added via `TAB_LABEL` map)
+
+---
+
 ### Changed — Robust PWA update delivery for home-screen installs
 
 Three gaps were causing players with the app installed on their phone's home screen to miss updates:
