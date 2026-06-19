@@ -13,6 +13,20 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Robust PWA update delivery for home-screen installs
+
+Three gaps were causing players with the app installed on their phone's home screen to miss updates:
+
+1. **`updateViaCache: 'none'`** added to the SW registration in `index.html` — the browser now always fetches `service-worker.js` fresh from the network instead of using an HTTP-cached copy that could be up to 24 hours stale.
+2. **Foreground check on `visibilitychange`** (`App.jsx`) — every time the app is brought back to the foreground (home screen launch, app switcher return), `reg.update()` is called immediately to check for a new SW. Previously the browser only polled on its own schedule.
+3. **Auto-apply update when not mid-quiz** (`App.jsx`) — when a new SW is waiting and the player is not in an active quiz, `skipWaiting` triggers automatically and the page reloads. If an update arrives during a quiz, it defers until the quiz ends (the "AFTER ROUND" banner remains as the visible signal).
+
+### Added — Landing screen live leaderboard rank
+
+- `fetchLeaderboardWindow(offset, limit)` added to `src/lib/utils.js` — fetches a slice of the global leaderboard at any rank position (used to find the two neighbours).
+- `App.jsx` fetches the player's best score → global rank → two neighbour entries on mount (and again if the callsign changes). Errors are swallowed silently so the card stays at `—` if Supabase is unreachable.
+- `playerRank` and `rankNeighbors` now passed to `LandingScreen` — the leaderboard card rank number and neighbour rows are live data instead of permanent `—`.
+
 ### Changed — Home screen subtitle font + card layout fixes (Figma font testing session)
 
 Through a series of Figma pulls and local browser tests, identified that **Rajdhani** renders wider in the browser than Figma's internal engine, causing the 11px subtitle text to overflow the card's 20px right padding. Replaced the subtitle font on all three home screen cards with **Bebas Neue Regular 14px** (`#475569`) — a condensed display font that Figma and the browser render at the same width.
