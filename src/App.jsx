@@ -58,12 +58,31 @@ function App() {
       reloading = true;
       window.location.reload();
     });
+
+    // Re-check for a new SW every time the app comes back to the foreground.
+    // Critical for home-screen PWAs: the browser won't poll on its own when
+    // the app is launched from the icon or brought out of the background.
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        swRegRef.current?.update().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
   const handleSwUpdate = () => {
     const reg = swRegRef.current;
     if (reg && reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
   };
+
+  // Auto-apply a waiting SW update as soon as the player is not mid-quiz.
+  // If an update arrives during a quiz it stays pending (banner shows "AFTER
+  // ROUND"); the moment the quiz ends this effect fires and applies it.
+  const isPlaying = screen === "quiz";
+  useEffect(() => {
+    if (swUpdateReady && !isPlaying) handleSwUpdate();
+  }, [swUpdateReady, isPlaying]);
 
   const [selectedCategory,  setSelectedCategory]  = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);
@@ -341,8 +360,6 @@ function App() {
       />
     );
   }
-
-  const isPlaying = screen === "quiz";
 
   return (
     <>

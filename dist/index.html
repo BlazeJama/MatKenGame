@@ -90,8 +90,8 @@
     }
   </style>
 
-  <script type="module" crossorigin src="/MatKenGame/assets/index-Cg7Lf0va.js"></script>
-  <link rel="stylesheet" crossorigin href="/MatKenGame/assets/index-CIi8tf_j.css">
+  <script type="module" crossorigin src="/MatKenGame/assets/index-B0qf0Thj.js"></script>
+  <link rel="stylesheet" crossorigin href="/MatKenGame/assets/index-DuTLunol.css">
 </head>
 <body class="text-slate-100">
   <div id="root"></div>
@@ -100,7 +100,7 @@
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("service-worker.js").catch((err) => {
+        navigator.serviceWorker.register("service-worker.js", { updateViaCache: "none" }).catch((err) => {
           console.warn("Service worker registration failed:", err);
         });
       });
