@@ -373,8 +373,8 @@ export default function VehicleStudyScreen({ vehicle, onBack }) {
               onClick={onBack}
               style={{ background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}
             >
-              <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.68rem", letterSpacing: "0.154em", color: "rgba(245,158,10,0.35)" }}>
-                ← ALL VEHICLES
+              <span style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 600, fontSize: "0.875rem", letterSpacing: "0.154em", color: "#f59e0b" }}>
+                ← BACK
               </span>
             </button>
             <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2.125rem", color: "#e2e8f0", letterSpacing: "0.08em", lineHeight: 1 }}>

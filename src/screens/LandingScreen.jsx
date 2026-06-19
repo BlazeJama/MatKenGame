@@ -31,13 +31,13 @@ export default function LandingScreen({
 
         {/* Test Your Self */}
         <div
-          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", height: 160, display: "flex", flexDirection: "column", overflow: "hidden", cursor: "pointer" }}
+          style={{ background: "rgba(26,39,68,0.45)", border: "1px solid rgba(245,158,11,0.35)", height: 160, display: "flex", flexDirection: "column", justifyContent: "center", overflow: "hidden", cursor: "pointer" }}
           onClick={onSetup}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && onSetup()}
         >
-          <div style={{ height: 88, padding: "0 20px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ flex: "0 0 57px", padding: "0 20px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#f59e0b", margin: 0 }}>
               ◈ TRAINING
             </p>
@@ -45,11 +45,13 @@ export default function LandingScreen({
               <span style={{ color: "#e2e8f0" }}>TEST </span>
               <span style={{ color: "#f59e0b" }}>YOUR self</span>
             </p>
-            <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#64748b", margin: 0, whiteSpace: "nowrap" }}>
+          </div>
+          <div style={{ flex: "0 0 22px", padding: "0 20px", display: "flex", alignItems: "center" }}>
+            <p className="font-display" style={{ fontSize: "14px", color: "#475569", margin: 0 }}>
               60+ VEHICLES - MULTIPLE CATEGORIES - 3 DIFFICULTY LEVELS
             </p>
           </div>
-          <div style={{ height: 72, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 20px" }}>
+          <div style={{ padding: "0 20px" }}>
             <div style={{ background: "#f59e0b", height: 40, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
               <span className="font-display" style={{ fontSize: "1.4375rem", color: "#070b14", letterSpacing: "0.14em" }}>
                 BEGIN TRAINING →
@@ -76,7 +78,7 @@ export default function LandingScreen({
             </p>
           </div>
           <div style={{ padding: "0 20px", flex: "0 0 22px", display: "flex", alignItems: "center" }}>
-            <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#64748b", margin: 0, whiteSpace: "nowrap" }}>
+            <p className="font-display" style={{ fontSize: "14px", color: "#475569", margin: 0 }}>
               VEHICLES PROFILES - ARMAMENT - PROTECTION - VARIANTS
             </p>
           </div>
@@ -97,14 +99,14 @@ export default function LandingScreen({
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && onLeaderboard()}
         >
-          <div style={{ padding: "0 20px", flex: "0 0 57px", display: "flex", gap: 29, alignItems: "center" }}>
+          <div style={{ padding: "0 20px", flex: "0 0 57px", display: "flex", gap: 29, alignItems: "flex-start" }}>
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", flex: 1, overflow: "hidden", whiteSpace: "nowrap" }}>
               <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#f59e0b", margin: 0 }}>
                 ◈ TRAINING
               </p>
               <p className="font-display" style={{ fontSize: "2.25rem", lineHeight: 1, margin: 0 }}>
                 <span style={{ color: "#e2e8f0" }}>LEADER</span>
-                <span style={{ color: "#4ade80" }}>BOARD</span>
+                <span style={{ color: "#f59e0b" }}>BOARD</span>
               </p>
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", flexShrink: 0 }}>
@@ -117,7 +119,7 @@ export default function LandingScreen({
             </div>
           </div>
           <div style={{ padding: "0 20px", flex: "0 0 22px", display: "flex", alignItems: "center" }}>
-            <p style={{ fontFamily: "'Rajdhani', sans-serif", fontWeight: 500, fontSize: "0.6875rem", letterSpacing: "0.08em", color: "#64748b", margin: 0, whiteSpace: "nowrap" }}>
+            <p className="font-display" style={{ fontSize: "14px", color: "#475569", margin: 0 }}>
               GLOBAL STANDING - RANKED BY SCORE - ALL CATEGORIES
             </p>
           </div>

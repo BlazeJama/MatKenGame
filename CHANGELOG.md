@@ -13,6 +13,25 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Changed — Home screen subtitle font + card layout fixes (Figma font testing session)
+
+Through a series of Figma pulls and local browser tests, identified that **Rajdhani** renders wider in the browser than Figma's internal engine, causing the 11px subtitle text to overflow the card's 20px right padding. Replaced the subtitle font on all three home screen cards with **Bebas Neue Regular 14px** (`#475569`) — a condensed display font that Figma and the browser render at the same width.
+
+**LandingScreen.jsx changes:**
+- All three card subtitles (Training / Library / Leaderboard): switched from `Rajdhani Medium 11px #64748b nowrap` to `Bebas Neue Regular 14px #475569`
+- Training card: restored correct 3-section structure (`flex: 0 0 57px` label+title / `flex: 0 0 22px` subtitle / button) — a previous commit had incorrectly merged the subtitle into an 88px block
+- Leaderboard card header row: `alignItems` changed from `"center"` to `"flex-start"` to match Figma
+- BOARD accent colour: reverted to amber `#f59e0b` (green `#4ade80` was a temporary test marker)
+
+### Changed — Vehicle Study screen back button (Figma pull)
+
+**VehicleStudyScreen.jsx:**
+- Back button text changed from `← ALL VEHICLES` to `← BACK`
+- Back button colour changed from `rgba(245,158,10,0.35)` (35% opacity) to `#f59e0b` (full amber)
+- Back button font size bumped from `0.68rem` to `0.875rem` to match Figma `Header Vehicles` component
+
+---
+
 ### Changed — Home screen header and Training card layout (Figma pull, node 49-2)
 
 Re-pulled node 49-2 after user updated auto-layout settings in Figma.
