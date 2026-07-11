@@ -250,5 +250,5 @@ To load one, just say: "Read game-design-document.md before we start"
 
 ---
 
-*Last updated: 2026-05-20*
+*Last updated: 2026-07-11*
 *Project owner: BlazeJama*
