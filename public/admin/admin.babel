@@ -55,14 +55,14 @@ async function forceFreshLoad({ clearDraft = false } = {}) {
 }
 
 // Auto-detect HTML/JS version mismatch on load. The HTML loads this file as
-// `admin.jsx?v=NN`; if ADMIN_VERSION baked into the JS doesn't match NN from
+// `admin.babel?v=NN`; if ADMIN_VERSION baked into the JS doesn't match NN from
 // the script tag, the SW handed us a mismatched pair. Silently recover.
 (function autoRecoverIfStale() {
   try {
     const scripts = document.getElementsByTagName("script");
     for (const s of scripts) {
       const src = s.getAttribute("src") || "";
-      const m = src.match(/admin\.jsx\?v=(\d+)/);
+      const m = src.match(/admin\.babel\?v=(\d+)/);
       if (!m) continue;
       const htmlVersion = parseInt(m[1], 10);
       if (htmlVersion !== ADMIN_VERSION) {

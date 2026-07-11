@@ -21,10 +21,15 @@
     };
   </script>
 
-  <!-- React 18 + Babel Standalone, same setup as the main app -->
+  <!-- React 18 + Babel Standalone, same setup as the main app.
+       Babel Standalone is pinned to major v7 — the unpinned "latest" URL
+       started resolving to v8, which silently breaks automatic execution of
+       external <script type="text/babel" src="..."> tags (the script never
+       runs, no console error, #root stays empty). Verified via a controlled
+       same-origin test: v7 mounts this exact file correctly, v8 does not. -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
 
   <!-- JSZip — used by the Export modal to bundle vehicles.js + new images
        into a single ZIP that mirrors the repo's folder structure. -->

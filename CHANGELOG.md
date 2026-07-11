@@ -13,6 +13,19 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Fixed — Admin page completely blank: unpinned Babel Standalone CDN broke script execution (Critical)
+
+The admin page (`/MatKenGame/admin/`) was rendering a totally blank `#root` on every load — no console errors, no visible failure of any kind. Root-caused via a controlled same-origin A/B test (identical real `admin.babel` file, only the Babel version changed):
+
+- **Babel Standalone 7.29.7** — mounts correctly.
+- **Babel Standalone 8.0.4** — the script never executes at all; not even the first top-level `const` statement runs.
+
+`public/admin/index.html` loaded `@babel/standalone/babel.min.js` from unpkg with **no version pin**, and unpkg's "latest" tag recently moved to a v8 major release. Babel 8 silently breaks automatic execution of external `<script type="text/babel" src="...">` tags — a behavior the whole admin page depends on, since it's still CDN React 18 + Babel Standalone (not the Vite pipeline). This was completely unrelated to any of the admin content changes made this session; the file was correct the whole time, it just never got a chance to run.
+
+**Fix:** pinned the CDN URL to `@babel/standalone@7/babel.min.js`. Verified: the live `admin.babel` file (with all this session's thumbnail/full-data-view/W.H.A.T.S. template changes) now mounts and shows all 61 vehicles correctly.
+
+Also fixed a related dead bug found during the investigation: `admin.babel`'s stale-cache auto-recovery regex still matched the old `admin.jsx?v=NN` filename (pre-Vite-migration), so it could never detect a real version mismatch against the current `admin.babel?v=NN` script tag. Updated the regex to match the current filename.
+
 ### Fixed — Vehicle Library header hidden behind status bar in PWA mode
 
 When installed as a PWA (added to home screen), iOS removes the Safari URL bar and the status bar safe-area inset becomes much larger (~47–59px on notch/Dynamic Island devices). The header had a fixed `height: 110px` with `paddingTop: env(safe-area-inset-top)` — the padding consumed space inside the fixed height, pushing the "VEHICLE LIBRARY" title off the bottom of the header and hiding it.
