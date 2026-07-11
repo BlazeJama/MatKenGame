@@ -1,22 +1,22 @@
-﻿// MatKenGame â€” Vehicle Database
+// MatKenGame — Vehicle Database
 // =================================================================
 // This is the ONLY place vehicle data lives. Adding a new vehicle
-// never requires touching game code â€” just add an entry below.
+// never requires touching game code — just add an entry below.
 //
 // Schema (one entry per vehicle):
-//   id        â€” unique lowercase string, no spaces (e.g. "challenger2")
-//   name      â€” display name shown in answer buttons (e.g. "Challenger 2")
-//   country   â€” country of origin (e.g. "United Kingdom")
-//   category  â€” "Main Battle Tank" | "APC" | "IFV" | "Artillery" | "Helicopter"
+//   id        — unique lowercase string, no spaces (e.g. "challenger2")
+//   name      — display name shown in answer buttons (e.g. "Challenger 2")
+//   country   — country of origin (e.g. "United Kingdom")
+//   category  — "Main Battle Tank" | "APC" | "IFV" | "Artillery" | "Helicopter"
 //               (MVP uses Main Battle Tank only)
-//   era       â€” "WW2" | "Cold War" | "Modern"
-//   images    â€” array of { url, stars } objects. Zero or more.
+//   era       — "WW2" | "Cold War" | "Modern"
+//   images    — array of { url, stars } objects. Zero or more.
 //                 stars: 1 = easy, 2 = medium, 3 = hard
 //                 MVP picks a random image and ignores stars. Phase 2 will
 //                 filter by difficulty using these stars.
 //                 Vehicles with zero images are excluded from the game
 //                 until at least one is added.
-//   funFacts  â€” array of zero or more sentences. After the player answers,
+//   funFacts  — array of zero or more sentences. After the player answers,
 //               one is picked at random and shown. Empty array = no fact shown.
 //
 // Image storage:
@@ -45,7 +45,7 @@ export const vehicles = [
       { url: "assets/images/m1abrams-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The M1 Abrams is powered by a gas turbine engine â€” the same type used in helicopters â€” giving it a distinctive whine when moving."
+      "The M1 Abrams is powered by a gas turbine engine — the same type used in helicopters — giving it a distinctive whine when moving."
     ],
     about: "The definitive American main battle tank, built to dominate the battlefields of late Cold War and modern conflicts through an optimal balance of advanced composite armor, firepower, and gas-turbine mobility.",
     specs: {
@@ -460,7 +460,7 @@ export const vehicles = [
       { url: "assets/images/t34-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The T-34's sloped armour was revolutionary â€” it effectively doubled the protection against direct hits without adding weight."
+      "The T-34's sloped armour was revolutionary — it effectively doubled the protection against direct hits without adding weight."
     ],
     about: "Widely considered one of the most effective and revolutionary armor layout designs of World War II, the T-34 combined innovative sloped armor protection with rugged mechanical mass productivity.",
     specs: {
@@ -511,7 +511,7 @@ export const vehicles = [
       { url: "assets/images/shermanm4-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "Over 49,000 M4 Sherman tanks were built during World War 2 â€” more than any other tank used by the Western Allies."
+      "Over 49,000 M4 Sherman tanks were built during World War 2 — more than any other tank used by the Western Allies."
     ],
     about: "The legendary backbone of the Western Allied offensive machine, the M4 Sherman succeeded due to unparalleled mechanical reliability, logistical ease, and production scaling.",
     specs: {
@@ -564,7 +564,7 @@ export const vehicles = [
     funFacts: [
       "The M113 is the most widely used armoured fighting vehicle in history, with over 80,000 built and operators in more than 50 countries.",
       "Despite being designed in the 1950s, modified M113s are still used in active service by dozens of militaries today.",
-      "The M113's aluminium hull was controversial at first â€” critics worried it would melt under fire â€” but it proved lighter and faster than steel alternatives."
+      "The M113's aluminium hull was controversial at first — critics worried it would melt under fire — but it proved lighter and faster than steel alternatives."
     ],
     about: "The legendary aluminum-hulled workhorse of Western mechanized forces, providing basic battlefield mobility and battlefield transport to infantry squads across dozens of global conflicts.",
     specs: {
@@ -613,9 +613,9 @@ export const vehicles = [
       { url: "assets/images/btr80-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The BTR-80 can cross rivers under its own power using a water jet, with no preparation needed â€” the crew simply raises the trim vane and drives in.",
+      "The BTR-80 can cross rivers under its own power using a water jet, with no preparation needed — the crew simply raises the trim vane and drives in.",
       "Its eight wheels are all driven, giving it excellent cross-country mobility even if two wheels are destroyed by a mine.",
-      "The BTR-80 replaced the BTR-60 and BTR-70 specifically because Soviet troops complained that the older models' exits were dangerous under fire â€” the new side hatches open forward to provide cover."
+      "The BTR-80 replaced the BTR-60 and BTR-70 specifically because Soviet troops complained that the older models' exits were dangerous under fire — the new side hatches open forward to provide cover."
     ],
     about: "Designed to rectify the operational downfalls of earlier Soviet wheeled transports, the BTR-80 features cross-country 8x8 mobility and distinctive dual-section troop access doors.",
     specs: {
@@ -666,7 +666,7 @@ export const vehicles = [
     ],
     funFacts: [
       "The Stryker was specifically sized to fit inside a C-130 Hercules transport aircraft, giving the US Army the ability to deploy armoured units anywhere in the world within hours.",
-      "Unlike most APCs, the Stryker uses a remote weapon station that the gunner operates from inside the vehicle â€” keeping them protected while engaging targets.",
+      "Unlike most APCs, the Stryker uses a remote weapon station that the gunner operates from inside the vehicle — keeping them protected while engaging targets.",
       "The Stryker's network of sensors and computers links every vehicle in a unit together, giving commanders a real-time picture of all friendly positions on the battlefield."
     ],
     about: "The centerpiece of the US Army's rapid-deployment brigade combat teams, the Stryker bridges the tactical operational gap between heavy tracked forces and light infantry.",
@@ -717,7 +717,7 @@ export const vehicles = [
       { url: "assets/images/fv432-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The FV432 entered British Army service in 1963 and variants are still in use today â€” over 60 years of front-line service.",
+      "The FV432 entered British Army service in 1963 and variants are still in use today — over 60 years of front-line service.",
       "During the Falklands War, FV432s were used as ambulances and command vehicles, showing how versatile the basic hull design could be.",
       "The FV432 was designed to be fully amphibious using a flotation screen, though this feature was rarely used in practice."
     ],
@@ -768,8 +768,8 @@ export const vehicles = [
       { url: "assets/images/patria_amv-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Patria AMV is one of the most modular APCs ever built â€” the same hull can be reconfigured as a troop carrier, IFV, mortar carrier, ambulance, or command vehicle in the field.",
-      "Finland designed the AMV to operate reliably at -40Â°C, with heating systems that keep the engine and crew compartment functional without external power.",
+      "The Patria AMV is one of the most modular APCs ever built — the same hull can be reconfigured as a troop carrier, IFV, mortar carrier, ambulance, or command vehicle in the field.",
+      "Finland designed the AMV to operate reliably at -40°C, with heating systems that keep the engine and crew compartment functional without external power.",
       "The AMV's hull can be fitted with add-on armour packages that nearly double its protection level, adapting it to different threat environments."
     ],
     about: "A cutting-edge European modular 8x8 armored system, globally renowned for its exceptional mines protection design and flexible layout changes.",
@@ -820,9 +820,9 @@ export const vehicles = [
       { url: "assets/images/boxer-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Boxer uses a revolutionary 'drive module plus mission module' design â€” the front crew cab can be separated from the rear payload section and swapped in under an hour.",
+      "The Boxer uses a revolutionary 'drive module plus mission module' design — the front crew cab can be separated from the rear payload section and swapped in under an hour.",
       "This modularity means a single Boxer drive module can serve as an APC one day and an ambulance or command vehicle the next, without any workshop modifications.",
-      "The Boxer is in service with Germany, the Netherlands, Lithuania, and Australia, and is one of the heaviest wheeled APCs ever built â€” nearly as well protected as some infantry fighting vehicles."
+      "The Boxer is in service with Germany, the Netherlands, Lithuania, and Australia, and is one of the heaviest wheeled APCs ever built — nearly as well protected as some infantry fighting vehicles."
     ],
     about: "Built around a unique dual-component concept, the Boxer features an interchangeable rear mission module that can be hot-swapped in under an hour to change its role.",
     specs: {
@@ -872,9 +872,9 @@ export const vehicles = [
       { url: "assets/images/btr60-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The BTR-60 was the first Soviet APC built on its own purpose-designed chassis rather than adapted from a truck â€” every wheeled Soviet APC since traces its lineage to it.",
+      "The BTR-60 was the first Soviet APC built on its own purpose-designed chassis rather than adapted from a truck — every wheeled Soviet APC since traces its lineage to it.",
       "The BTR-60 uses two engines, each driving four wheels on its own side. If one engine is destroyed, the vehicle can still drive away on the other.",
-      "Over 25,000 BTR-60s were built, and they served with more than 50 countries â€” many of them still operating modernised variants today."
+      "Over 25,000 BTR-60s were built, and they served with more than 50 countries — many of them still operating modernised variants today."
     ],
     about: "Developing the foundational blueprint for Soviet 8x8 wheeled armored platforms, the BTR-60 brought amphibious squad transport capabilities to Soviet motorized rifle units.",
     specs: {
@@ -923,9 +923,9 @@ export const vehicles = [
       { url: "assets/images/vab-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The VAB (VÃ©hicule de l'Avant BlindÃ©) is fully amphibious using two water jets â€” French marines used it for beach assaults and river crossings without preparation.",
+      "The VAB (Véhicule de l'Avant Blindé) is fully amphibious using two water jets — French marines used it for beach assaults and river crossings without preparation.",
       "Over 5,000 VABs have been built, and the platform has seen combat with French forces in Lebanon, Bosnia, Mali, Afghanistan, and the Sahel.",
-      "Despite being designed in the 1970s, modernised VABs are still in front-line French service â€” replacements (the Griffon) only began arriving in the early 2020s."
+      "Despite being designed in the 1970s, modernised VABs are still in front-line French service — replacements (the Griffon) only began arriving in the early 2020s."
     ],
     about: "France's foundational armored front-line transport, the VAB is a highly versatile, reliable wheeled system configured in both 4x4 and 6x6 variations.",
     specs: {
@@ -974,7 +974,7 @@ export const vehicles = [
       { url: "assets/images/piranha3-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Piranha family is the foundation for the Stryker, LAV-25, and Pandur â€” all of those Western APCs are derived from this Swiss 8Ã—8 design.",
+      "The Piranha family is the foundation for the Stryker, LAV-25, and Pandur — all of those Western APCs are derived from this Swiss 8×8 design.",
       "Switzerland is officially neutral, yet its arms industry produces the Piranha which serves with more than 20 militaries worldwide.",
       "The Piranha III can be air-transported by C-130 Hercules and reconfigured between APC, IFV, command vehicle, ambulance, and mortar carrier roles."
     ],
@@ -1026,9 +1026,9 @@ export const vehicles = [
       { url: "assets/images/eitan-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "Israel's Eitan was designed using lessons from the 2006 Lebanon War â€” it carries the Trophy active protection system, which can intercept incoming RPGs and anti-tank missiles in flight.",
+      "Israel's Eitan was designed using lessons from the 2006 Lebanon War — it carries the Trophy active protection system, which can intercept incoming RPGs and anti-tank missiles in flight.",
       "The Eitan replaces the M113 in Israeli service, which had been criticised for inadequate protection against modern anti-armour weapons.",
-      "Despite weighing over 35 tonnes, the Eitan can reach 90 km/h on roads â€” making it one of the fastest heavily-armoured wheeled APCs ever built."
+      "Despite weighing over 35 tonnes, the Eitan can reach 90 km/h on roads — making it one of the fastest heavily-armoured wheeled APCs ever built."
     ],
     about: "Israel's cutting-edge heavy 8x8 wheeled armored personnel carrier, developed to replace aging M113 tracks with unmatched mine and ballistic protection.",
     specs: {
@@ -1083,9 +1083,9 @@ export const vehicles = [
       { url: "assets/images/m2bradley-008.jpg", stars: 1 }
     ],
     funFacts: [
-      "The Bradley is unusual in that it can both transport soldiers AND fight alongside them â€” its 25mm chain gun and TOW missiles make it capable of destroying enemy tanks.",
+      "The Bradley is unusual in that it can both transport soldiers AND fight alongside them — its 25mm chain gun and TOW missiles make it capable of destroying enemy tanks.",
       "During the 1991 Gulf War, Bradleys destroyed more Iraqi armoured vehicles than M1 Abrams tanks did.",
-      "The Bradley's development was so troubled and expensive that it inspired a satirical 1998 film â€” 'The Pentagon Wars' â€” depicting how the original simple APC design grew into a complex fighting vehicle."
+      "The Bradley's development was so troubled and expensive that it inspired a satirical 1998 film — 'The Pentagon Wars' — depicting how the original simple APC design grew into a complex fighting vehicle."
     ],
     about: "Engineered to engage and destroy enemy armor assets while delivering infantry directly into the line of fire, the Bradley combines a fast autocannon with hard-hitting anti-tank missiles.",
     specs: {
@@ -1143,7 +1143,7 @@ export const vehicles = [
     funFacts: [
       "The BMP-2's 30mm autocannon can engage both ground targets and low-flying helicopters, making it one of the most versatile IFVs ever built.",
       "Unlike most Western IFVs, the BMP-2 was designed so infantry could fire their personal weapons from inside the vehicle through firing ports along the sides.",
-      "The BMP-2 is amphibious â€” it swims using its tracks with no preparation, though crews found its low freeboard made river crossings nerve-wracking in rough water."
+      "The BMP-2 is amphibious — it swims using its tracks with no preparation, though crews found its low freeboard made river crossings nerve-wracking in rough water."
     ],
     about: "A legendary Soviet tracked amphibious design, the BMP-2 improved on its predecessor by introducing a wider two-man turret and a high-rate-of-fire 30mm autocannon.",
     specs: {
@@ -1199,9 +1199,9 @@ export const vehicles = [
       { url: "assets/images/bmp3-009.jpg", stars: 2 }
     ],
     funFacts: [
-      "The BMP-3 is the only infantry fighting vehicle in the world armed with a 100mm gun, a 30mm autocannon, and three 7.62mm machine guns â€” all at the same time.",
+      "The BMP-3 is the only infantry fighting vehicle in the world armed with a 100mm gun, a 30mm autocannon, and three 7.62mm machine guns — all at the same time.",
       "Its 100mm gun can fire both conventional shells and laser-guided anti-tank missiles through the same barrel.",
-      "The BMP-3 is fully amphibious and fast â€” it can reach 10 km/h on water using two water jets, fast enough to conduct river assault crossings under fire."
+      "The BMP-3 is fully amphibious and fast — it can reach 10 km/h on water using two water jets, fast enough to conduct river assault crossings under fire."
     ],
     about: "A unique and heavily armed Soviet-designed tracked infantry fighting vehicle featuring a radical dual-caliber integrated gun system.",
     specs: {
@@ -1223,7 +1223,7 @@ export const vehicles = [
       { section: "SECONDARY WEAPONS", name: "3 x 7.62mm PKT machine guns (coaxial and bow-mounted)" }
     ],
     protection: [
-      { section: "ARMOUR", name: "Aluminum alloy hull with steel face appliquÃ© panels" },
+      { section: "ARMOUR", name: "Aluminum alloy hull with steel face appliqué panels" },
       { section: "PROTECTION SYSTEMS", name: "Arena or Shtora defensive countermeasure suites" },
       { section: "PROTECTION SYSTEMS", name: "Hydrojet amphibious water propulsion drives" }
     ],
@@ -1259,9 +1259,9 @@ export const vehicles = [
       { url: "assets/images/warrior-011.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Warrior's armour was specifically designed to protect against 14.5mm heavy machine gun fire on all sides â€” much tougher than contemporary Soviet IFVs.",
+      "The Warrior's armour was specifically designed to protect against 14.5mm heavy machine gun fire on all sides — much tougher than contemporary Soviet IFVs.",
       "During the 1991 Gulf War, Warriors advanced so quickly across the Iraqi desert that they outpaced the infantry they were supposed to be supporting.",
-      "The Warrior can run on flat tyres â€” its road wheels are designed to keep the vehicle moving even after being punctured by shrapnel or small-arms fire."
+      "The Warrior can run on flat tyres — its road wheels are designed to keep the vehicle moving even after being punctured by shrapnel or small-arms fire."
     ],
     about: "The stalwart tracked infantry fighting vehicle of the British Army, designed to provide rugged battlefield survivability and mobility to mechanized infantry squads.",
     specs: {
@@ -1283,7 +1283,7 @@ export const vehicles = [
       { section: "SMOKE", name: "2 x 4 smoke grenade dischargers" }
     ],
     protection: [
-      { section: "ARMOUR", name: "All-welded aluminum armor skin with steel appliquÃ© frames" },
+      { section: "ARMOUR", name: "All-welded aluminum armor skin with steel appliqué frames" },
       { section: "PROTECTION SYSTEMS", name: "Thick side-skirt armor arrays protecting tracks" },
       { section: "PROTECTION SYSTEMS", name: "Fire suppression system in engine and crew cabins" }
     ],
@@ -1295,7 +1295,7 @@ export const vehicles = [
       ]
     },
     variants: [
-      { name: "Warrior Desert Variant", year: 1990, label: "Equipped with enhanced cooling packs and Chobham appliquÃ© armor plates" },
+      { name: "Warrior Desert Variant", year: 1990, label: "Equipped with enhanced cooling packs and Chobham appliqué armor plates" },
       { name: "Warrior CSP", year: 2018, label: "Capability Sustainment Programme prototype adding a fully stabilized 40mm cased telescoped weapon turret" }
     ]
   },
@@ -1317,7 +1317,7 @@ export const vehicles = [
       { url: "assets/images/cv90-009.jpg", stars: 3 }
     ],
     funFacts: [
-      "The CV90 was designed to start its engine reliably at -40Â°C and operate in the deep snow of Nordic terrain, conditions that would stop most other IFVs.",
+      "The CV90 was designed to start its engine reliably at -40°C and operate in the deep snow of Nordic terrain, conditions that would stop most other IFVs.",
       "Its 40mm autocannon is one of the most powerful ever fitted to an IFV, capable of destroying lightly armoured vehicles at over 1,500 metres.",
       "The CV90 is one of the best-selling IFVs in the world, used by Norway, Sweden, Switzerland, Finland, the Netherlands, and Denmark."
     ],
@@ -1374,7 +1374,7 @@ export const vehicles = [
       { url: "assets/images/marder-008.webp", stars: 2 }
     ],
     funFacts: [
-      "The Marder was one of the first true infantry fighting vehicles â€” designed not just to carry troops but to fight alongside them with its own heavy weapons.",
+      "The Marder was one of the first true infantry fighting vehicles — designed not just to carry troops but to fight alongside them with its own heavy weapons.",
       "Its design placed such a priority on infantry protection that the troop compartment can withstand hits from 20mm rounds on all sides.",
       "The Marder has been continuously upgraded since its introduction in 1971 and remained in front-line German service for over 50 years."
     ],
@@ -1433,7 +1433,7 @@ export const vehicles = [
       { url: "assets/images/bmp1-010.jpg", stars: 2 }
     ],
     funFacts: [
-      "Introduced in 1966, the BMP-1 was the world's first true infantry fighting vehicle â€” combining troop transport, armour, and direct fire support in one platform.",
+      "Introduced in 1966, the BMP-1 was the world's first true infantry fighting vehicle — combining troop transport, armour, and direct fire support in one platform.",
       "Its 73mm low-pressure gun could fire HEAT rounds capable of penetrating early NATO tanks at close range, making the BMP-1 a serious threat far beyond a typical APC.",
       "The BMP-1 has been used in nearly every major conflict since the 1973 Yom Kippur War, with over 20,000 built and many still in service today."
     ],
@@ -1489,8 +1489,8 @@ export const vehicles = [
       { url: "assets/images/puma-007.jpg", stars: 1 }
     ],
     funFacts: [
-      "The Puma is one of the most heavily protected IFVs ever built â€” its modular armour can be upgraded in the field from 'Combat Light' (38 tonnes, air-transportable) to 'Combat' (43 tonnes, maximum protection).",
-      "Its turret is unmanned â€” the gunner and commander sit inside the hull, removing the most exposed crew positions from harm's way.",
+      "The Puma is one of the most heavily protected IFVs ever built — its modular armour can be upgraded in the field from 'Combat Light' (38 tonnes, air-transportable) to 'Combat' (43 tonnes, maximum protection).",
+      "Its turret is unmanned — the gunner and commander sit inside the hull, removing the most exposed crew positions from harm's way.",
       "Germany's Puma development programme cost over 10 billion euros, making it one of the most expensive IFVs per unit ever fielded."
     ],
     about: "One of the most technologically advanced and heavily armored infantry fighting vehicles in service today, the Puma is built around modular security packages and an unmanned turret.",
@@ -1600,7 +1600,7 @@ export const vehicles = [
     ],
     funFacts: [
       "The ZBD-04A is China's first true modern IFV, drawing design inspiration from the Russian BMP-3 but with significant Chinese improvements and updated electronics.",
-      "Like the BMP-3, it carries a 100mm gun and 30mm autocannon â€” but with improved digital fire control and crew interfaces.",
+      "Like the BMP-3, it carries a 100mm gun and 30mm autocannon — but with improved digital fire control and crew interfaces.",
       "The ZBD-04A is one of the few IFVs in the world capable of swimming at over 12 km/h using water jets, supporting amphibious operations."
     ],
     about: "China's frontline tracked infantry fighting vehicle, featuring a Russian-style dual 100mm/30mm weapon turret mated to an improved domestic armor chassis.",
@@ -1651,9 +1651,9 @@ export const vehicles = [
       { url: "assets/images/m109paladin-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The M109 Paladin can fire its first round within 60 seconds of stopping and be moving again 60 seconds later â€” a tactic called 'shoot and scoot' to avoid counter-battery fire.",
+      "The M109 Paladin can fire its first round within 60 seconds of stopping and be moving again 60 seconds later — a tactic called 'shoot and scoot' to avoid counter-battery fire.",
       "It has been continuously upgraded since 1963 and is still the primary self-propelled howitzer of the US Army today.",
-      "The Paladin's 155mm shell can reach targets over 30 kilometres away with standard ammunition â€” and over 40 km with rocket-assisted rounds."
+      "The Paladin's 155mm shell can reach targets over 30 kilometres away with standard ammunition — and over 40 km with rocket-assisted rounds."
     ],
     about: "The most widely used Western self-propelled howitzer in history, the M109 delivers mobile heavy fire support via a 155mm cannon mounted inside a massive fully rotating turret.",
     specs: {
@@ -1702,7 +1702,7 @@ export const vehicles = [
       { url: "assets/images/pzh2000-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The PzH 2000 can fire three rounds in 9 seconds and sustain 10-13 rounds per minute â€” faster than almost any other self-propelled howitzer in the world.",
+      "The PzH 2000 can fire three rounds in 9 seconds and sustain 10-13 rounds per minute — faster than almost any other self-propelled howitzer in the world.",
       "Its automated loading system means the crew of five never has to manually handle the 43 kg shells, reducing fatigue and increasing sustained rate of fire.",
       "The PzH 2000 saw combat in Afghanistan with Dutch forces and in Ukraine, where its range and accuracy made it one of the most prized artillery systems of that conflict."
     ],
@@ -1756,7 +1756,7 @@ export const vehicles = [
     funFacts: [
       "The 2S19 Msta-S uses the same hull as the T-80 tank, giving it excellent cross-country mobility compared to most self-propelled howitzers.",
       "It can fire a special Krasnopol laser-guided shell that homes in on a target painted by a forward observer, hitting with near-pinpoint accuracy at over 20 km.",
-      "The Msta-S is designed for fully automated ammunition handling â€” the autoloader can cycle a round every 6â€“7 seconds without crew intervention."
+      "The Msta-S is designed for fully automated ammunition handling — the autoloader can cycle a round every 6–7 seconds without crew intervention."
     ],
     about: "Designed to replace the aging Akatsiya platforms, the 2S19 Msta utilizes a heavy tracked chassis derived from T-72 and T-80 components to deploy a rapid-firing 152mm gun system.",
     specs: {
@@ -1805,11 +1805,11 @@ export const vehicles = [
       { url: "assets/images/caesar-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The CAESAR is mounted on a standard 6Ã—6 truck chassis rather than a tracked hull, making it cheaper to maintain and light enough to be air-transported by C-130.",
-      "A CAESAR crew of five can go from driving down a road to firing a round in under 60 seconds, then be moving again within 30 seconds â€” one of the fastest deploy-fire-move cycles of any howitzer.",
+      "The CAESAR is mounted on a standard 6×6 truck chassis rather than a tracked hull, making it cheaper to maintain and light enough to be air-transported by C-130.",
+      "A CAESAR crew of five can go from driving down a road to firing a round in under 60 seconds, then be moving again within 30 seconds — one of the fastest deploy-fire-move cycles of any howitzer.",
       "CAESAR howitzers were donated to Ukraine in 2022 and praised by Ukrainian crews for their reliability, accuracy, and speed of deployment."
     ],
-    about: "A lightweight, highly mobile self-propelled howitzer mounted on a 6Ã—6 civilian truck chassis, engineered for rapid deployment and fast relocation in contemporary operations.",
+    about: "A lightweight, highly mobile self-propelled howitzer mounted on a 6×6 civilian truck chassis, engineered for rapid deployment and fast relocation in contemporary operations.",
     specs: {
       crew: "5 personnel (commander, gunner, 2 ammunition handlers, driver)",
       weight: "18.0 tonnes (complete combat configuration)",
@@ -1835,7 +1835,7 @@ export const vehicles = [
       intro: "A compact, low-slung truck with a central gun turret occupying most of the cargo bed, painted in camouflage.",
       cues: [
         { letter: "A", keyword: "TURRET", description: "Box-like elevated gun turret dominating the truck cargo section" },
-        { letter: "B", keyword: "WHEELS", description: "Six large road wheels in a 6Ã—6 civilian truck configuration" }
+        { letter: "B", keyword: "WHEELS", description: "Six large road wheels in a 6×6 civilian truck configuration" }
       ]
     },
     variants: [
@@ -1857,7 +1857,7 @@ export const vehicles = [
     funFacts: [
       "South Korea's K9 Thunder is one of the most exported self-propelled howitzers in the world, in service with nine countries including India, Egypt, Finland, and Norway.",
       "The K9 can fire three rounds in 15 seconds and sustain a rate of six rounds per minute for extended bombardment missions.",
-      "India operates the K9 Vajra, a locally produced variant optimised for high-altitude Himalayan operations â€” the only self-propelled howitzer qualified for use at elevations above 4,000 metres."
+      "India operates the K9 Vajra, a locally produced variant optimised for high-altitude Himalayan operations — the only self-propelled howitzer qualified for use at elevations above 4,000 metres."
     ],
     about: "South Korea's most successful self-propelled howitzer export, the K9 Thunder is a full-tracked, fully automated platform engineered for rapid sustained firepower in modern mechanized warfare.",
     specs: {
@@ -1906,7 +1906,7 @@ export const vehicles = [
     ],
     funFacts: [
       "The AS-90 can fire a burst of three rounds in under 10 seconds and sustain six rounds per minute for prolonged fire missions.",
-      "Its 155mm gun uses a semi-automatic loading system that eliminates the need for a loader â€” the crew of five operates entirely from within the armoured turret.",
+      "Its 155mm gun uses a semi-automatic loading system that eliminates the need for a loader — the crew of five operates entirely from within the armoured turret.",
       "AS-90s were donated to Ukraine in 2023, where crews valued their combination of range, mobility, and protection compared to older Soviet-era artillery."
     ],
     about: "The British Army's primary self-propelled howitzer, the AS-90 is a full-tracked platform featuring an automated turret with minimal crew exposure, optimized for rapid deployment and sustained fire.",
@@ -1957,7 +1957,7 @@ export const vehicles = [
     funFacts: [
       "The M270 can fire 12 rockets in under 40 seconds, blanketing an area the size of six football fields with submunitions.",
       "It uses the same chassis as the Bradley fighting vehicle, allowing the rocket battery to keep pace with armoured units across rough terrain.",
-      "Iraqi troops in the 1991 Gulf War nicknamed the M270 'Steel Rain' â€” its area-saturation attacks were devastating to dug-in positions."
+      "Iraqi troops in the 1991 Gulf War nicknamed the M270 'Steel Rain' — its area-saturation attacks were devastating to dug-in positions."
     ],
     about: "The M270 Multiple Launch Rocket System is a tracked artillery platform capable of rapid area saturation, firing twelve guided missiles in rapid succession to blanket targets with submunitions.",
     specs: {
@@ -2005,9 +2005,9 @@ export const vehicles = [
       { url: "assets/images/2s7pion-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The 2S7 Pion's 203mm gun is one of the largest-calibre weapons ever mounted on a tracked chassis â€” its shells weigh over 100 kg each.",
+      "The 2S7 Pion's 203mm gun is one of the largest-calibre weapons ever mounted on a tracked chassis — its shells weigh over 100 kg each.",
       "The Pion can fire a special tactical nuclear shell, making it one of the few Soviet artillery systems with strategic capabilities.",
-      "With a maximum range of over 47 km using conventional rounds, the 2S7 outranges most NATO artillery â€” a deliberate Soviet design choice during the Cold War."
+      "With a maximum range of over 47 km using conventional rounds, the 2S7 outranges most NATO artillery — a deliberate Soviet design choice during the Cold War."
     ],
     about: "The Soviet Union's largest self-propelled howitzer, the 2S7 Pion mounts a massive 203mm gun on a tracked chassis, delivering continent-spanning firepower with strategic capabilities.",
     specs: {
@@ -2055,8 +2055,8 @@ export const vehicles = [
       { url: "assets/images/m777-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The M777 is the lightest 155mm howitzer in the world â€” its titanium construction makes it light enough to be sling-loaded by a CH-47 Chinook.",
-      "It entered combat in 2005 and has been used extensively in Afghanistan, Iraq, and Ukraine â€” donated to Ukrainian forces by both the US and UK.",
+      "The M777 is the lightest 155mm howitzer in the world — its titanium construction makes it light enough to be sling-loaded by a CH-47 Chinook.",
+      "It entered combat in 2005 and has been used extensively in Afghanistan, Iraq, and Ukraine — donated to Ukrainian forces by both the US and UK.",
       "Despite its low weight, the M777 can fire the GPS-guided Excalibur shell to land within four metres of a target at ranges over 40 km."
     ],
     about: "A towed 155mm howitzer engineered for extreme lightness through titanium construction, making it unique as the world's lightest 155mm artillery piece while maintaining battlefield effectiveness.",
@@ -2155,9 +2155,9 @@ export const vehicles = [
       { url: "assets/images/ah64apache-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Apache's fire control radar can track up to 128 targets simultaneously and prioritise which to engage â€” allowing a single crew to coordinate attacks on an entire armoured column.",
-      "Apache pilots wear helmet-mounted displays that slave the 30mm chain gun directly to where they look â€” wherever the pilot looks, the gun points.",
-      "The Apache is designed to survive hits from 23mm rounds â€” its critical components are armoured, its rotor blades can take multiple bullet hits and keep flying, and its engines can run for 30 minutes after losing all oil."
+      "The Apache's fire control radar can track up to 128 targets simultaneously and prioritise which to engage — allowing a single crew to coordinate attacks on an entire armoured column.",
+      "Apache pilots wear helmet-mounted displays that slave the 30mm chain gun directly to where they look — wherever the pilot looks, the gun points.",
+      "The Apache is designed to survive hits from 23mm rounds — its critical components are armoured, its rotor blades can take multiple bullet hits and keep flying, and its engines can run for 30 minutes after losing all oil."
     ],
     about: "The definitive Western attack helicopter, the Apache is an armored tandem-seat twin-engine platform engineered to locate and destroy heavy armor formations in any weather environment.",
     specs: {
@@ -2208,8 +2208,8 @@ export const vehicles = [
       { url: "assets/images/mi24hind-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Mi-24 Hind is unique among attack helicopters â€” it has a full troop compartment capable of carrying eight fully-equipped soldiers, making it simultaneously a gunship and an assault transport.",
-      "Afghan Mujahideen fighters called the Mi-24 the 'flying tank' and 'devil's chariot' â€” its armoured hull could absorb small arms fire that would destroy other helicopters.",
+      "The Mi-24 Hind is unique among attack helicopters — it has a full troop compartment capable of carrying eight fully-equipped soldiers, making it simultaneously a gunship and an assault transport.",
+      "Afghan Mujahideen fighters called the Mi-24 the 'flying tank' and 'devil's chariot' — its armoured hull could absorb small arms fire that would destroy other helicopters.",
       "The Mi-24 was so feared during the Soviet-Afghan War that the CIA supplied Stinger man-portable missiles to the Mujahideen specifically to counter it."
     ],
     about: "A unique Cold War hybrid design, the Mi-24 'Hind' functions as both a heavily armed attack gunship and a light armored infantry transport capable of inserting a squad of troops.",
@@ -2261,7 +2261,7 @@ export const vehicles = [
     ],
     funFacts: [
       "A single UH-60 Black Hawk can carry 11 combat-equipped soldiers, sling-load up to 4 tonnes of external cargo, or be rapidly converted into a medevac aircraft with six stretchers.",
-      "The Black Hawk is specifically designed to be crash-worthy â€” its airframe is engineered to absorb impacts at up to 13.4 m/s vertical descent, protecting the crew in a hard landing.",
+      "The Black Hawk is specifically designed to be crash-worthy — its airframe is engineered to absorb impacts at up to 13.4 m/s vertical descent, protecting the crew in a hard landing.",
       "Black Hawks are used by over 30 countries and have served in virtually every US military operation since replacing the UH-1 Huey in 1979."
     ],
     about: "The premier medium-lift tactical transport asset of the US military, the Black Hawk is a rugged, low-profile helicopter engineered to deliver air assault squads into hot landing zones.",
@@ -2311,9 +2311,9 @@ export const vehicles = [
       { url: "assets/images/ch47chinook-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Chinook's tandem rotor design means all engine power goes to lifting â€” with no tail rotor needed, it has one of the best payload-to-weight ratios of any helicopter ever built.",
-      "A CH-47 can carry up to 55 soldiers or lift over 12 tonnes of external sling load â€” including other helicopters and light artillery pieces.",
-      "Chinooks have been in continuous production and service since 1962, making them one of the longest-serving military helicopters in history â€” with no replacement in sight."
+      "The Chinook's tandem rotor design means all engine power goes to lifting — with no tail rotor needed, it has one of the best payload-to-weight ratios of any helicopter ever built.",
+      "A CH-47 can carry up to 55 soldiers or lift over 12 tonnes of external sling load — including other helicopters and light artillery pieces.",
+      "Chinooks have been in continuous production and service since 1962, making them one of the longest-serving military helicopters in history — with no replacement in sight."
     ],
     about: "A distinctive twin-rotor heavy-lift cargo and troop transport helicopter, the Chinook's tandem rotor design eliminates the need for a tail rotor, providing unmatched payload capacity and operational versatility.",
     specs: {
@@ -2341,7 +2341,7 @@ export const vehicles = [
       intro: "A large, bulky transport helicopter with two large rotors mounted on vertical pylons at the front and rear, a distinctive boxy fuselage, and open cargo access doors.",
       cues: [
         { letter: "A", keyword: "ROTORS", description: "Two large rotors prominently visible on vertical extended pylons at each end" },
-        { letter: "B", keyword: "TAIL", description: "No tail rotor assembly â€” clean tapered tail boom instead" }
+        { letter: "B", keyword: "TAIL", description: "No tail rotor assembly — clean tapered tail boom instead" }
       ]
     },
     variants: [
@@ -2361,8 +2361,8 @@ export const vehicles = [
       { url: "assets/images/ka52alligator-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Ka-52 uses a coaxial rotor system â€” two sets of blades on the same mast spinning in opposite directions â€” which eliminates the tail rotor entirely and allows it to rotate and fly sideways as easily as forward.",
-      "The Ka-52 is the only attack helicopter in the world fitted with an ejection seat â€” the rotor blades are blown off explosively before the seat fires, allowing the crew to escape in an emergency.",
+      "The Ka-52 uses a coaxial rotor system — two sets of blades on the same mast spinning in opposite directions — which eliminates the tail rotor entirely and allows it to rotate and fly sideways as easily as forward.",
+      "The Ka-52 is the only attack helicopter in the world fitted with an ejection seat — the rotor blades are blown off explosively before the seat fires, allowing the crew to escape in an emergency.",
       "Its nose-mounted radar and sensor suite allows it to fly behind terrain using 'pop-up' attack profiles, rising briefly to fire before dropping back into cover."
     ],
     about: "A highly unique heavy attack platform, the Ka-52 is characterized by a distinct side-by-side cockpit layout and a signature dual contra-rotating coaxial main rotor assembly.",
@@ -2413,9 +2413,9 @@ export const vehicles = [
       { url: "assets/images/tiger_had-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Tiger was designed using radar-absorbing composite materials to reduce its radar cross-section â€” making it significantly harder to detect than older metal-airframe helicopters.",
+      "The Tiger was designed using radar-absorbing composite materials to reduce its radar cross-section — making it significantly harder to detect than older metal-airframe helicopters.",
       "Its engine exhausts are shaped and shielded to minimise the infrared signature, making it harder for heat-seeking missiles to lock on.",
-      "The Tiger HAD (HÃ©licoptÃ¨re d'Appui Destruction) variant used by France and Spain is one of the most agile attack helicopters in the world â€” its lightweight composite airframe gives it performance comparable to much smaller scout helicopters."
+      "The Tiger HAD (Hélicoptère d'Appui Destruction) variant used by France and Spain is one of the most agile attack helicopters in the world — its lightweight composite airframe gives it performance comparable to much smaller scout helicopters."
     ],
     about: "A modern European attack helicopter constructed primarily from composite materials, the Tiger features advanced avionics, a sophisticated fire-control system, and stealth-optimized design for low-visibility operations.",
     specs: {
@@ -2465,7 +2465,7 @@ export const vehicles = [
       { url: "assets/images/uh1huey-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The UH-1 Huey is one of the most iconic helicopters ever built â€” its distinctive 'thump-thump' blade slap became synonymous with the Vietnam War.",
+      "The UH-1 Huey is one of the most iconic helicopters ever built — its distinctive 'thump-thump' blade slap became synonymous with the Vietnam War.",
       "Over 16,000 UH-1s were built, more than any other military helicopter except the Mi-8.",
       "The Huey is still in active military service with over 30 countries, more than 60 years after its first flight in 1956."
     ],
@@ -2515,8 +2515,8 @@ export const vehicles = [
       { url: "assets/images/mi8hip-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The Mi-8 family is the most-produced helicopter in history, with over 17,000 built since 1961 â€” more than any Western helicopter design.",
-      "An Mi-8 can carry 24 fully-equipped soldiers â€” twice the troop capacity of the Black Hawk â€” making it one of the most capable medium-lift helicopters ever built.",
+      "The Mi-8 family is the most-produced helicopter in history, with over 17,000 built since 1961 — more than any Western helicopter design.",
+      "An Mi-8 can carry 24 fully-equipped soldiers — twice the troop capacity of the Black Hawk — making it one of the most capable medium-lift helicopters ever built.",
       "The Mi-8 has flown in every climate on Earth, from the Arctic Circle to the equator, and has logged more combat hours than perhaps any other helicopter type."
     ],
     about: "A versatile twin-rotor transport and assault helicopter, the Mi-8 Hip is the most-produced helicopter in history, serving as the primary medium-lift platform for Soviet and Russian forces since the early 1960s.",
@@ -2565,8 +2565,8 @@ export const vehicles = [
       { url: "assets/images/nh90-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The NH90 is the most extensively customised helicopter ever built â€” virtually every operator nation gets a slightly different configuration tailored to its requirements.",
-      "It was the first helicopter to be designed entirely on computer using CAD/CAM systems â€” no physical prototypes were built during the initial design phase.",
+      "The NH90 is the most extensively customised helicopter ever built — virtually every operator nation gets a slightly different configuration tailored to its requirements.",
+      "It was the first helicopter to be designed entirely on computer using CAD/CAM systems — no physical prototypes were built during the initial design phase.",
       "The NH90's fly-by-wire flight control system gives it stability and precision more typical of fighter jets than transport helicopters."
     ],
     about: "A modern European tactical transport and assault helicopter, the NH90 features advanced composite construction, fly-by-wire controls, and mission-specific modular design enabling rapid configuration changes.",
@@ -2615,8 +2615,8 @@ export const vehicles = [
       { url: "assets/images/aw101merlin-003.jpg", stars: 3 }
     ],
     funFacts: [
-      "The AW101 Merlin can operate from ship decks in sea states that would ground most other helicopters â€” its automated flight control system manages pitch and roll to counter ship motion.",
-      "Its three engines give it enormous performance reserves â€” a Merlin can complete its mission safely even after losing an engine entirely.",
+      "The AW101 Merlin can operate from ship decks in sea states that would ground most other helicopters — its automated flight control system manages pitch and roll to counter ship motion.",
+      "Its three engines give it enormous performance reserves — a Merlin can complete its mission safely even after losing an engine entirely.",
       "The Royal Navy uses Merlins for anti-submarine warfare, dipping their sonar into the ocean to hunt submarines hundreds of kilometres from their host ship."
     ],
     about: "A three-engine naval transport and anti-submarine helicopter, the AW101 Merlin is optimized for sustained ship-based operations, featuring automatic flight control for deck landings in heavy seas.",
@@ -3129,7 +3129,7 @@ export const vehicles = [
     },
     variants: [
       { name: "Piranha V Infantry Carrier", year: 2018, label: "Equipped with a light 12.7mm remote weapon station module" },
-      { name: "DragÃ³n IFV", year: 2020, label: "Highly specialized Spanish variant featuring advanced digital vehicle electronics and a 30mm turret" }
+      { name: "Dragón IFV", year: 2020, label: "Highly specialized Spanish variant featuring advanced digital vehicle electronics and a 30mm turret" }
     ]
   },
   {
@@ -3239,11 +3239,11 @@ export const vehicles = [
   }
 ];
 
-// Convenience helper â€” total count, useful for the home-screen stats card
+// Convenience helper — total count, useful for the home-screen stats card
 // (vehicle count is derived at runtime)
 
-// Alliance configuration â€” maps countries to military alliances.
-// Managed via Admin â†’ ðŸŒ Alliances. Empty = built-in defaults apply.
+// Alliance configuration — maps countries to military alliances.
+// Managed via Admin → 🌐 Alliances. Empty = built-in defaults apply.
 export const pactConfig = {
 
 };

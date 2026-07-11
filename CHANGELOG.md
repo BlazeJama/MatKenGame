@@ -36,6 +36,14 @@ Fix: changed header height to `calc(110px + env(safe-area-inset-top, 0px))` so t
 
 ---
 
+### Fixed — Code-review follow-ups: vehicles.js encoding corruption + landing rank stale state
+
+Issues surfaced by a code-review pass over the session's work:
+
+- **UTF-8 double-encoding + BOM in `data/vehicles.js` (Critical)** — the earlier ES-module conversion was done with a Windows PowerShell `Get-Content | Set-Content -Encoding utf8` command, which misread the BOM-less UTF-8 as Windows-1252 and re-encoded it double, prepending a BOM. This corrupted all 74 em-dashes to `â€"` **in live user-facing text** (funFacts shown after every quiz answer, plus `about`/`whats` study text). Repaired in place via a byte-level reverse map (preserving the newer admin-edited study data, which had diverged from the pre-corruption baseline) and re-saved as UTF-8 without BOM. Verified: 0 mojibake, imports cleanly as an ES module, em-dashes render correctly.
+- **Landing rank showed stale standing (Important)** — the rank-fetch effect returned early on callsign change, a scoreless player, or a failed Supabase lookup without clearing the previous `playerRank`/`rankNeighbors`, so the card could show the prior operator's rank. Now resets to `—` at the top of the effect before fetching.
+- **`window` shadowing (Minor)** — renamed a local `const window` to `windowRows` in the rank effect to avoid shadowing the global.
+
 ### Changed — Robust PWA update delivery for home-screen installs
 
 Three gaps were causing players with the app installed on their phone's home screen to miss updates:

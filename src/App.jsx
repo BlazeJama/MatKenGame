@@ -102,6 +102,11 @@ function App() {
   // Fires once on load (and again if the callsign changes). Errors are
   // swallowed silently — the card just stays at "—" if Supabase is down.
   useEffect(() => {
+    // Clear stale rank first so a new/scoreless callsign, a failed lookup, or
+    // an offline Supabase all fall back to "—" instead of showing the previous
+    // operator's standing.
+    setPlayerRank(null);
+    setRankNeighbors([]);
     if (!callsign) return;
     let cancelled = false;
     (async () => {
@@ -112,9 +117,9 @@ function App() {
         if (rank == null || cancelled) return;
         setPlayerRank(rank);
         const offset = Math.max(0, rank - 2);
-        const window = await fetchLeaderboardWindow(offset, 3);
+        const windowRows = await fetchLeaderboardWindow(offset, 3);
         if (cancelled) return;
-        const neighbors = window
+        const neighbors = windowRows
           .map((e, i) => ({ ...e, rank: offset + i + 1 }))
           .filter((e) => e.callsign !== callsign)
           .slice(0, 2)
