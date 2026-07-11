@@ -76,13 +76,15 @@ function App() {
     if (reg && reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
   };
 
-  // Auto-apply a waiting SW update as soon as the player is not mid-quiz.
-  // If an update arrives during a quiz it stays pending (banner shows "AFTER
-  // ROUND"); the moment the quiz ends this effect fires and applies it.
+  // Auto-apply a waiting SW update only while the player is on the landing
+  // (home) screen — the one safe moment where a reload can't interrupt a quiz
+  // or lose someone's place mid-browse. On any other screen the "UPDATE
+  // AVAILABLE" banner stays visible for manual apply; the update then applies
+  // automatically the next time they return home.
   const isPlaying = screen === "quiz";
   useEffect(() => {
-    if (swUpdateReady && !isPlaying) handleSwUpdate();
-  }, [swUpdateReady, isPlaying]);
+    if (swUpdateReady && screen === "landing") handleSwUpdate();
+  }, [swUpdateReady, screen]);
 
   const [selectedCategory,  setSelectedCategory]  = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);
