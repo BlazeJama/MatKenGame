@@ -156,7 +156,7 @@ export const vehicles = [
     about: "Designed to prioritize maximum crew survivability, the Challenger 2 is the heavily armored workhorse of the British Army, famous for its combat record and unique rifled main gun.",
     specs: {
       crew: "4 personnel",
-      weight: "62.5 tonnes (up to 75.0 tonnes combat-ready with add-on kits)",
+      weight: "75.0 tonnes (combat-ready)",
       length: "11.55 m (including gun)",
       width: "3.52 m",
       height: "2.49 m",
@@ -3238,9 +3238,6 @@ export const vehicles = [
     ]
   }
 ];
-
-// Convenience helper — total count, useful for the home-screen stats card
-// (vehicle count is derived at runtime)
 
 // Alliance configuration — maps countries to military alliances.
 // Managed via Admin → 🌐 Alliances. Empty = built-in defaults apply.
