@@ -13,6 +13,15 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Fixed — Boxer's hotlinked placeholder images replaced with local files
+
+The Boxer IFV's 1★ and 2★ images were hotlinked Google image-search thumbnails
+(`encrypted-tbn0.gstatic.com`) — transient URLs, opaque to the service worker,
+that would break offline and likely online eventually. Replaced via the admin
+with three local images (`boxer-001.jpg`, `boxer-002.jpg`, `boxer-003.jpg`),
+published through the now-fixed `update-game.bat` flow. All vehicle images are
+now local and same-origin.
+
 ### Fixed — Newly added images were committed but never deployed
 
 The admin publish flow wrote image files to the repo-root `assets/images/`, but
