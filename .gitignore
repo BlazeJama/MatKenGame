@@ -8,3 +8,9 @@ Thumbs.db
 .claude/
 .agents/
 skills-lock.json
+
+# Build artefacts — CI rebuilds both from source on every push
+# (.github/workflows/deploy.yml runs `npm ci` then `npm run build`,
+# and uploads dist/ as a fresh Pages artifact). Never commit these.
+node_modules/
+dist/
