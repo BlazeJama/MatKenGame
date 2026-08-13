@@ -32,15 +32,14 @@
 // Loading model:
 //   An ES module, imported directly by src/App.jsx and src/lib/utils.js.
 //   The admin page cannot import ES modules, so public/admin/index.html
-//   imports it and re-exposes the data as window.vehicles. vite.config.js
+//   imports it and re-exposes the data as `window.vehicles`. vite.config.js
 //   also copies this file to dist/data/vehicles.js so the deployed admin
 //   page can fetch it.
 //
 // Editing:
 //   Use an editor that preserves UTF-8 without a BOM. Do NOT round-trip this
 //   file through PowerShell `Get-Content | Set-Content -Encoding utf8` -- on
-//   PS 5.1 that misreads the encoding and corrupts every non-ASCII character
-//   (it has previously mangled all 74 em-dashes here).
+//   PS 5.1 that misreads the encoding and corrupts every non-ASCII character.
 //
 // =================================================================
 
@@ -828,9 +827,9 @@ export const vehicles = [
     category: "APC",
     era: "Modern",
     images: [
-      { url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7C8Vu1fXdLKbdQDlTocn84TiaaqkrFb1qlA&s", stars: 1 },
-      { url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGmeXsJMOb1awJv-LVnQIluVXSYXeovEZTEw&s", stars: 2 },
-      { url: "assets/images/boxer-003.jpg", stars: 3 }
+      { url: "assets/images/boxer-001.jpg", stars: 1 },
+      { url: "assets/images/boxer-002.jpg", stars: 3 },
+      { url: "assets/images/boxer-003.jpg", stars: 2 }
     ],
     funFacts: [
       "The Boxer uses a revolutionary 'drive module plus mission module' design — the front crew cab can be separated from the rear payload section and swapped in under an hour.",
