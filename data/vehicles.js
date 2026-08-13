@@ -148,7 +148,8 @@ export const vehicles = [
       { url: "assets/images/challenger2-002.jpg", stars: 2 },
       { url: "assets/images/challenger2-003.jpg", stars: 3 },
       { url: "assets/images/challenger2-004.jpg", stars: 3 },
-      { url: "assets/images/challenger2-005.jpg", stars: 3 }
+      { url: "assets/images/challenger2-005.jpg", stars: 3 },
+      { url: "assets/images/challenger2-006.jpg", stars: 1 }
     ],
     funFacts: [
       "Until 2023, no Challenger 2 had ever been destroyed by enemy fire in combat."
