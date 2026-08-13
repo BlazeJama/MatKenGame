@@ -246,10 +246,8 @@ function App() {
         <div>
           <p className="font-display text-red-400 mb-3" style={{ fontSize: "1.8rem", letterSpacing: "0.1em" }}>DATA LOAD FAILURE</p>
           <p className="text-sm" style={{ color: "#64748b" }}>
-            Check that{" "}
-            <code className="font-data" style={{ color: "#f59e0b" }}>data/vehicles.js</code>{" "}
-            loads before{" "}
-            <code className="font-data" style={{ color: "#f59e0b" }}>app.jsx</code>.
+            No vehicles could be loaded from{" "}
+            <code className="font-data" style={{ color: "#f59e0b" }}>data/vehicles.js</code>.
           </p>
         </div>
       </div>

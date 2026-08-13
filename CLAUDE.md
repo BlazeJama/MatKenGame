@@ -65,30 +65,48 @@ MatKenGame/
 ├── index.html              ← HTML entry point (Vite injects bundled JS/CSS)
 ├── src/
 │   ├── main.jsx            ← Vite entry point — mounts React app
-│   ├── App.jsx             ← Main React app (all components)
+│   ├── App.jsx             ← Router + shared game state
+│   ├── screens/            ← One file per screen (Landing, Quiz, End, …)
+│   ├── components/         ← Shared UI (TacCard, CallsignModal, …)
+│   ├── lib/                ← constants.js, utils.js
 │   └── index.css           ← Tailwind base imports
 ├── data/
 │   └── vehicles.js         ← ALL vehicle data — ES module exports
-├── public/
+├── public/                 ← Copied verbatim into dist/
 │   ├── assets/
-│   │   ├── images/         ← Vehicle images (same-origin)
+│   │   ├── images/         ← Vehicle images — the ONLY image location
 │   │   └── icons/          ← PWA icons (192px and 512px)
 │   ├── admin/
 │   │   ├── index.html      ← Admin page HTML (CDN-based, served raw)
 │   │   └── admin.babel     ← Admin React app (Babel-transpiled, .babel extension prevents Vite transform)
 │   ├── manifest.json       ← PWA manifest
-│   └── service-worker.js   ← Offline caching
-├── vite.config.js          ← Vite config (base, admin middleware)
+│   └── service-worker.js   ← Offline caching (bump CACHE_VERSION per deploy)
+├── update-game.bat         ← One-click publish for admin exports
+├── vite.config.js          ← Vite config (base, admin middleware, vehicles.js copy)
 ├── tailwind.config.js      ← Tailwind config
 ├── postcss.config.js       ← PostCSS config
 ├── package.json            ← npm deps + scripts
-├── manifest.json           ← Root manifest (Vite processes this for the build)
 ├── CLAUDE.md               ← This file
 ├── CHANGELOG.md            ← Version history
 ├── TODO.md                 ← Feature checklist
 ├── README.md               ← Project description
 └── game-design-document.md ← Full feature plan
 ```
+
+### Where images live — read this before touching image paths
+
+Two different things that look the same and must NOT be made to match:
+
+| | Value | Why |
+|---|---|---|
+| **File on disk** | `public/assets/images/{file}` | `public/` is the only tree Vite copies into `dist/` and publishes |
+| **`image.url` in `vehicles.js`** | `assets/images/{file}` | A runtime URL, resolved against the page at `/MatKenGame/` |
+
+Writing image files to a root `assets/images/` instead of `public/` means they
+get committed but never deployed — a silent 404 in-game. That bug existed until
+the 2026-08-13 cleanup. Equally, prefixing `image.url` with `public/` would
+404 every one of the 282 images. The two are correct precisely because they
+differ.
 
 ---
 
@@ -143,8 +161,8 @@ export const vehicles = [
 ### React
 - Use functional components only — no class components
 - Use hooks (useState, useEffect) for state management
-- For MVP, all components can live in app.jsx
-- Keep game logic separate from UI rendering where possible
+- One screen per file in `src/screens/`; shared UI in `src/components/`
+- Keep game logic in `src/lib/utils.js`, separate from UI rendering
 
 ### Styling (Tailwind)
 - Mobile-first responsive classes (sm:, md:, lg:)
@@ -153,8 +171,9 @@ export const vehicles = [
 - Colour scheme: navy (#1a2744) as primary, white backgrounds, green for correct, red for wrong
 
 ### Images
-- For MVP: image URLs in `data/vehicles.js` are direct HTTPS Wikimedia Commons URLs
-- Phase 2 introduces the admin page, which will store images in `assets/images/` and auto-name them (`vehicleid-001.jpg`, etc.) via the GitHub API. Not part of MVP.
+- All images are local and same-origin — no hotlinking (offline play depends on it)
+- Files go in `public/assets/images/`; `image.url` stays `assets/images/{file}`. See **Where images live** above before changing either.
+- Added through the admin page (drag-and-drop), which auto-names them `{vehicleId}-{nnn}.{ext}` and bundles them into the export ZIP
 
 ---
 
@@ -250,5 +269,5 @@ To load one, just say: "Read game-design-document.md before we start"
 
 ---
 
-*Last updated: 2026-07-11*
+*Last updated: 2026-08-13*
 *Project owner: BlazeJama*
