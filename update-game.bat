@@ -28,14 +28,16 @@ if errorlevel 1 (
   exit /b 1
 )
 
-REM Stage vehicles.js and ALL new/changed images
-echo [2/6] Staging data\vehicles.js and assets\images\...
-git add data/vehicles.js assets/images/
+REM Stage vehicles.js and ALL new/changed images.
+REM NOTE: images live in public\assets\images\ — that is the tree Vite copies
+REM into dist\ and publishes. The root assets\images\ tree is NOT deployed.
+echo [2/6] Staging data\vehicles.js and public\assets\images\...
+git add data/vehicles.js public/assets/images/
 if errorlevel 1 (
   echo.
   echo ERROR: git add failed. A file may be locked by another program
   echo (antivirus, file explorer preview, image viewer). Close anything
-  echo that might be touching assets\images\ and try again.
+  echo that might be touching public\assets\images\ and try again.
   echo.
   pause
   exit /b 1
@@ -45,12 +47,12 @@ REM Check if there is actually anything staged to commit
 echo [3/6] Checking for staged changes...
 git diff --cached --quiet
 if not errorlevel 1 (
-  echo No changes detected in data\vehicles.js or assets\images\.
+  echo No changes detected in data\vehicles.js or public\assets\images\.
   echo.
   echo Did you remember to extract the ZIP you downloaded from the
   echo admin page into this folder? It should place files here:
   echo   %~dp0data\vehicles.js
-  echo   %~dp0assets\images\
+  echo   %~dp0public\assets\images\
   echo.
   pause
   exit /b 0

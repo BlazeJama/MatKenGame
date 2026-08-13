@@ -23,7 +23,7 @@ const ADMIN_PASSWORD = "matken";
 // CACHE_VERSION in service-worker.js. If admin.jsx loads with a mismatch
 // against the HTML's ?v= (because a stale SW served an old JS or HTML),
 // the auto-detect below silently clears caches and reloads.
-const ADMIN_VERSION = 59;
+const ADMIN_VERSION = 60;
 
 // Storage keys
 const SESSION_AUTH_KEY   = "matken-admin-auth";
@@ -844,7 +844,16 @@ function downloadDataUrl(dataUrl, filename) {
 // to mirror the repo so the user can extract it into the project root and have
 // every file land in the right place.
 //   /data/vehicles.js
-//   /assets/images/<id>-<nnn>.<ext>
+//   /public/assets/images/<id>-<nnn>.<ext>
+//
+// Images go under public/ because that is the only tree Vite copies into dist/
+// and publishes. Files written to the repo-root assets/images/ are committed
+// but never deployed — a silent 404 in-game.
+//
+// NOTE: this is the FILESYSTEM destination only. The image.url strings written
+// into vehicles.js stay "assets/images/<file>" (see the `path:` field in
+// collectPendingDownloads) because those are runtime URLs resolved against the
+// page at /MatKenGame/. Do not "fix" them to match this path.
 async function downloadUpdateBundle(fileContent, pendingDownloads, filename = "matken-update.zip") {
   if (typeof JSZip === "undefined") {
     alert("ZIP library failed to load. Use the individual downloads instead.");
@@ -852,7 +861,7 @@ async function downloadUpdateBundle(fileContent, pendingDownloads, filename = "m
   }
   const zip = new JSZip();
   zip.file("data/vehicles.js", fileContent);
-  const imagesDir = zip.folder("assets").folder("images");
+  const imagesDir = zip.folder("public").folder("assets").folder("images");
   for (const p of pendingDownloads) {
     imagesDir.file(p.filename, dataUrlToBlob(p.dataUrl));
   }
