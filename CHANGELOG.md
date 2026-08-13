@@ -13,6 +13,89 @@ Versions follow: **[MAJOR.MINOR.PATCH]**
 ## [Unreleased]
 > Changes being worked on but not yet in a release.
 
+### Fixed — Newly added images were committed but never deployed
+
+The admin publish flow wrote image files to the repo-root `assets/images/`, but
+Vite only copies `public/` into `dist/`. Every image added through the admin was
+therefore committed and never published — a silent 404 in-game. Nothing looked
+broken only because the root and `public/` image trees happened to be
+byte-identical.
+
+- `update-game.bat` now stages `public/assets/images/`, and its "extract the ZIP
+  here" messages name the correct path.
+- The admin's export ZIP is now structured `public/assets/images/<file>`.
+- Deliberately unchanged: the `image.url` strings in `vehicles.js` stay
+  `assets/images/<file>`. Those are runtime URLs resolved against
+  `/MatKenGame/`, not filesystem paths — rewriting them would 404 all 282
+  images. Both `admin.babel` and `CLAUDE.md` now spell this out.
+
+Verified end to end on the live site: a newly added image (`challenger2-006.jpg`)
+reaches players.
+
+### Fixed — update-game.bat closed instantly without publishing
+
+The window flashed and vanished, and an earlier run left files staged but never
+committed. Cause: an unescaped `)` inside `echo (antivirus, … image viewer).`
+within an `if errorlevel 1 ( … )` block. In cmd.exe that terminates the block,
+producing a syntax error that killed the script before any `pause`.
+
+Rewritten to use `goto :label` for every branch instead of parenthesised blocks,
+so the class of bug cannot recur. Also: checks git is on PATH up front, replaces
+`wmic` (removed on current Windows builds) with PowerShell for the timestamp,
+routes every exit through a single `:end` so the window always pauses, and is
+stored ASCII-only with CRLF endings. "Run as administrator" is unnecessary and
+can break git credentials — noted in the file.
+
+### Changed — Project cleanup: 6,392 tracked files down to ~330
+
+Unused files moved to `D:\Claude_projects\MatKenGame_archive\2026-08-13\`
+(see `ARCHIVE-NOTES.md` there). The pre-cleanup state is tagged
+`pre-cleanup-2026-08-13`.
+
+- **Stopped tracking `node_modules/` and `dist/`.** CI runs `npm ci` and
+  `npm run build` and uploads a fresh `dist/`, so the committed copies were
+  never read — they only added ~5,770 files of noise and made build-cache churn
+  appear in every `git status`.
+- **Archived pre-Vite leftovers:** `app.jsx` (103 KB monolith), the root
+  `service-worker.js` (v58 — the live one is `public/service-worker.js`),
+  `Start-server.bat` (broken since the Vite migration), and
+  `scripts/download-images.mjs` (one-off bulk downloader; images are added via
+  the admin now).
+- **Archived the 75 MB duplicate root `assets/images/`** (282 files). Verified
+  first that no file existed only there and that no bytes differed from
+  `public/assets/images/`.
+- **Archived one-off source docs** — `Brainstorm.md`, the two
+  `*_VEHICLES_DATA*.md` files, and two dated design notes — all with zero
+  inbound references.
+- **Single-sourced `manifest.json` and the PWA icons.** Both existed twice,
+  byte-identical, and *both shipped*: the root copies were build inputs emitted
+  as hashed duplicates, while the `public/` copies were what the service worker
+  precached. `index.html` now points at the `public/` copies via Vite's
+  `%BASE_URL%`, and the root duplicates are archived.
+- Service worker cache bumped v61 → v62.
+
+Note: this does not shrink `.git`, which still holds every blob in history. The
+gain is a smaller working tree and one source of truth per file.
+
+### Changed — Documentation brought in line with the actual project
+
+- **`README.md`** — tech stack said "React via CDN / Tailwind via CDN / Vanilla
+  JavaScript"; now React 19 + Vite 8 + Tailwind 3 + Supabase. Folder tree
+  rewritten (it still showed `app.jsx` and `admin/admin.jsx`). Feature list and
+  phase table updated: categories, difficulty, filters, timed mode, hints, study
+  mode and the leaderboard all shipped but were still listed as planned.
+- **`CLAUDE.md`** — folder structure refreshed, stale "all components can live in
+  app.jsx" and pre-admin image guidance replaced, and a new **Where images live**
+  table added documenting the file-path vs runtime-URL distinction.
+- **`src/App.jsx`** — the DATA LOAD FAILURE screen told players to check that
+  `vehicles.js` loads before `app.jsx`, a file that no longer exists. This was
+  the only user-visible reference to it.
+- **`data/vehicles.js`** and the admin's exported-file header — corrected the
+  loading-model comment (it described the old `<script>` + `window.vehicles`
+  setup) and added a warning against round-tripping the file through PowerShell
+  `Set-Content -Encoding utf8`, which previously corrupted all 74 em-dashes.
+- Admin version bumped to v61.
+
 ### Fixed — Admin page completely blank: unpinned Babel Standalone CDN broke script execution (Critical)
 
 The admin page (`/MatKenGame/admin/`) was rendering a totally blank `#root` on every load — no console errors, no visible failure of any kind. Root-caused via a controlled same-origin A/B test (identical real `admin.babel` file, only the Babel version changed):

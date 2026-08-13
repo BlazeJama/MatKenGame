@@ -20,15 +20,27 @@
 //               one is picked at random and shown. Empty array = no fact shown.
 //
 // Image storage:
-//   - Each image.url is a local path under assets/images/
+//   - Each image.url is a RUNTIME URL of the form assets/images/{file},
+//     resolved against the page at /MatKenGame/.
+//   - The image FILES live in public/assets/images/ -- the only tree Vite
+//     copies into dist/ and publishes. The url and the file path deliberately
+//     differ; do not "correct" one to match the other.
 //   - Naming convention: {vehicleId}-{nnn}.{ext}  (e.g. m1abrams-001.jpg)
 //   - Images are added via the Admin page (drag-and-drop), which generates
 //     the correct filename and exports both the .js file and the image files.
 //
 // Loading model:
-//   This file is loaded as a regular <script> in index.html *before* app.jsx,
-//   and exposes the data as `window.vehicles`. When the project later adopts
-//   a build step (Phase 2+), this can be swapped to `export const vehicles`.
+//   An ES module, imported directly by src/App.jsx and src/lib/utils.js.
+//   The admin page cannot import ES modules, so public/admin/index.html
+//   imports it and re-exposes the data as window.vehicles. vite.config.js
+//   also copies this file to dist/data/vehicles.js so the deployed admin
+//   page can fetch it.
+//
+// Editing:
+//   Use an editor that preserves UTF-8 without a BOM. Do NOT round-trip this
+//   file through PowerShell `Get-Content | Set-Content -Encoding utf8` -- on
+//   PS 5.1 that misreads the encoding and corrupts every non-ASCII character
+//   (it has previously mangled all 74 em-dashes here).
 //
 // =================================================================
 

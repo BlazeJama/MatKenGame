@@ -59,7 +59,7 @@ Check items off as they are finished. Never remove items — mark them ✅ inste
 
 ### Phase 5: Documentation & Merge
 - [x] Update CLAUDE.md with new build/dev instructions
-- [ ] Update README.md if needed
+- [x] Update README.md if needed *(done 2026-08-13: tech stack, folder tree, feature list and phase table brought in line with the Vite build)*
 - [x] Update TODO.md with migration completion
 - [x] Update CHANGELOG.md with migration summary
 - [ ] ⚠️ **Request explicit approval to merge `vite-migration` → `main`**
